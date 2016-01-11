@@ -1,0 +1,242 @@
+/**
+ * teleport
+ * Created: 09.11.15 9:56 by Shubnikov Alexey <a.shubnikov@niaep.ru>
+ * Copyright (c) 2015 OSKR NIAEP
+ */
+
+(function ($) {
+
+    $.fn.requestForm = function (options) {
+
+        teleport.requestForm.init(this, options);
+        return this;
+    };
+
+    teleport.requestForm = {
+
+        defaultSettings: {
+            refreshParticipantsRoute: null,
+            participantsContainerSelector: null,
+            dateSelector: null,
+            beginTimeSelector: null,
+            endTimeSelector: null,
+            dateTimeControlsSelector: null
+        },
+        settings: {},
+        eventDeferred: $.Deferred(),
+        requestId: null,
+        date: null,
+        beginTime: null,
+        endTime: null,
+        $form: null,
+        $participantsContainer: null,
+        $date: null,
+        $beginTime: null,
+        $endTime: null,
+        $dateTime: null,
+
+        init: function ($form, options) {
+
+            var settings = $.extend(this.settings, this.defaultSettings, options || {});
+
+            this.$form = $form;
+            this.$participantsContainer = $(settings.participantsContainerSelector);
+            this.$date = $(settings.dateSelector, $form);
+            this.$beginTime = $(settings.beginTimeSelector, $form);
+            this.$endTime = $(settings.endTimeSelector, $form);
+            this.$dateTime = $(settings.dateTimeControlsSelector, $form);
+
+            this.$date.on('change', {that: this}, this.dateChange);
+            this.$beginTime.on('change', {that: this}, this.beginTimeChange);
+            this.$endTime.on('change', {that: this}, this.endTimeChange);
+
+            this.requestId = settings.requestId;
+            this.date = this.$date.val();
+            this.beginTime = this.$beginTime.val();
+            this.endTime = this.$endTime.val();
+        },
+
+        refreshParticipants: function () {
+
+            var that = this;
+            this.eventDeferred.reject();
+            this.eventDeferred = $.Deferred(function (obj) {
+                setTimeout(function () {
+                    obj.resolveWith(that);
+                }, 900);
+            }).done(function () {
+
+                if(!this.$dateTime.hasClass('has-error')){
+                    $.get(
+                        this.settings.refreshParticipantsRoute,
+                        this.$form.serialize(),
+                        function (data) {
+                            that.$participantsContainer.html(data);
+                        },
+                        'html'
+                    );
+                }
+            });
+        },
+
+        dateChange: function (event) {
+            var that = event.data.that;
+            if (this.value !== that.date) {
+                that.date = this.value;
+                that.refreshParticipants();
+            }
+        },
+
+        beginTimeChange: function (event) {
+            var that = event.data.that;
+            if (this.value !== that.beginTime) {
+                that.beginTime = this.value;
+                that.refreshParticipants();
+            }
+        },
+
+        endTimeChange: function (event) {
+            var that = event.data.that;
+            if (this.value !== that.endTime) {
+                that.endTime = this.value;
+                that.refreshParticipants();
+            }
+        }
+    };
+
+    $.fn.participants = function (options) {
+
+        teleport.participants.init(this, options);
+        teleport.participants.$companyButtons.first().trigger('click');
+        return this;
+    };
+
+    teleport.participants = {
+        defaultSettings: {
+            companyButtonsSelector: 'button.vks-company',
+            vksRoomsSelector: '#vks-participants',
+            checkBoxesSelector: 'input[type=checkbox]',
+            checkedRoomsSelector: 'div.checked-room',
+            uncheckButtonsSelector: 'button.btn-uncheck',
+            checkedRoomsContainerSelector: '#checked-rooms-container',
+            infoButtonsSelector: 'button.btn-room-info'
+        },
+        settings: {},
+        $companyButtons: null,
+        $vksRooms: null,
+        $checkBoxes: null,
+        $checkedRooms: null,
+        $uncheckButtons: null,
+        $checkedRoomsContainer: null,
+        $infoButtons: null,
+
+        init: function ($container, options) {
+
+            var settings = $.extend(this.settings, this.defaultSettings, options || {});
+
+            this.$companyButtons = $(settings.companyButtonsSelector, $container);
+            this.$vksRooms = $(settings.vksRoomsSelector, $container);
+            this.$checkBoxes = $(settings.checkBoxesSelector, $container);
+            this.$checkedRoomsContainer = $(settings.checkedRoomsContainerSelector, $container);
+            this.$checkedRooms = $(settings.checkedRoomsSelector, $container);
+            this.$infoButtons = $(settings.infoButtonsSelector, $container);
+            this.$uncheckButtons = $(settings.uncheckButtonsSelector, $container);
+
+            this.$companyButtons.on('click', {that: this}, this.companyButtonClick);
+            this.$checkBoxes.on('change', {that: this}, this.checkBoxChange);
+            $container.on('click', settings.uncheckButtonsSelector, {that: this}, this.uncheckButtonClick);
+
+            this.$infoButtons.popover({html: true});
+            this.$companyButtons.tooltip();
+        },
+
+        companyButtonClick: function (event) {
+
+            var $companyButtons = event.data.that.$companyButtons;
+            var $vksRooms = event.data.that.$vksRooms;
+
+            $companyButtons.removeClass('active');
+            var $button = $(this);
+            $button.addClass('active');
+            $vksRooms.hide();
+            $vksRooms.filter(function () {
+                return $('input[type=checkbox]', this).data('companyId') == $button.data('id');
+            }).fadeIn();
+        },
+
+        checkBoxChange: function (event) {
+
+            var $checkBox = $(this);
+            var that = event.data.that;
+
+            if ($checkBox.is(':checked')) {
+                var $checkedRoom = that.createCheckedRoom($checkBox.val(), $checkBox.data());
+                that.$checkedRoomsContainer.append($checkedRoom);
+            } else {
+                var $removedRoom = that.$checkedRooms.filter(function () {
+                    return this.getAttribute('data-room-id') === $checkBox.val();
+                });
+                that.removeCheckedRoom($removedRoom);
+            }
+        },
+
+        uncheckButtonClick: function (event) {
+
+            var $button = $(this);
+            var that = event.data.that;
+
+            that.$checkBoxes.filter(function () {
+                return this.value === $button.parent().data('roomId');
+            }).attr('checked', false);
+
+            that.removeCheckedRoom($button.parent());
+        },
+
+        removeCheckedRoom: function ($checkedRoom) {
+
+            var $infoButton = $(this.settings.infoButtonsSelector, $checkedRoom);
+            var $uncheckButton = $(this.settings.uncheckButtonsSelector, $checkedRoom);
+
+            $infoButton.popover('destroy');
+            this.$infoButtons = this.$infoButtons.not($infoButton);
+            this.$uncheckButtons = this.$uncheckButtons.not($uncheckButton);
+            this.$checkedRooms = this.$checkedRooms.not($checkedRoom);
+            $checkedRoom.remove();
+        },
+
+        createCheckedRoom: function (roomId, data) {
+
+            var $container = $('<div>', {
+                'class': 'btn-group checked-room',
+                'data-room-id': roomId
+            });
+
+            var $infoButton = $('<button>', {
+                'class': 'btn btn-default btn-room-info',
+                'type': 'button'
+            }).html(data['shortName']).popover({
+                'html': true,
+                'container': '#vks-participants',
+                'placement': 'top',
+                'content': '<dl><dt>Название</dt><dd>' + data['name'] + '</dd>' +
+                '<dt>Организация</dt><dd>' + data['companyName'] + '</dd>' +
+                '<dt>Технический специалист</dt><dd>' + data['contact'] + '</dd>' +
+                '<dt>IP адрес</dt><dd>' + data['ipAddress'] + '</dd></dl>'
+            });
+
+            var $uncheckButton = $('<button>', {
+                'class': 'btn btn-default btn-uncheck',
+                'type': 'button'
+            }).append($('<span>', {'class': 'glyphicon glyphicon-remove text-danger'}));
+
+            $container.append($infoButton).append($uncheckButton);
+
+            this.$checkedRooms = this.$checkedRooms.add($container);
+            this.$infoButtons = this.$infoButtons.add($infoButton);
+            this.$uncheckButtons = this.$uncheckButtons.add($uncheckButton);
+
+            return $container;
+        }
+    };
+
+})(jQuery);

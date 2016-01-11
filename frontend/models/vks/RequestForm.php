@@ -1,0 +1,157 @@
+<?php
+/**
+ * teleport
+ * Created: 21.12.15 11:06
+ * @copyright Copyright (c) 2015 OSKR NIAEP
+ */
+
+namespace frontend\models\vks;
+
+use common\components\MinuteFormatter;
+use yii\mongodb\validators\MongoDateValidator;
+use common\components\validators\MinuteValidator;
+use yii\helpers\ArrayHelper;
+use common\models\vks\Participant;
+
+/**
+ * @author Shubnikov Alexey <a.shubnikov@niaep.ru>
+ *
+ * RequestForm
+ */
+class RequestForm extends Request
+{
+    const SCENARIO_REFRESH_PARTICIPANTS = 'refresh_participants';
+    /**
+     * @var string Begin time representation in form
+     */
+    public $beginTimeInput;
+    /**
+     * @var string End time representation in form
+     */
+    public $endTimeInput;
+
+    /**
+     * @inheritDoc
+     */
+    public function init()
+    {
+        parent::init();
+
+        $this->date = new \MongoDate(mktime(0, 0, 0, date("n"), date("j") + 1));
+        $this->beginTime = \Yii::$app->params['vks.minTime'];
+        $this->endTime = \Yii::$app->params['vks.maxTime'];
+        $this->dateInput = \Yii::$app->formatter->asDate($this->date->sec, 'dd.MM.yyyy');
+        $this->beginTimeInput = MinuteFormatter::asString($this->beginTime);
+        $this->endTimeInput = MinuteFormatter::asString($this->endTime);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function scenarios()
+    {
+        return [
+            'default' => ['status', 'topic', 'dateInput', 'beginTimeInput', 'endTimeInput', 'audioRecord', 'participantsId', 'note'],
+            self::SCENARIO_REFRESH_PARTICIPANTS => ['dateInput', 'beginTimeInput', 'endTimeInput', 'participantsId'],
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function afterFind()
+    {
+        parent::afterFind();
+
+        $this->dateInput = \Yii::$app->formatter->asDate($this->date->sec, 'dd.MM.yyyy');
+        $this->beginTimeInput = $this->beginTimeString;
+        $this->endTimeInput = $this->endTimeString;
+    }
+
+
+    public function rules()
+    {
+        return array_merge(parent::rules(), [
+            [['topic', 'dateInput', 'beginTimeInput', 'endTimeInput'], 'required'],
+
+            ['dateInput', MongoDateValidator::className(), 'format' => 'dd.MM.yyyy',
+                'min' => \Yii::$app->formatter->asDate(mktime(0, 0, 0), 'dd.MM.yyyy'),
+                'max' => \Yii::$app->formatter->asDate(strtotime("+1 week"), 'dd.MM.yyyy'),
+            ],
+
+            ['beginTimeInput', MinuteValidator::className(),
+                'min' => MinuteFormatter::asString(\Yii::$app->params['vks.minTime']),
+                'max' => $this->endTimeInput,
+                'minuteAttribute' => 'beginTime'
+            ],
+            ['beginTimeInput', 'compare', 'compareAttribute' => 'endTimeInput', 'operator' => '!=='],
+
+            ['endTimeInput', MinuteValidator::className(),
+                'min' => $this->beginTimeInput,
+                'max' => MinuteFormatter::asString(\Yii::$app->params['vks.maxTime']),
+                'minuteAttribute' => 'endTime'
+            ],
+
+            ['audioRecord', 'boolean'],
+            ['audioRecord', 'filter', 'filter' => function ($value) {
+                return boolval($value);
+            }],
+
+            ['participantsId', 'required', 'on' => 'default'],
+            ['participantsId', function ($attribute) {
+
+                $value = $this->{$attribute};
+                if (count($value) < 2) {
+                    $this->addError($attribute, 'Количество участников должно быть не менее двух');
+                    return;
+                }
+
+                $allParticipants = Participant::findAllByRequest($this);
+                $allParticipantsId = ArrayHelper::getColumn($allParticipants, '_id');
+
+                foreach ($value as $participant) {
+                    $key = array_search($participant, $allParticipantsId);
+                    if ($key === false) {
+                        $this->addError($attribute, 'Участник не найден');
+                        return;
+                    } elseif ($allParticipants[$key]->isBusy) {
+                        $busyParticipant = $allParticipants[$key];
+                        $this->addError($attribute, "Участник '{$busyParticipant->name}' занят с " . MinuteFormatter::asString($busyParticipant->busyFrom) . " до " . MinuteFormatter::asString($busyParticipant->busyTo));
+                    }
+                }
+            }, 'on' => 'default'],
+
+            ['note', 'safe'],
+        ]);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+
+            if ($insert || $this->createdBy == \Yii::$app->user->identity['primaryKey']) {
+                $this->status = self::STATUS_CONSIDERATION;
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+
+        if ($insert || array_key_exists('status', $changedAttributes)) {
+            $this->trigger(self::EVENT_STATUS_CHANGED);
+        }
+    }
+
+
+}
