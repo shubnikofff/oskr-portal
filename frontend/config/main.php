@@ -7,27 +7,15 @@ $params = array_merge(
 );
 
 return [
-    'id' => 'app-frontend',
+    'id' => 'teleport-frontend',
+    'name' => 'Телепорт',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'controllerNamespace' => 'frontend\controllers',
-    'components' => [
-        'user' => [
-            'identityClass' => 'common\models\User',
-            'enableAutoLogin' => true,
-        ],
-        'log' => [
-            'traceLevel' => YII_DEBUG ? 3 : 0,
-            'targets' => [
-                [
-                    'class' => 'yii\log\FileTarget',
-                    'levels' => ['error', 'warning'],
-                ],
-            ],
-        ],
-        'errorHandler' => [
-            'errorAction' => 'site/error',
-        ],
+    'defaultRoute' => 'vks-request/index',
+    'controllerMap' => [
+        //'profile' => 'frontend\controllers\UserController'
     ],
+    'components' => require(__DIR__.'/components.php'),
     'params' => $params,
 ];

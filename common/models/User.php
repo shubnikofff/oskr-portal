@@ -3,40 +3,48 @@ namespace common\models;
 
 use Yii;
 use yii\base\NotSupportedException;
-use yii\behaviors\TimestampBehavior;
-use yii\db\ActiveRecord;
+use yii\mongodb\ActiveRecord;
 use yii\web\IdentityInterface;
+use common\components\behaviors\TimestampBehavior;
 
 /**
  * User model
  *
- * @property integer $id
+ * @property string $id
  * @property string $username
- * @property string $password_hash
- * @property string $password_reset_token
+ * @property string $passwordHash
+ * @property string $passwordResetToken
  * @property string $email
- * @property string $auth_key
+ * @property string $activateToken
+ * @property string $authKey
  * @property integer $status
- * @property integer $created_at
- * @property integer $updated_at
+ * @property \MongoDate $createdAt
+ * @property \MongoDate $updatedAt
  * @property string $password write-only password
+ * @property string $statusName
+ * @property string $lastName
+ * @property string $firstName
+ * @property string $middleName
+ * @property string $shortName
+ * @property string $fullName
+ * @property string $division
+ * @property \MongoId $companyId
+ * @property Company $company
+ * @property string $post
+ * @property string $phone
+ * @property string $mobile
  */
 class User extends ActiveRecord implements IdentityInterface
 {
-    const STATUS_DELETED = 0;
+    const STATUS_BLOCKED = 0;
+    const STATUS_NO_ACTIVATE = 1;
     const STATUS_ACTIVE = 10;
 
-    /**
-     * @inheritdoc
-     */
-    public static function tableName()
+    public static function collectionName()
     {
-        return '{{%user}}';
+        return 'user';
     }
 
-    /**
-     * @inheritdoc
-     */
     public function behaviors()
     {
         return [
@@ -44,14 +52,50 @@ class User extends ActiveRecord implements IdentityInterface
         ];
     }
 
-    /**
-     * @inheritdoc
-     */
+    public function attributes()
+    {
+        return [
+            '_id',
+            'username',
+            'activateToken',
+            'authKey',
+            'passwordHash',
+            'passwordResetToken',
+            'email',
+            'status',
+            'createdAt',
+            'updatedAt',
+            'lastName',
+            'firstName',
+            'middleName',
+            'companyId',
+            'division',
+            'post',
+            'phone',
+            'mobile'
+        ];
+    }
+
     public function rules()
     {
         return [
-            ['status', 'default', 'value' => self::STATUS_ACTIVE],
-            ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
+            ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_BLOCKED, self::STATUS_NO_ACTIVATE]],
+        ];
+    }
+
+    public function attributeLabels()
+    {
+        return [
+            'lastName' => 'Фамилия',
+            'firstName' => 'Имя',
+            'middleName' => 'Отчество',
+            'status' => 'Статус',
+            'companyId' => 'Организация',
+            'division' => 'Подразделение',
+            'post' => 'Должность',
+            'phone' => 'Контактный телефон',
+            'mobile' => 'Мобильный телефон',
+            'createdAt' => 'Дата регистрации'
         ];
     }
 
@@ -60,7 +104,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public static function findIdentity($id)
     {
-        return static::findOne(['id' => $id, 'status' => self::STATUS_ACTIVE]);
+        return self::findOne(['_id' => $id, 'status' => self::STATUS_ACTIVE]);
     }
 
     /**
@@ -75,7 +119,7 @@ class User extends ActiveRecord implements IdentityInterface
      * Finds user by username
      *
      * @param string $username
-     * @return static|null
+     * @return User|null
      */
     public static function findByUsername($username)
     {
@@ -95,9 +139,18 @@ class User extends ActiveRecord implements IdentityInterface
         }
 
         return static::findOne([
-            'password_reset_token' => $token,
+            'passwordResetToken' => $token,
             'status' => self::STATUS_ACTIVE,
         ]);
+    }
+
+    /**
+     * @param $token
+     * @return null|User
+     */
+    public static function findByActivateToken($token)
+    {
+        return static::findOne(['activateToken' => $token, 'status' => self::STATUS_NO_ACTIVATE]);
     }
 
     /**
@@ -111,9 +164,9 @@ class User extends ActiveRecord implements IdentityInterface
         if (empty($token)) {
             return false;
         }
-
-        $timestamp = (int) substr($token, strrpos($token, '_') + 1);
         $expire = Yii::$app->params['user.passwordResetTokenExpire'];
+        $parts = explode('_', $token);
+        $timestamp = (int)end($parts);
         return $timestamp + $expire >= time();
     }
 
@@ -122,7 +175,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function getId()
     {
-        return $this->getPrimaryKey();
+        return (string)$this->getPrimaryKey();
     }
 
     /**
@@ -130,7 +183,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function getAuthKey()
     {
-        return $this->auth_key;
+        return $this->authKey;
     }
 
     /**
@@ -149,7 +202,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function validatePassword($password)
     {
-        return Yii::$app->security->validatePassword($password, $this->password_hash);
+        return Yii::$app->security->validatePassword($password, $this->passwordHash);
     }
 
     /**
@@ -159,7 +212,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function setPassword($password)
     {
-        $this->password_hash = Yii::$app->security->generatePasswordHash($password);
+        $this->passwordHash = Yii::$app->security->generatePasswordHash($password);
     }
 
     /**
@@ -167,7 +220,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function generateAuthKey()
     {
-        $this->auth_key = Yii::$app->security->generateRandomString();
+        $this->authKey = Yii::$app->security->generateRandomString();
     }
 
     /**
@@ -175,7 +228,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function generatePasswordResetToken()
     {
-        $this->password_reset_token = Yii::$app->security->generateRandomString() . '_' . time();
+        $this->passwordResetToken = Yii::$app->security->generateRandomString() . '_' . time();
     }
 
     /**
@@ -183,6 +236,77 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function removePasswordResetToken()
     {
-        $this->password_reset_token = null;
+        $this->passwordResetToken = null;
+    }
+
+    /**
+     * Generates new activate token
+     */
+    public function generateActivateToken()
+    {
+        $this->activateToken = Yii::$app->security->generateRandomString();
+    }
+
+    /**
+     * Removes activate token
+     */
+    public function removeActivateToken()
+    {
+        $this->activateToken = null;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStatusName()
+    {
+        $result = '';
+        switch ($this->status) {
+            case self::STATUS_ACTIVE :
+                $result = 'Активен';
+                break;
+            case self::STATUS_BLOCKED :
+                $result = 'Заблокирован';
+                break;
+            case self::STATUS_NO_ACTIVATE :
+                $result = 'Не активирован';
+                break;
+        }
+        return $result;
+    }
+
+    /**
+     * @return string
+     */
+    public function getShortName()
+    {
+        $result = ucfirst($this->lastName);
+        if ($this->firstName) {
+            $result .= ' ' . strtoupper(mb_substr($this->firstName, 0, 1)) . '.';
+        }
+        if ($this->middleName) {
+            $result .= strtoupper(mb_substr($this->middleName, 0, 1)) . '.';
+        }
+        return $result;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFullName()
+    {
+        $fullName[] = $this->lastName;
+        if ($this->firstName) {
+            $fullName[] = $this->firstName;
+            if ($this->middleName) {
+                $fullName[] = $this->middleName;
+            }
+        }
+        return implode(' ', $fullName);
+    }
+
+    public function getCompany()
+    {
+        return $this->hasOne(Company::className(), ['_id' => 'companyId']);
     }
 }

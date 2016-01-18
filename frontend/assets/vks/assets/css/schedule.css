@@ -1,0 +1,83 @@
+#vks-schedule-table {
+    border: none;
+    width: 100%;
+}
+
+#vks-schedule-header td,  #vks-schedule-footer td {
+    width: 10%;
+    border-left: 1px solid black;
+    padding-left: 4px;
+}
+
+#vks-schedule-header td:first-child,  #vks-schedule-footer td:first-child {
+    border: none;
+}
+
+#vks-schedule-header {
+    border-bottom: 1px solid black;
+}
+
+#vks-schedule-footer {
+    border-top: 1px solid black;
+}
+
+button.vks-item {
+    display: none;
+    padding: 5px;
+    border: 1px solid #999999;
+}
+
+button.vks-item div.participants-names {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+td.vks-not-found {
+    color: #999999;
+    text-align: center;
+    padding: 15px 0;
+}
+
+#vks-schedule-legend {
+    font-size: 13px;
+}
+
+div.status-color-box {
+    width: 30px;
+    height: 12px;
+    display: inline-block;
+    border: 1px solid black;
+}
+
+.status-cancel {
+    background-color: #ffd0d9;
+}
+
+.status-approve {
+    background-color: #baffbd;
+}
+
+.status-ahu-approve {
+    background-color: blanchedalmond;
+}
+
+.status-considiration {
+    background-color: white;
+}
+
+button.status-cancel:hover {
+    background-color: #ff9ea5;
+}
+
+button.status-approve:hover {
+    background-color: #69ffa5;
+}
+
+button.status-ahu-approve:hover {
+    background-color: #ffd6a2;
+}
+
+button.status-considiration:hover {
+    background-color: #f8f4ff;
+}

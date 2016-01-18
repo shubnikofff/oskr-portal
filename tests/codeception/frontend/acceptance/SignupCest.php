@@ -4,6 +4,7 @@ namespace tests\codeception\frontend\acceptance;
 
 use tests\codeception\frontend\_pages\SignupPage;
 use common\models\User;
+use tests\codeception\frontend\AcceptanceTester;
 
 class SignupCest
 {
@@ -37,7 +38,7 @@ class SignupCest
     }
 
     /**
-     * @param \codeception_frontend\AcceptanceTester $I
+     * @param AcceptanceTester $I
      * @param \Codeception\Scenario $scenario
      */
     public function testUserSignup($I, $scenario)
@@ -48,7 +49,7 @@ class SignupCest
         $I->see('Signup', 'h1');
         $I->see('Please fill out the following fields to signup:');
 
-        $I->amGoingTo('submit signup form with no data');
+        $I->amGoingTo('submit signup form with no configs');
 
         $signupPage->submit([]);
 

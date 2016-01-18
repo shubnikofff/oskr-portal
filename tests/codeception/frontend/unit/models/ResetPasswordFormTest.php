@@ -4,7 +4,7 @@ namespace tests\codeception\frontend\unit\models;
 
 use tests\codeception\frontend\unit\DbTestCase;
 use tests\codeception\common\fixtures\UserFixture;
-use frontend\models\ResetPasswordForm;
+use frontend\models\user\ResetPasswordForm;
 
 class ResetPasswordFormTest extends DbTestCase
 {
@@ -14,7 +14,7 @@ class ResetPasswordFormTest extends DbTestCase
      */
     public function testResetWrongToken()
     {
-        new ResetPasswordForm('notexistingtoken_1391882543');
+        new \frontend\models\user\ResetPasswordForm('notexistingtoken_1391882543');
     }
 
     /**
@@ -36,8 +36,9 @@ class ResetPasswordFormTest extends DbTestCase
         return [
             'user' => [
                 'class' => UserFixture::className(),
-                'dataFile' => '@tests/codeception/frontend/unit/fixtures/data/models/user.php'
+                'dataFile' => '@tests/codeception/frontend/unit/fixtures/configs/models/user.php'
             ],
         ];
     }
+
 }

@@ -10,7 +10,7 @@ $I->wantTo('ensure login page works');
 
 $loginPage = LoginPage::openBy($I);
 
-$I->amGoingTo('submit login form with no data');
+$I->amGoingTo('submit login form with no configs');
 $loginPage->login('', '');
 if (method_exists($I, 'wait')) {
     $I->wait(3); // only for selenium

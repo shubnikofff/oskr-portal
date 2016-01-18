@@ -1,39 +1,39 @@
 <?php
+use yii\helpers\Html;
+use yii\bootstrap\ActiveForm;
+use frontend\assets\LoginAsset;
 
 /* @var $this yii\web\View */
 /* @var $form yii\bootstrap\ActiveForm */
 /* @var $model \common\models\LoginForm */
 
-use yii\helpers\Html;
-use yii\bootstrap\ActiveForm;
-
-$this->title = 'Login';
-$this->params['breadcrumbs'][] = $this->title;
+LoginAsset::register($this);
+$this->title = 'Вход';
 ?>
 <div class="site-login">
-    <h1><?= Html::encode($this->title) ?></h1>
+    <div class="container">
 
-    <p>Please fill out the following fields to login:</p>
+        <?php $form = ActiveForm::begin([
+            'id' => 'login-form',
+            'enableClientValidation' => false,
+            'options' => [
+                'class' => 'form-login'
+            ]
+        ]); ?>
 
-    <div class="row">
-        <div class="col-lg-5">
-            <?php $form = ActiveForm::begin(['id' => 'login-form']); ?>
+        <?= $form->field($model, 'username')->textInput(['placeholder' => 'Логин'])->label(false) ?>
 
-                <?= $form->field($model, 'username') ?>
+        <?= $form->field($model, 'password')->passwordInput(['placeholder' => 'Пароль'])->label(false) ?>
 
-                <?= $form->field($model, 'password')->passwordInput() ?>
+        <?= $form->field($model, 'rememberMe')->checkbox() ?>
 
-                <?= $form->field($model, 'rememberMe')->checkbox() ?>
+        <?= Html::submitButton('Войти', ['class' => 'btn btn-primary btn-block', 'name' => 'login-button']) ?>
 
-                <div style="color:#999;margin:1em 0">
-                    If you forgot your password you can <?= Html::a('reset it', ['site/request-password-reset']) ?>.
-                </div>
-
-                <div class="form-group">
-                    <?= Html::submitButton('Login', ['class' => 'btn btn-primary', 'name' => 'login-button']) ?>
-                </div>
-
-            <?php ActiveForm::end(); ?>
+        <div class="form-control-static">
+            <?= Html::a('Забыли пароль?', ['site/request-password-reset']) ?>
         </div>
+
+        <?php ActiveForm::end(); ?>
+
     </div>
 </div>

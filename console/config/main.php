@@ -11,6 +11,9 @@ return [
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'controllerNamespace' => 'console\controllers',
+    'controllerMap' => [
+        'mongodb-migrate' => 'yii\mongodb\console\controllers\MigrateController'
+    ],
     'components' => [
         'log' => [
             'targets' => [

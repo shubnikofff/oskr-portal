@@ -2,11 +2,13 @@
 
 namespace tests\codeception\frontend\_pages;
 
+use tests\codeception\frontend\AcceptanceTester;
+use tests\codeception\frontend\FunctionalTester;
 use \yii\codeception\BasePage;
 
 /**
  * Represents signup page
- * @property \codeception_frontend\AcceptanceTester|\codeception_frontend\FunctionalTester $actor
+ * @property AcceptanceTester|FunctionalTester $actor
  */
 class SignupPage extends BasePage
 {
@@ -20,7 +22,7 @@ class SignupPage extends BasePage
     {
         foreach ($signupData as $field => $value) {
             $inputType = $field === 'body' ? 'textarea' : 'input';
-            $this->actor->fillField($inputType . '[name="SignupForm[' . $field . ']"]', $value);
+            $this->actor->fillField($inputType . '[name="UserForm[' . $field . ']"]', $value);
         }
         $this->actor->click('signup-button');
     }

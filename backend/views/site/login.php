@@ -1,35 +1,38 @@
 <?php
+use yii\helpers\Html;
+use yii\widgets\ActiveForm;
+use backend\assets\LoginAsset;
 
 /* @var $this yii\web\View */
 /* @var $form yii\bootstrap\ActiveForm */
-/* @var $model \common\models\LoginForm */
+/* @var $model \backend\models\LoginForm */
 
-use yii\helpers\Html;
-use yii\bootstrap\ActiveForm;
-
-$this->title = 'Login';
-$this->params['breadcrumbs'][] = $this->title;
+LoginAsset::register($this);
+$this->title = 'Вход';
+$session = Yii::$app->session;
 ?>
+
 <div class="site-login">
-    <h1><?= Html::encode($this->title) ?></h1>
 
-    <p>Please fill out the following fields to login:</p>
+    <?= $session->hasFlash($model::NO_PERMISSIONS_FLASH) ? "<div class='alert alert-info alert-dismissible'>" . $session->getFlash($model::NO_PERMISSIONS_FLASH) . "</div>" : ''; ?>
 
-    <div class="row">
-        <div class="col-lg-5">
-            <?php $form = ActiveForm::begin(['id' => 'login-form']); ?>
+    <div class="container">
 
-                <?= $form->field($model, 'username') ?>
+        <?php $form = ActiveForm::begin([
+            'id' => 'login-form',
+            'enableClientValidation' => false,
+            'options' => [
+                'class' => 'form-login'
+            ]
+        ]); ?>
 
-                <?= $form->field($model, 'password')->passwordInput() ?>
+        <h2 class="form-signin-heading">Панель управления</h2>
+        <?= $form->field($model, 'username')->textInput(['placeholder' => 'Логин'])->label(false) ?>
+        <?= $form->field($model, 'password')->passwordInput(['placeholder' => 'Пароль'])->label(false) ?>
+        <?= Html::submitButton('Вход', ['class' => 'btn btn-primary btn-block']) ?>
 
-                <?= $form->field($model, 'rememberMe')->checkbox() ?>
+        <?php ActiveForm::end(); ?>
 
-                <div class="form-group">
-                    <?= Html::submitButton('Login', ['class' => 'btn btn-primary', 'name' => 'login-button']) ?>
-                </div>
-
-            <?php ActiveForm::end(); ?>
-        </div>
     </div>
+
 </div>
