@@ -71,7 +71,7 @@ $participants = Participant::findAllByRequest($model)
 
         <div class="row">
 
-            <div class="col-lg-4">
+            <div class="col-lg-5">
 
                 <div class="btn-group-vertical btn-block">
 
@@ -79,10 +79,11 @@ $participants = Participant::findAllByRequest($model)
 
                         <?= Html::button($company->name, [
                             'class' => 'btn btn-default vks-company',
+                            'style' => 'white-space: normal',
                             'data' => [
                                 'id' => (string)$company->primaryKey,
                                 'toggle' => 'tooltip',
-                                'placement' => 'right',
+                                'placement' => 'left',
                                 'container' => '#vks-participants',
                                 'title' => $company->address
                             ]
@@ -94,7 +95,7 @@ $participants = Participant::findAllByRequest($model)
 
             </div>
 
-            <div class="col-lg-8">
+            <div class="col-lg-7">
 
                 <div class="row">
 
