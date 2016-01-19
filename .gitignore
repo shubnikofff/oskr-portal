@@ -29,3 +29,5 @@ composer.lock
 phpunit.phar
 # local phpunit config
 /phpunit.xml
+
+docker-compose.yml
