@@ -6,6 +6,7 @@
  */
 use yii\bootstrap\Html;
 use common\rbac\SystemPermission;
+
 /**
  * @var $this \yii\web\View
  * @var $model \frontend\models\vks\Request
@@ -59,7 +60,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php if (Yii::$app->user->can(SystemPermission::APPROVE_REQUEST)): ?>
 
-        <?= $this->render('_deployServerForm', ['model' => $model])?>
+        <?= $this->render('_deployServerForm', ['model' => $model]) ?>
 
     <?php endif; ?>
 
@@ -96,6 +97,12 @@ $this->params['breadcrumbs'][] = $this->title;
         </tbody>
 
     </table>
+
+    <?php if ($model->note): ?>
+
+        <p><b style="font-size: 14px">Примечание</b><p><?= $model->note ?></p></p>
+
+    <?php endif; ?>
 
     <div style="margin-bottom: 12px">
 
