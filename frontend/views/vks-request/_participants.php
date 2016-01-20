@@ -63,7 +63,7 @@ $participants = Participant::findAllByRequest($model)
 
     </div>
 
-    <small class="help-block"><span class="glyphicon glyphicon-info-sign"></span> Для получения информации о знатяости
+    <small class="help-block"><span class="glyphicon glyphicon-info-sign"></span> Для получения информации о занятости
         переговрных помещений в других ВКС, дата и время совещания должны быть указаны полностью
     </small>
 
@@ -140,7 +140,7 @@ $participants = Participant::findAllByRequest($model)
 
     </div>
 
-    <small class="help-block"><span class="glyphicon glyphicon-info-sign"></span> Если учатсник отстутствует в списке, укажите информацию о нем в примечании:
+    <small class="help-block"><span class="glyphicon glyphicon-info-sign"></span> Если учатсник отсутствует в списке, укажите информацию о нем в примечании:
         название, контакты технического специалиста, ip-адрес
     </small>
 
