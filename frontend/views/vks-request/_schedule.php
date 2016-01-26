@@ -12,89 +12,63 @@ use yii\helpers\Html;
  * @var $dataProvider \yii\data\ActiveDataProvider
  * @var $model \frontend\models\vks\RequestSearch
  */
+$minTime = Yii::$app->params['vks.minTime'];
+$maxTime = Yii::$app->params['vks.maxTime'];
 ?>
-
-<?php $timeLine = [
-    'start' => Yii::$app->params['vks.minTime'],
-    'length' => Yii::$app->params['vks.maxTime'] - Yii::$app->params['vks.minTime']
-];
-
-$printTimeLine = function () use ($timeLine) {
-    $i = $timeLine['start'] / 60;
-    while ($i < ($timeLine['start'] + $timeLine['length']) / 60) {
-        echo Html::tag('td', "{$i}:00");
-        $i++;
-    }
-} ?>
 
     <p class="lead">Расписание на <?= Yii::$app->formatter->asDate($model->date->sec, 'long') ?></p>
 
-    <table id="vks-schedule-table">
-
-        <tr id="vks-schedule-header">
-
-            <?php $printTimeLine(); ?>
-
+    <!--<table id="table1" class="v-table">
+        <tr>
+            <td><div class="v-item" style="top: 15px; height: 60px">
+                    <div class="theme"><a href="#">Перв111ая тема Первая тема Первая тема Первая тема Первая тема Первая тема </a></div>
+                    <div class="participants"><b>НН 325 - МФ ЦУП</b></div>
+                    <div class="service-info">RMX</div>
+                </div></td>
+            <td><div class="v-item" style="top: 30px; height: 90px">
+                    <div class="theme"><a href="#">Перв111ая тема Первая тема Первая тема Первая тема Первая тема Первая тема </a></div>
+                    <div class="participants">НН 325 - МФ ЦУП</div>
+                    <div class="service-info">RMX</div>
+                </div></td>
+            <td><div class="v-item" style="top: 60px; height: 60px">
+                    <div class="theme"><a href="#">Перв111ая тема Первая тема Первая тема Первая тема Первая тема Первая тема </a></div>
+                    <div class="participants">НН 325 - МФ ЦУП</div>
+                    <div class="service-info">RMX</div>
+                </div></td>
         </tr>
-
-        <?php $requests = $dataProvider->getModels(); ?>
-
-        <?php if (count($requests)): ?>
-
-            <?php foreach ($requests as $request): ?>
-
-                <?php /** @var $request \frontend\models\vks\Request */
-
-                $statusClass = '';
-                switch ($request->status) {
-                    case $request::STATUS_CANCEL:
-                        $statusClass = 'status-cancel';
-                        break;
-                    case $request::STATUS_APPROVE:
-                        $statusClass = 'status-approve';
-                        break;
-                    case $request::STATUS_CONSIDERATION:
-                        $statusClass = 'status-considiration';
-                        break;
-                }
-
-                $audioRecord = ($request->audioRecord) ? "<span class='glyphicon glyphicon-headphones'></span>" : "";
-                $deployServer = ($request->deployServerId) ? $request->deployServer->name : "";
-
-                $itemContent = "<small><div>$request->topic</div>" . implode(' ', [$audioRecord, $deployServer]) .
-                    "<div class='participants-names'><b>" . implode(' - ', $request->participantShortNameList) . "</b></div></small>" ?>
-                <tr>
-                    <td colspan="10"><?= Html::button($itemContent, [
-                            'class' => "vks-item {$statusClass}",
-                            'title' => "Время проведения c {$request->beginTimeString} по {$request->endTimeString}",
-                            'data' => [
-                                'url' => \yii\helpers\Url::toRoute(['vks-request/view', 'id' => (string)$request->primaryKey]),
-                                'beginTime' => $request->beginTime,
-                                'endTime' => $request->endTime
-                            ]
-                        ]) ?>
-                    </td>
-                </tr>
-
-            <?php endforeach; ?>
-
-        <?php else: ?>
-
-            <tr>
-                <td colspan="10" class="vks-not-found"><h4>Ничего не найдено</h4></td>
-            </tr>
-
-
-        <?php endif; ?>
-
-        <tr id="vks-schedule-footer">
-
-            <?php $printTimeLine(); ?>
-
-        </tr>
-
     </table>
-    <hr>
+
+    <table id="table2" class="v-table">
+        <tr>
+            <td><div class="v-item" style="top: 150px; height: 90px"><a href="#">Четвертая тема</a></div></td>
+        </tr>
+    </table>-->
+
+    <div id="vks-schedule">
+
+        <table class="vks-time-grid">
+
+            <?php for ($i = $minTime; $i < $maxTime; $i += 30): ?>
+
+                <?php if ($i % 60 == 0): ?>
+
+                    <tr class="vks-time-grid full-hour">
+                        <td><?= (string)($i / 60) ?><sup>00</sup></td>
+                    </tr>
+
+                <?php else: ?>
+
+                    <tr class="vks-time-grid half-hour">
+                        <td></td>
+                    </tr>
+
+                <?php endif; ?>
+
+            <?php endfor; ?>
+
+        </table>
+
+    </div>
 
     <div id="vks-schedule-legend">
         <div>
@@ -113,7 +87,9 @@ $printTimeLine = function () use ($timeLine) {
     </div>
 
 <?php $options = \yii\helpers\Json::encode([
-    'timeLine' => $timeLine,
+    'minTime' => $minTime,
+    'maxTime' => $maxTime,
+    'itemsContainerSelector' => '#vks-schedule-items-container',
     'itemsSelector' => 'button.vks-item',
     'modalWidgetSelector' => '#vks-view-modal-widget',
     'modalContainerSelector' => '#vks-view-container'
