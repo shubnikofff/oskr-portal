@@ -35,61 +35,52 @@
 
     $.fn.schedule = function (options) {
         teleport.schedule.init(this, options);
-        teleport.schedule.printItems();
+        teleport.schedule.print();
     };
 
     teleport.schedule = {
 
         defaultSettings: {
-            timeLine: null,
-            itemsSelector: null,
+            timeColumnWidth: null,
+            timeGridSelector: null,
+            requestsGridSelector: null,
             modalWidgetSelector: null,
-            modalContainerSelector: null
+            modalContentSelector: null,
+            requestReferenceSelector: null
         },
         settings: {},
-        tableWidth: null,
-        $table: null,
-        $items: null,
-        //$modalWidget: null,
+        $requestsGrid: null,
+        $timeGrid: null,
 
-        init: function ($table, options) {
+        init: function ($container, options) {
 
             var settings = $.extend(this.settings, this.defaultSettings, options || {});
 
-            this.$table = $table;
-            this.$items = $(settings.itemsSelector, $table);
-            this.tableWidth = $table.width();
+            this.$requestsGrid = $(settings.requestsGridSelector, $container);
+            this.$timeGrid = $(settings.timeGridSelector, $container);
 
-            $table.css('min-width', $table.css('width'));
-
-            this.$items.on('click', {that: this}, this.itemClick);
+            $(settings.requestReferenceSelector, $container).on('click', {
+                container: $(settings.modalContentSelector),
+                modalWidgetSelector: settings.modalWidgetSelector
+            }, this.showModal);
         },
 
-        printItems: function () {
+        print: function () {
 
-            var timeLine = this.settings.timeLine;
-            var minuteLength = this.tableWidth / timeLine.length;
-
-            this.$items.each(function () {
-
-                var $item = $(this);
-                var left = ($item.data('begintime') - timeLine.start) * minuteLength;
-                var width = ($item.data('endtime') - $item.data('begintime')) * minuteLength;
-
-                $item.css('width', width + 'px');
-                $item.offset({top: 0, left: left});
-            });
-
-            this.$items.fadeIn();
+            var timeColumnWidth = this.settings.timeColumnWidth;
+            this.$requestsGrid.css('margin-left', timeColumnWidth);
+            this.$requestsGrid.width(this.$timeGrid.width() - timeColumnWidth);
+            this.$requestsGrid.height(this.$timeGrid.height());
+            this.$requestsGrid.fadeIn();
         },
 
-        itemClick: function (event) {
-            var that = event.data.that;
-            $.get(this.getAttribute('data-url'), function (data) {
-                $(that.settings.modalContainerSelector).html(data);
-                $(that.settings.modalWidgetSelector).modal('show');
+        showModal: function (event) {
+            event.data.container.load($(this).attr('href'), function() {
+                $(event.data.modalWidgetSelector).modal('show');
             });
+            event.preventDefault();
         }
+
     };
 
 })(jQuery);

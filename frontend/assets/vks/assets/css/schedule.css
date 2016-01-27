@@ -1,45 +1,60 @@
-#vks-schedule-table {
-    border: none;
+table.vks-time-grid {
     width: 100%;
+    border-top: 1px solid;
 }
 
-#vks-schedule-header td,  #vks-schedule-footer td {
-    width: 10%;
-    border-left: 1px solid black;
-    padding-left: 4px;
+tr.vks-time-grid {
+    height: 30px;
 }
 
-#vks-schedule-header td:first-child,  #vks-schedule-footer td:first-child {
-    border: none;
+tr.full-hour {
+    border-bottom: dashed 1px;
 }
 
-#vks-schedule-header {
-    border-bottom: 1px solid black;
+tr.half-hour {
+    border-bottom: solid 1px;
 }
 
-#vks-schedule-footer {
-    border-top: 1px solid black;
-}
-
-button.vks-item {
+table.vks-request-grid {
+    position: absolute;
     display: none;
+}
+
+td.vks-request-grid {
+    vertical-align: top;
+}
+
+div.vks-request {
+    position: relative;
     padding: 5px;
-    border: 1px solid #999999;
+    z-index: 100;
 }
 
-button.vks-item div.participants-names {
-    white-space: nowrap;
+div.vks-request div {
     overflow: hidden;
-    text-overflow: ellipsis;
+    text-align: center;
 }
 
-td.vks-not-found {
-    color: #999999;
-    text-align: center;
-    padding: 15px 0;
+div.vks-request-theme {
+    height: 40%;
+    font-size: 10pt;
+}
+
+a.vks-request-theme {
+    color: black;
+}
+
+div.vks-request-participants {
+    height: 40%;
+    font-size: 9pt;
+}
+
+div.vks-request-service-data {
+    height: 20%;
 }
 
 #vks-schedule-legend {
+    margin-top: 15px;
     font-size: 13px;
 }
 
@@ -51,11 +66,13 @@ div.status-color-box {
 }
 
 .status-cancel {
-    background-color: #ffd0d9;
+    background-color: #ffb6ae;
+    border: 1px solid darkred;
 }
 
 .status-approve {
     background-color: #baffbd;
+    border: 1px solid darkgreen;
 }
 
 .status-ahu-approve {
@@ -63,21 +80,6 @@ div.status-color-box {
 }
 
 .status-considiration {
-    background-color: white;
-}
-
-button.status-cancel:hover {
-    background-color: #ff9ea5;
-}
-
-button.status-approve:hover {
-    background-color: #69ffa5;
-}
-
-button.status-ahu-approve:hover {
-    background-color: #ffd6a2;
-}
-
-button.status-considiration:hover {
-    background-color: #f8f4ff;
+    background-color: whitesmoke;
+    border: 1px solid #3d3d3d;
 }

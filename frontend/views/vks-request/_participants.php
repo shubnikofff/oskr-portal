@@ -140,7 +140,7 @@ $participants = Participant::findAllByRequest($model)
 
     </div>
 
-    <small class="help-block"><span class="glyphicon glyphicon-info-sign"></span> Если учатсник отсутствует в списке, укажите информацию о нем в примечании:
+    <small class="help-block"><span class="glyphicon glyphicon-info-sign"></span> Если участник отсутствует в списке, укажите информацию о нем в примечании:
         название, контакты технического специалиста, ip-адрес
     </small>
 

@@ -12,6 +12,7 @@ use kartik\date\DatePicker;
 use frontend\assets\vks\RequestFormAsset;
 use yii\helpers\Url;
 use yii\helpers\BaseHtml;
+use common\components\MinuteFormatter;
 
 /**
  * @var $this \yii\web\View
@@ -68,7 +69,8 @@ use yii\helpers\BaseHtml;
     <small class="help-block"><span class="glyphicon glyphicon-info-sign"></span> Укажите дату не
         ранее <?= Yii::$app->formatter->asDate(time(), 'long') ?> и не
         позднее <?= Yii::$app->formatter->asDate(strtotime("+1 week"), 'long') ?>
-        Время должно быть в интервале c 8-00 до 18-00.
+        Время должно быть в интервале c <?= MinuteFormatter::asString(Yii::$app->params['vks.minTime'])?>
+        до <?= MinuteFormatter::asString(Yii::$app->params['vks.maxTime'])?>.
     </small>
 
     <?= $form->field($model, 'audioRecord')->checkbox() ?>
