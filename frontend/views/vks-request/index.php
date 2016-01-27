@@ -22,16 +22,18 @@ use yii\helpers\ArrayHelper;
  */
 
 $this->title = "Видеоконференцсвязь";
+$modalWidgetId = 'vks-view-modal-widget';
+$modalBodyId = 'vks-view-container';
 ?>
 
     <div class="vks-request-index">
 
         <?php Modal::begin([
-            'id' => 'vks-view-modal-widget',
+            'id' => $modalWidgetId,
             'header' => "<h5>Информация по ВКС</h5>"
         ]) ?>
 
-        <div id="vks-view-container"></div>
+        <div id="<?= $modalBodyId?>"></div>
 
         <?php Modal::end() ?>
 
@@ -97,6 +99,8 @@ $this->title = "Видеоконференцсвязь";
         <?= $this->render('_schedule', [
             'model' => $model,
             'dataProvider' => $dataProvider,
+            'modalWidgetSelector' => "#$modalWidgetId",
+            'modalContentSelector' => "#$modalBodyId"
         ]) ?>
 
         <?php Pjax::end() ?>

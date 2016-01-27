@@ -11,6 +11,8 @@ use yii\helpers\Html;
  * @var $this \yii\web\View
  * @var $dataProvider \yii\data\ActiveDataProvider
  * @var $model \frontend\models\vks\RequestSearch
+ * @var $modalWidgetSelector string
+ * @var $modalContentSelector string
  */
 $minTime = Yii::$app->params['vks.minTime'];
 $maxTime = Yii::$app->params['vks.maxTime'];
@@ -87,13 +89,17 @@ $maxTime = Yii::$app->params['vks.maxTime'];
                                         break;
                                 } ?>
 
-                                <div class="vks-request <?= $statusClass ?>" style="top: <?= $top ?>px; height: <?= $height ?>px">
+                                <?php $participantList = implode(' - ', $request->participantShortNameList) ?>
+
+                                <div class="vks-request <?= $statusClass ?>"
+                                     style="top: <?= $top ?>px; height: <?= $height ?>px"
+                                     title="<?= $request->beginTimeString ?> - <?= $request->endTimeString ?> (<?= $participantList ?>)">
 
                                     <div class="vks-request-theme">
-                                        <?= Html::a($request->topic, ['/vks-request/view', 'id' => (string)$request->primaryKey]) ?>
+                                        <?= Html::a($request->topic, ['/vks-request/view', 'id' => (string)$request->primaryKey], ['class' => 'vks-request-theme',]) ?>
                                     </div>
                                     <div class="vks-request-participants">
-                                        <b><?= implode(' - ', $request->participantShortNameList) ?></b></div>
+                                        <b><?= $participantList ?></b></div>
                                     <div class="vks-request-service-data">
                                         <small>
                                             <?= ($request->deployServer) ? $request->deployServer->name : "" ?>&nbsp;
@@ -160,6 +166,9 @@ $maxTime = Yii::$app->params['vks.maxTime'];
 <?php $options = \yii\helpers\Json::encode([
     'timeColumnWidth' => 40,
     'timeGridSelector' => 'table.vks-time-grid',
-    'requestsGridSelector' => 'table.vks-request-grid'
+    'requestsGridSelector' => 'table.vks-request-grid',
+    'modalWidgetSelector' => $modalWidgetSelector,
+    'modalContentSelector' => $modalContentSelector,
+    'requestReferenceSelector' => 'a.vks-request-theme'
 ]);
 $this->registerJs("$('#vks-schedule').schedule({$options});"); ?>

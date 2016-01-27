@@ -43,7 +43,10 @@
         defaultSettings: {
             timeColumnWidth: null,
             timeGridSelector: null,
-            requestsGridSelector: null
+            requestsGridSelector: null,
+            modalWidgetSelector: null,
+            modalContentSelector: null,
+            requestReferenceSelector: null
         },
         settings: {},
         $requestsGrid: null,
@@ -52,18 +55,32 @@
         init: function ($container, options) {
 
             var settings = $.extend(this.settings, this.defaultSettings, options || {});
+
             this.$requestsGrid = $(settings.requestsGridSelector, $container);
             this.$timeGrid = $(settings.timeGridSelector, $container);
+
+            $(settings.requestReferenceSelector, $container).on('click', {
+                container: $(settings.modalContentSelector),
+                modalWidgetSelector: settings.modalWidgetSelector
+            }, this.showModal);
         },
 
-        print : function() {
+        print: function () {
 
             var timeColumnWidth = this.settings.timeColumnWidth;
             this.$requestsGrid.css('margin-left', timeColumnWidth);
             this.$requestsGrid.width(this.$timeGrid.width() - timeColumnWidth);
             this.$requestsGrid.height(this.$timeGrid.height());
             this.$requestsGrid.fadeIn();
+        },
+
+        showModal: function (event) {
+            event.data.container.load($(this).attr('href'), function() {
+                $(event.data.modalWidgetSelector).modal('show');
+            });
+            event.preventDefault();
         }
+
     };
 
 })(jQuery);
