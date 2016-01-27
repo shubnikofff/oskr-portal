@@ -1,44 +1,3 @@
-/*#vks-schedule-table {
-    border: none;
-    width: 100%;
-}
-
-#vks-schedule-header td,  #vks-schedule-footer td {
-    width: 10%;
-    border-left: 1px solid black;
-    padding-left: 4px;
-}
-
-#vks-schedule-header td:first-child,  #vks-schedule-footer td:first-child {
-    border: none;
-}
-
-#vks-schedule-header {
-    border-bottom: 1px solid black;
-}
-
-#vks-schedule-footer {
-    border-top: 1px solid black;
-}
-
-button.vks-item {
-    display: none;
-    padding: 5px;
-    border: 1px solid #999999;
-}
-
-button.vks-item div.participants-names {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-td.vks-not-found {
-    color: #999999;
-    text-align: center;
-    padding: 15px 0;
-}*/
-
 table.vks-time-grid {
     width: 100%;
     border-top: 1px solid;
@@ -56,44 +15,43 @@ tr.half-hour {
     border-bottom: solid 1px;
 }
 
-
-/*div.v-item {
-    padding: 5px;
-    border: 1px solid green;
-    background-color: lightcyan;
-    position: relative;
-    z-index: 100;
-}
-
-div.v-item div{
-    overflow: hidden;
-    text-align: center;
-}
-
-div.theme {
-    height: 40%;
-}
-
-div.participants {
-    height: 40%;
-    font-size: 9pt;
-}
-
-div.service-info {
-    height: 20%;
-    font-size: 8pt;
-}
-
-table.v-table {
+table.vks-request-grid {
     position: absolute;
     display: none;
 }
 
-table.v-table td {
+td.vks-request-grid {
     vertical-align: top;
-}*/
+}
 
+div.vks-request {
+    position: relative;
+    padding: 5px;
+    z-index: 100;
+}
 
+div.vks-request div {
+    overflow: hidden;
+    text-align: center;
+}
+
+div.vks-request-theme {
+    height: 40%;
+    font-size: 10pt;
+}
+
+div.vks-request-theme a {
+    color: black;
+}
+
+div.vks-request-participants {
+    height: 40%;
+    font-size: 9pt;
+}
+
+div.vks-request-service-data {
+    height: 20%;
+}
 
 #vks-schedule-legend {
     margin-top: 15px;
@@ -108,11 +66,13 @@ div.status-color-box {
 }
 
 .status-cancel {
-    background-color: #ffd0d9;
+    background-color: #ffb6ae;
+    border: 1px solid darkred;
 }
 
 .status-approve {
     background-color: #baffbd;
+    border: 1px solid darkgreen;
 }
 
 .status-ahu-approve {
@@ -120,21 +80,6 @@ div.status-color-box {
 }
 
 .status-considiration {
-    background-color: white;
-}
-
-button.status-cancel:hover {
-    background-color: #ff9ea5;
-}
-
-button.status-approve:hover {
-    background-color: #69ffa5;
-}
-
-button.status-ahu-approve:hover {
-    background-color: #ffd6a2;
-}
-
-button.status-considiration:hover {
-    background-color: #f8f4ff;
+    background-color: whitesmoke;
+    border: 1px solid #3d3d3d;
 }

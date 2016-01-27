@@ -10,7 +10,7 @@ use kartik\helpers\Html;
 
 /**
  * @var $this \yii\web\View
- * @var $model \common\models\vks\Request
+ * @var $model \frontend\models\vks\Request
  */
 $this->title = "Заявка на Видеоконференцсвязь"
 ?>

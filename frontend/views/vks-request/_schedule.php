@@ -18,6 +18,7 @@ $maxTime = Yii::$app->params['vks.maxTime'];
 
     <p class="lead">Расписание на <?= Yii::$app->formatter->asDate($model->date->sec, 'long') ?></p>
 
+
     <!--<table id="table1" class="v-table">
         <tr>
             <td><div class="v-item" style="top: 15px; height: 60px">
@@ -45,6 +46,76 @@ $maxTime = Yii::$app->params['vks.maxTime'];
     </table>-->
 
     <div id="vks-schedule">
+
+        <?php if ($dataProvider->totalCount): ?>
+
+            <?php /** @var \frontend\models\vks\Request[] $requests */
+            $requests = $dataProvider->getModels();
+            $groupedRequests[] = [$requests[0]];
+
+            for ($i = 1; $i < count($requests); $i++) {
+                if ($requests[$i]->beginTime < $requests[$i - 1]->endTime) {
+                    $groupedRequests[count($groupedRequests) - 1][] = $requests[$i];
+                } else {
+                    $groupedRequests[] = [$requests[$i]];
+                }
+            } ?>
+
+            <?php foreach ($groupedRequests as $requestsGroup) : ?>
+
+                <table class="vks-request-grid">
+
+                    <tr>
+
+                        <?php foreach ($requestsGroup as $request): ?>
+                            <?php /** @var $request \frontend\models\vks\Request */ ?>
+
+                            <td class="vks-request-grid">
+
+                                <?php $top = $request->beginTime - $minTime;
+                                $height = $request->endTime - $request->beginTime;
+                                $statusClass = '';
+                                switch ($request->status) {
+                                    case $request::STATUS_CANCEL:
+                                        $statusClass = 'status-cancel';
+                                        break;
+                                    case $request::STATUS_APPROVE:
+                                        $statusClass = 'status-approve';
+                                        break;
+                                    case $request::STATUS_CONSIDERATION:
+                                        $statusClass = 'status-considiration';
+                                        break;
+                                } ?>
+
+                                <div class="vks-request <?= $statusClass ?>" style="top: <?= $top ?>px; height: <?= $height ?>px">
+
+                                    <div class="vks-request-theme">
+                                        <?= Html::a($request->topic, ['/vks-request/view', 'id' => (string)$request->primaryKey]) ?>
+                                    </div>
+                                    <div class="vks-request-participants">
+                                        <b><?= implode(' - ', $request->participantShortNameList) ?></b></div>
+                                    <div class="vks-request-service-data">
+                                        <small>
+                                            <?= ($request->deployServer) ? $request->deployServer->name : "" ?>&nbsp;
+                                            <?php if ($request->audioRecord): ?>
+                                                <span class="glyphicon glyphicon-headphones"></span>
+                                            <?php endif; ?>
+                                        </small>
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+                        <?php endforeach; ?>
+
+                    </tr>
+
+                </table>
+
+            <?php endforeach; ?>
+
+        <?php endif; ?>
 
         <table class="vks-time-grid">
 
@@ -87,11 +158,8 @@ $maxTime = Yii::$app->params['vks.maxTime'];
     </div>
 
 <?php $options = \yii\helpers\Json::encode([
-    'minTime' => $minTime,
-    'maxTime' => $maxTime,
-    'itemsContainerSelector' => '#vks-schedule-items-container',
-    'itemsSelector' => 'button.vks-item',
-    'modalWidgetSelector' => '#vks-view-modal-widget',
-    'modalContainerSelector' => '#vks-view-container'
+    'timeColumnWidth' => 40,
+    'timeGridSelector' => 'table.vks-time-grid',
+    'requestsGridSelector' => 'table.vks-request-grid'
 ]);
-$this->registerJs("$('#vks-schedule-table').schedule({$options});"); ?>
+$this->registerJs("$('#vks-schedule').schedule({$options});"); ?>
