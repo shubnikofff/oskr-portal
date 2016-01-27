@@ -17,35 +17,7 @@ use yii\helpers\Html;
 $minTime = Yii::$app->params['vks.minTime'];
 $maxTime = Yii::$app->params['vks.maxTime'];
 ?>
-
     <p class="lead">Расписание на <?= Yii::$app->formatter->asDate($model->date->sec, 'long') ?></p>
-
-
-    <!--<table id="table1" class="v-table">
-        <tr>
-            <td><div class="v-item" style="top: 15px; height: 60px">
-                    <div class="theme"><a href="#">Перв111ая тема Первая тема Первая тема Первая тема Первая тема Первая тема </a></div>
-                    <div class="participants"><b>НН 325 - МФ ЦУП</b></div>
-                    <div class="service-info">RMX</div>
-                </div></td>
-            <td><div class="v-item" style="top: 30px; height: 90px">
-                    <div class="theme"><a href="#">Перв111ая тема Первая тема Первая тема Первая тема Первая тема Первая тема </a></div>
-                    <div class="participants">НН 325 - МФ ЦУП</div>
-                    <div class="service-info">RMX</div>
-                </div></td>
-            <td><div class="v-item" style="top: 60px; height: 60px">
-                    <div class="theme"><a href="#">Перв111ая тема Первая тема Первая тема Первая тема Первая тема Первая тема </a></div>
-                    <div class="participants">НН 325 - МФ ЦУП</div>
-                    <div class="service-info">RMX</div>
-                </div></td>
-        </tr>
-    </table>
-
-    <table id="table2" class="v-table">
-        <tr>
-            <td><div class="v-item" style="top: 150px; height: 90px"><a href="#">Четвертая тема</a></div></td>
-        </tr>
-    </table>-->
 
     <div id="vks-schedule">
 
