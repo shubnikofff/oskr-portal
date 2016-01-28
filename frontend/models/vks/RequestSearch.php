@@ -27,20 +27,20 @@ class RequestSearch extends Request implements SearchModelInterface
     /**
      * @inheritDoc
      */
-        public function scenarios()
-        {
-            return [
-                $this::SCENARIO_SEARCH_SCHEDULE => ['dateInput', 'participantsId'],
-                $this::SCENARIO_SEARCH_PERSONAL => ['createdBy']
-            ];
-        }
+    public function scenarios()
+    {
+        return [
+            $this::SCENARIO_SEARCH_SCHEDULE => ['dateInput', 'participantsId'],
+            $this::SCENARIO_SEARCH_PERSONAL => ['createdBy']
+        ];
+    }
 
     /**
      * @inheritDoc
      */
     public function rules()
     {
-        return array_merge(parent::rules(),[
+        return array_merge(parent::rules(), [
             ['createdBy', 'default', 'value' => \Yii::$app->user->can(SystemPermission::APPROVE_REQUEST) ? null : \Yii::$app->user->identity['primaryKey']]
         ]);
     }

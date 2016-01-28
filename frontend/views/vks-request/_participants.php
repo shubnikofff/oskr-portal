@@ -79,7 +79,6 @@ $participants = Participant::findAllByRequest($model)
 
                         <?= Html::button($company->name, [
                             'class' => 'btn btn-default vks-company',
-                            'style' => 'white-space: normal',
                             'data' => [
                                 'id' => (string)$company->primaryKey,
                                 'toggle' => 'tooltip',
@@ -140,7 +139,8 @@ $participants = Participant::findAllByRequest($model)
 
     </div>
 
-    <small class="help-block"><span class="glyphicon glyphicon-info-sign"></span> Если участник отсутствует в списке, укажите информацию о нем в примечании:
+    <small class="help-block"><span class="glyphicon glyphicon-info-sign"></span> Если участник отсутствует в списке,
+        укажите информацию о нем в примечании:
         название, контакты технического специалиста, ip-адрес
     </small>
 

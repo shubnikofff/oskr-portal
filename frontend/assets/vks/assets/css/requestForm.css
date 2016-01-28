@@ -5,3 +5,8 @@ div.vks-room label {
 #checked-rooms-container div.btn-group {
     margin-left: 3px;
 }
+
+button.vks-company {
+    text-align: left;
+    white-space: normal;
+}
