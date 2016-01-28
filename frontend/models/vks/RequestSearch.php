@@ -60,10 +60,12 @@ class RequestSearch extends Request implements SearchModelInterface
                         'desc' => ['date' => SORT_DESC, 'beginTime' => SORT_DESC],
                     ],
                     'beginTime',
+                    'endTime'
                 ],
                 'defaultOrder' => [
                     'date' => SORT_DESC,
-                    'beginTime' => SORT_ASC
+                    'beginTime' => SORT_ASC,
+                    'endTime' => SORT_ASC
                 ]
             ],
             'query' => $query
