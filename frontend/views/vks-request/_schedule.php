@@ -11,8 +11,6 @@ use yii\helpers\Html;
  * @var $this \yii\web\View
  * @var $dataProvider \yii\data\ActiveDataProvider
  * @var $model \frontend\models\vks\RequestSearch
- * @var $modalWidgetSelector string
- * @var $modalContentSelector string
  */
 $minTime = Yii::$app->params['vks.minTime'];
 $maxTime = Yii::$app->params['vks.maxTime'];
@@ -139,8 +137,8 @@ $maxTime = Yii::$app->params['vks.maxTime'];
     'timeColumnWidth' => 40,
     'timeGridSelector' => 'table.vks-time-grid',
     'requestsGridSelector' => 'table.vks-request-grid',
-    'modalWidgetSelector' => $modalWidgetSelector,
-    'modalContentSelector' => $modalContentSelector,
+    'modalWidgetSelector' => '#vks-view-modal-widget',
+    'modalContentSelector' => '#vks-view-container',
     'requestReferenceSelector' => 'a.vks-request-theme'
 ]);
 $this->registerJs("$('#vks-schedule').schedule({$options});"); ?>

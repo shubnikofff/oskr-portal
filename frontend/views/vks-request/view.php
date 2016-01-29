@@ -21,10 +21,27 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <hr>
 
-    <p style="font-size: 15px;">
-        Время проведения <?= Yii::$app->formatter->asDate($model->date->sec, 'long') ?>
-        c <?= $model->beginTimeString ?> до <?= $model->endTimeString ?>
-    </p>
+    <div>
+
+        <div style="font-size: 15px; display: inline-block">
+            Время проведения <?= Yii::$app->formatter->asDate($model->date->sec, 'long') ?>
+            c <?= $model->beginTimeString ?> до <?= $model->endTimeString ?>
+        </div>
+
+        <div class="pull-right" style="display: inline-block">
+
+            <?php if ($model->status == \frontend\models\vks\Request::STATUS_APPROVE): ?>
+
+                <?= Html::a("<span class='glyphicon glyphicon-print'></span> Распечатать", ['vks-request/print', 'id' => (string)$model->primaryKey], [
+                    'class' => 'btn btn-default',
+                    'target' => '_blank'
+                ]) ?>
+
+            <?php endif; ?>
+
+        </div>
+
+    </div>
 
     <?php switch ($model->status) {
         case $model::STATUS_APPROVE:

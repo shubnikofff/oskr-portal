@@ -51,6 +51,8 @@
         settings: {},
         $requestsGrid: null,
         $timeGrid: null,
+        $modalWidget: null,
+        $modalContent: null,
 
         init: function ($container, options) {
 
@@ -58,10 +60,12 @@
 
             this.$requestsGrid = $(settings.requestsGridSelector, $container);
             this.$timeGrid = $(settings.timeGridSelector, $container);
+            this.$modalWidget = $(settings.modalWidgetSelector);
+            this.$modalContent = $(settings.modalContentSelector);
 
-            $(settings.requestReferenceSelector, $container).on('click', {
-                container: $(settings.modalContentSelector),
-                modalWidgetSelector: settings.modalWidgetSelector
+            $container.on('click', settings.requestReferenceSelector, {
+                $content: this.$modalContent,
+                $widget: this.$modalWidget
             }, this.showModal);
         },
 
@@ -75,10 +79,11 @@
         },
 
         showModal: function (event) {
-            event.data.container.load($(this).attr('href'), function() {
-                $(event.data.modalWidgetSelector).modal('show');
-            });
+
             event.preventDefault();
+            event.data.$content.load($(this).attr('href'), function() {
+                event.data.$widget.modal('show');
+            });
         }
 
     };

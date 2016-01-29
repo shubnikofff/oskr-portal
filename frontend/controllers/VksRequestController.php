@@ -124,4 +124,13 @@ class VksRequestController extends Controller
             throw new NotFoundHttpException('Страница не найдена');
         }
     }
+
+    public function actionPrint($id)
+    {
+        $model = Request::findOne(['_id' => new \MongoId($id), 'status' => Request::STATUS_APPROVE]);
+        if ($model) {
+            return $this->renderPartial('print', ['model' => $model]);
+        }
+        throw new NotFoundHttpException;
+    }
 }
