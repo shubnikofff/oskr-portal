@@ -51,7 +51,7 @@ class RequestForm extends Request
     public function scenarios()
     {
         return [
-            'default' => ['status', 'topic', 'dateInput', 'beginTimeInput', 'endTimeInput', 'audioRecord', 'participantsId', 'note'],
+            'default' => ['status', 'topic', 'dateInput', 'beginTimeInput', 'endTimeInput', 'mode', 'equipment', 'audioRecord', 'participantsId', 'note'],
             self::SCENARIO_REFRESH_PARTICIPANTS => ['dateInput', 'beginTimeInput', 'endTimeInput', 'participantsId'],
         ];
     }
@@ -72,7 +72,7 @@ class RequestForm extends Request
     public function rules()
     {
         return array_merge(parent::rules(), [
-            [['topic', 'dateInput', 'beginTimeInput', 'endTimeInput'], 'required'],
+            [['topic', 'dateInput', 'beginTimeInput', 'endTimeInput', 'mode'], 'required'],
 
             ['dateInput', MongoDateValidator::className(), 'format' => 'dd.MM.yyyy',
                 'min' => \Yii::$app->formatter->asDate(mktime(0, 0, 0), 'dd.MM.yyyy'),
@@ -97,12 +97,22 @@ class RequestForm extends Request
                 return boolval($value);
             }],
 
-            ['participantsId', 'required', 'on' => 'default'],
+            ['mode', 'in', 'range' => [self::MODE_WITH_VKS, self::MODE_WITHOUT_VKS]],
+            ['mode', 'filter', 'filter' => function ($value) {
+                return intval($value);
+            }],
+
+            ['participantsId', 'required', 'on' => 'default', 'message' => 'Необходимо выбрать участников'],
             ['participantsId', function ($attribute) {
 
                 $value = $this->{$attribute};
-                if (count($value) < 2) {
+
+                if($this->mode === self::MODE_WITH_VKS && count($value) < 2) {
                     $this->addError($attribute, 'Количество участников должно быть не менее двух');
+                    return;
+                }
+                if($this->mode === self::MODE_WITHOUT_VKS && count($value) !== 1) {
+                    $this->addError($attribute, 'Помещение для совещания должно быть только одно');
                     return;
                 }
 
@@ -121,7 +131,7 @@ class RequestForm extends Request
                 }
             }, 'on' => 'default'],
 
-            ['note', 'safe'],
+            [['note', 'equipment'], 'safe'],
         ]);
     }
 

@@ -20,7 +20,12 @@
             dateSelector: null,
             beginTimeSelector: null,
             endTimeSelector: null,
-            dateTimeControlsSelector: null
+            dateTimeControlsSelector: null,
+            modeSelector: null,
+            audioRecordSelector: null,
+            equipmentSelector: null,
+            withVksMode: null,
+            withoutVksMode: null
         },
         settings: {},
         eventDeferred: $.Deferred(),
@@ -49,6 +54,11 @@
             this.$date.on('change', {that: this}, this.dateChange);
             this.$beginTime.on('change', {that: this}, this.beginTimeChange);
             this.$endTime.on('change', {that: this}, this.endTimeChange);
+            $(settings.modeSelector, $form).on('change', {
+                $audioRecord: $(settings.audioRecordSelector, $form),
+                $equipment: $(settings.equipmentSelector, $form),
+                settings: settings
+            }, this.modeChange);
 
             this.requestId = settings.requestId;
             this.date = this.$date.val();
@@ -66,7 +76,7 @@
                 }, 900);
             }).done(function () {
 
-                if(!this.$dateTime.hasClass('has-error')){
+                if (!this.$dateTime.hasClass('has-error')) {
                     $.get(
                         this.settings.refreshParticipantsRoute,
                         this.$form.serialize(),
@@ -100,6 +110,26 @@
             if (this.value !== that.endTime) {
                 that.endTime = this.value;
                 that.refreshParticipants();
+            }
+        },
+
+        modeChange: function (event) {
+            var $audioRecord = event.data.$audioRecord;
+            var $equipment = event.data.$equipment;
+            var withVks = event.data.settings.withVksMode;
+            var withoutVks = event.data.settings.withoutVksMode;
+
+            if ($(this).val() == withVks) {
+                $audioRecord.css('display', 'block');
+                $equipment.css('display', 'none');
+                $('input', $audioRecord).prop("disabled", false);
+                $('input', $equipment).prop("disabled", true);
+
+            } else if ($(this).val() == withoutVks) {
+                $equipment.css('display', 'block');
+                $audioRecord.css('display', 'none');
+                $('input', $audioRecord).prop("disabled", true);
+                $('input', $equipment).prop("disabled", false);
             }
         }
     };

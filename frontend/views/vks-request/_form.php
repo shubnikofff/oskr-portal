@@ -5,7 +5,7 @@
  * @copyright Copyright (c) 2015 OSKR NIAEP
  */
 
-use kartik\form\ActiveForm;
+use yii\bootstrap\ActiveForm;
 use kartik\helpers\Html;
 use kartik\time\TimePicker;
 use kartik\date\DatePicker;
@@ -69,11 +69,27 @@ use common\components\MinuteFormatter;
     <small class="help-block"><span class="glyphicon glyphicon-info-sign"></span> Укажите дату не
         ранее <?= Yii::$app->formatter->asDate(time(), 'long') ?> и не
         позднее <?= Yii::$app->formatter->asDate(strtotime("+1 week"), 'long') ?>
-        Время должно быть в интервале c <?= MinuteFormatter::asString(Yii::$app->params['vks.minTime'])?>
-        до <?= MinuteFormatter::asString(Yii::$app->params['vks.maxTime'])?>.
+        Время должно быть в интервале c <?= MinuteFormatter::asString(Yii::$app->params['vks.minTime']) ?>
+        до <?= MinuteFormatter::asString(Yii::$app->params['vks.maxTime']) ?>.
     </small>
 
-    <?= $form->field($model, 'audioRecord')->checkbox() ?>
+    <?= $form->field($model, 'mode')->inline()->radioList([
+        $model::MODE_WITH_VKS => 'С использованием ВКС',
+        $model::MODE_WITHOUT_VKS => 'Без использвоания ВКС'
+    ]) ?>
+
+    <div id="vks-audio-record" style="display: <?= $model->mode === $model::MODE_WITH_VKS ? 'block' : 'none' ?>">
+        <?= $form->field($model, 'audioRecord')->checkbox() ?>
+    </div>
+
+    <div id="vks-equipment" style="display: <?= $model->mode === $model::MODE_WITHOUT_VKS ? 'block' : 'none' ?>">
+
+        <?= $form->field($model, 'equipment')->checkboxList([
+            'projector' => 'Проектор',
+            'screen' => 'Экран'
+        ]) ?>
+
+    </div>
 
     <hr>
 
@@ -109,6 +125,12 @@ $options = \yii\helpers\Json::encode([
     'beginTimeSelector' => '#requestform-begintimeinput',
     'endTimeSelector' => '#requestform-endtimeinput',
     'dateTimeControlsSelector' => 'div.vks-date-time',
+    'modeSelector' => 'input[name="RequestForm[mode]"]',
+    'withVksMode' => $model::MODE_WITH_VKS,
+    'withoutVksMode' => $model::MODE_WITHOUT_VKS,
+    'audioRecordSelector' => '#vks-audio-record',
+    'equipmentSelector' => '#vks-equipment'
+
 ]);
 $this->registerJs("$('form').requestForm({$options});");
 ?>

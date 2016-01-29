@@ -12,7 +12,7 @@ use kartik\helpers\Html;
  * @var $this \yii\web\View
  * @var $model \frontend\models\vks\Request
  */
-$this->title = "Заявка на Видеоконференцсвязь"
+$this->title = "Бронирование помещений"
 ?>
 
 <div class="vks-request-create">

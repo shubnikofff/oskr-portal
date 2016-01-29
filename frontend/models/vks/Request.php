@@ -25,6 +25,8 @@ use yii\mongodb\validators\MongoIdValidator;
  * @property string beginTimeString
  * @property int $endTime
  * @property string endTimeString
+ * @property int $mode
+ * @property array $equipment
  * @property bool $audioRecord
  * @property \MongoId $deployServerId
  * @property DeployServer $deployServer
@@ -38,6 +40,9 @@ use yii\mongodb\validators\MongoIdValidator;
  */
 class Request extends \common\models\Request
 {
+    const MODE_WITH_VKS = 0;
+    const MODE_WITHOUT_VKS = 1;
+
     const SCENARIO_APPROVE = 'approve';
     const SCENARIO_CANCEL = 'cancel';
     const SCENARIO_SET_DEPLOY_SERVER = 'set_deploy_server';
@@ -62,6 +67,8 @@ class Request extends \common\models\Request
             'date',
             'beginTime',
             'endTime',
+            'mode',
+            'equipment',
             'audioRecord',
             'deployServerId',
             'participantsId',
@@ -134,6 +141,8 @@ class Request extends \common\models\Request
             'date' => 'Дата',
             'beginTimeInput' => 'Время начала',
             'endTimeInput' => 'Время конца',
+            'mode' => 'Режим совещания',
+            'equipment' => 'Дополнительное оборудование',
             'audioRecord' => 'Аудиозапись',
             'deployServerId' => 'Сервер сборки',
             'participantsId' => 'Участники',
