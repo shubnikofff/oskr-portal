@@ -85,8 +85,8 @@ use common\components\MinuteFormatter;
     <div id="vks-equipment" style="display: <?= $model->mode === $model::MODE_WITHOUT_VKS ? 'block' : 'none' ?>">
 
         <?= $form->field($model, 'equipment')->checkboxList([
-            'projector' => 'Проектор',
-            'screen' => 'Экран'
+            'проектор' => 'Проектор',
+            'экран' => 'Экран'
         ]) ?>
 
     </div>

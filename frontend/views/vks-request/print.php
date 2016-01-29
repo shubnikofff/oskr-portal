@@ -67,7 +67,19 @@ $this->title = "Завяка на помещение";
         <dd><?= $model->owner->phone ?></dd>
     </dl>
 
-    <p>Сделать аудиозапись: <b><?= Yii::$app->formatter->asBoolean($model->audioRecord) ?></b></p>
+    <p>Совещание в режиме ВКС: <b><?= Yii::$app->formatter->asBoolean($model->mode === $model::MODE_WITH_VKS)?></b></p>
+
+    <?php if ($model->mode === $model::MODE_WITH_VKS): ?>
+
+        <p>Сделать аудиозапись: <b><?= Yii::$app->formatter->asBoolean($model->audioRecord) ?></b></p>
+
+    <?php endif; ?>
+
+    <?php if ($model->mode === $model::MODE_WITHOUT_VKS): ?>
+
+        <p><b>Дополнительное оборудование:</b> <?= implode(', ', $model->equipment) ?></p>
+
+    <?php endif; ?>
 
 
     <p class="lead">Участники</p>

@@ -21,7 +21,7 @@ use yii\helpers\ArrayHelper;
  * @var $dataProvider \yii\data\ActiveDataProvider
  */
 
-$this->title = "Видеоконференцсвязь";
+$this->title = "График";
 ?>
 
     <div class="vks-request-index">
