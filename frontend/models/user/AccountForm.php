@@ -32,7 +32,6 @@ class AccountForm extends Model
     public $lastName;
     public $firstName;
     public $middleName;
-    public $companyId;
     public $division;
     public $post;
     public $phone;
@@ -53,7 +52,7 @@ class AccountForm extends Model
     public function rules()
     {
         return [
-            [['username', 'currentPassword', 'password', 'password_repeat', 'email', 'lastName', 'companyId', 'division', 'post', 'phone'], 'required'],
+            [['username', 'currentPassword', 'password', 'password_repeat', 'email', 'lastName', 'division', 'post', 'phone'], 'required'],
 
             [['username', 'email'], 'filter', 'filter' => 'trim'],
 
@@ -67,9 +66,6 @@ class AccountForm extends Model
 
             ['email', 'email'],
             ['email', 'unique', 'targetClass' => User::className(), 'message' => 'Данный e-mail уже зарегистрирован.'],
-
-            ['companyId', 'yii\mongodb\validators\MongoIdValidator', 'forceFormat' => 'object'],
-            ['companyId', 'exist', 'targetClass' => Company::className(), 'targetAttribute' => '_id'],
 
             [['firstName', 'middleName', 'mobile'], 'safe'],
         ];
@@ -93,22 +89,10 @@ class AccountForm extends Model
             'lastName' => 'Фамилия',
             'firstName' => 'Имя',
             'middleName' => 'Отчество',
-            'companyId' => 'Организация',
             'division' => 'Подразделение',
             'post' => 'Должность',
             'phone' => 'Контактный телефон',
             'mobile' => 'Мобильный телефон',
         ];
-    }
-
-    /**
-     * @return array
-     */
-    public static function CompanyItems()
-    {
-        $companies = Company::find()->select(['_id', 'name'])->asArray()->all();
-        return ArrayHelper::map($companies, function ($item) {
-            return (string)$item['_id'];
-        }, 'name');
     }
 }

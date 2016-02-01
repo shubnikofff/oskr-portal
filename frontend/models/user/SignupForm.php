@@ -23,7 +23,7 @@ class SignupForm extends AccountForm
     public function scenarios()
     {
         return [
-            'default' => ['username', 'password', 'password_repeat', 'email', 'lastName', 'firstName', 'middleName', 'companyId', 'division', 'post', 'phone', 'mobile'],
+            'default' => ['username', 'password', 'password_repeat', 'email', 'lastName', 'firstName', 'middleName', 'division', 'post', 'phone', 'mobile'],
         ];
     }
     /**
@@ -52,7 +52,6 @@ class SignupForm extends AccountForm
             $user->lastName = $this->lastName;
             $user->firstName = $this->firstName;
             $user->middleName = $this->middleName;
-            $user->companyId = $this->companyId;
             $user->division = $this->division;
             $user->post = $this->post;
             $user->phone = $this->phone;

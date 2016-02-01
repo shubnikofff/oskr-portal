@@ -31,7 +31,7 @@ class UserForm extends Model
         return [
             ['username', 'filter', 'filter' => 'trim'],
             ['username', 'required'],
-            ['username', 'unique', 'targetClass' => '\common\models\User', 'message' => 'Данное имя пользователя уже занято.'],
+            ['username', 'unique', 'targetClass' => '\common\models\User', 'message' => 'Пользователь с таким именем уже зарегистрирован.'],
             ['username', 'string', 'min' => 4, 'max' => 255],
 
             ['email', 'filter', 'filter' => 'trim'],

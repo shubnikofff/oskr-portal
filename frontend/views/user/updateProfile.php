@@ -10,7 +10,6 @@
 use kartik\form\ActiveForm;
 use kartik\helpers\Html;
 use yii\widgets\MaskedInput;
-use kartik\select2\Select2;
 
 $this->title = "Изменение данных";
 $this->params['breadcrumbs'][] = ['label' => 'Профиль', 'url' => \yii\helpers\Url::to(['user/profile'])];
@@ -39,10 +38,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?= $form->field($model, 'firstName') ?>
 
                     <?= $form->field($model, 'middleName') ?>
-
-                    <?= $form->field($model, 'companyId')->widget(Select2::className(),[
-                        'data' => $model::CompanyItems()
-                    ])?>
 
                     <?= $form->field($model, 'division')->textarea() ?>
 

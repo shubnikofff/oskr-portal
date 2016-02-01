@@ -75,7 +75,7 @@ use common\components\MinuteFormatter;
 
     <?= $form->field($model, 'mode')->inline()->radioList([
         $model::MODE_WITH_VKS => 'С использованием ВКС',
-        $model::MODE_WITHOUT_VKS => 'Без использвоания ВКС'
+        $model::MODE_WITHOUT_VKS => 'Без использования ВКС'
     ]) ?>
 
     <div id="vks-audio-record" style="display: <?= $model->mode === $model::MODE_WITH_VKS ? 'block' : 'none' ?>">

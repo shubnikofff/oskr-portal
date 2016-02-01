@@ -28,8 +28,6 @@ use common\components\behaviors\TimestampBehavior;
  * @property string $shortName
  * @property string $fullName
  * @property string $division
- * @property \MongoId $companyId
- * @property Company $company
  * @property string $post
  * @property string $phone
  * @property string $mobile
@@ -68,7 +66,6 @@ class User extends ActiveRecord implements IdentityInterface
             'lastName',
             'firstName',
             'middleName',
-            'companyId',
             'division',
             'post',
             'phone',
@@ -90,7 +87,6 @@ class User extends ActiveRecord implements IdentityInterface
             'firstName' => 'Имя',
             'middleName' => 'Отчество',
             'status' => 'Статус',
-            'companyId' => 'Организация',
             'division' => 'Подразделение',
             'post' => 'Должность',
             'phone' => 'Контактный телефон',
@@ -303,10 +299,5 @@ class User extends ActiveRecord implements IdentityInterface
             }
         }
         return implode(' ', $fullName);
-    }
-
-    public function getCompany()
-    {
-        return $this->hasOne(Company::className(), ['_id' => 'companyId']);
     }
 }

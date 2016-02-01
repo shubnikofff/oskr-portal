@@ -2,7 +2,6 @@
 use kartik\helpers\Html;
 use kartik\form\ActiveForm;
 use yii\widgets\MaskedInput;
-use kartik\select2\Select2;
 
 /* @var $this yii\web\View */
 /* @var $model \frontend\models\user\SignupForm */
@@ -42,13 +41,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?= $form->field($model, 'firstName') ?>
 
                     <?= $form->field($model, 'middleName') ?>
-
-                    <?= $form->field($model, 'companyId')->widget(Select2::className(), [
-                        'data' => $model::CompanyItems(),
-                        'options' => [
-                            'placeholder' => 'Укажите организацию',
-                        ],
-                    ]) ?>
 
                     <?= $form->field($model, 'division')->textarea() ?>
 

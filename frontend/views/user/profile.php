@@ -55,11 +55,6 @@ $this->params['breadcrumbs'][] = $this->title;
                 </dl>
 
                 <dl>
-                    <dt>Организация</dt>
-                    <dd><?= $model->company->name ?></dd>
-                </dl>
-
-                <dl>
                     <dt>Подразделение</dt>
                     <dd><?= $model->division ?></dd>
                 </dl>

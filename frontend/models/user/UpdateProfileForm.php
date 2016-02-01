@@ -26,7 +26,6 @@ class UpdateProfileForm extends AccountForm
         $this->lastName = $user->lastName;
         $this->firstName = $user->firstName;
         $this->middleName = $user->middleName;
-        $this->companyId = (string)$user->companyId;
         $this->division = $user->division;
         $this->post = $user->post;
         $this->phone = $user->phone;
@@ -53,7 +52,6 @@ class UpdateProfileForm extends AccountForm
             $user->lastName = $this->lastName;
             $user->firstName = $this->firstName;
             $user->middleName = $this->middleName;
-            $user->companyId = $this->companyId;
             $user->division = $this->division;
             $user->post = $this->post;
             $user->phone = $this->phone;
