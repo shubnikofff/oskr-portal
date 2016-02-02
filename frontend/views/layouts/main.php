@@ -27,7 +27,7 @@ AppAsset::register($this);
 <?php $this->beginBody() ?>
 <div class="wrap">
     <?php NavBar::begin([
-        'brandLabel' => Yii::$app->name,
+        'brandLabel' => 'Расписание',//Yii::$app->name,
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar-inverse navbar-fixed-top',
@@ -81,7 +81,7 @@ AppAsset::register($this);
     <div class="container">
         <p class="pull-left">&copy;&nbsp;<?= date('Y') ?> Отдел Системных Корпоративных Ресурсов АО"НИАЭП"</p>
 
-        <p class="pull-right"><?= Html::a('oskr@niaep.ru', 'mailto:oskr@niaep.ru') ?></p>
+        <p class="pull-right">Техническая поддержка: 00-00, <?= Html::a('oskr@niaep.ru', 'mailto:oskr@niaep.ru') ?></p>
     </div>
 </footer>
 

@@ -52,7 +52,7 @@ class AccountForm extends Model
     public function rules()
     {
         return [
-            [['username', 'currentPassword', 'password', 'password_repeat', 'email', 'lastName', 'division', 'post', 'phone'], 'required'],
+            [['username', 'currentPassword', 'password', 'password_repeat', 'email', 'lastName', 'firstName', 'middleName', 'division', 'post', 'phone'], 'required'],
 
             [['username', 'email'], 'filter', 'filter' => 'trim'],
 
@@ -67,7 +67,7 @@ class AccountForm extends Model
             ['email', 'email'],
             ['email', 'unique', 'targetClass' => User::className(), 'message' => 'Данный e-mail уже зарегистрирован.'],
 
-            [['firstName', 'middleName', 'mobile'], 'safe'],
+            ['mobile', 'safe'],
         ];
     }
 
