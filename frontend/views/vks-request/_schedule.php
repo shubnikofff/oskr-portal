@@ -25,15 +25,21 @@ $maxTime = Yii::$app->params['vks.maxTime'];
             {
                 /** @var \frontend\models\vks\Request[] $requests */
                 foreach ($requests as $key => $request) {
+                    $currentGroup = end($schedule);
+                    if(end($currentGroup)->endTime > $request->beginTime) {
 
+                    }
                 }
 
-                groupRequests($schedule, $requests);
+                if(count($requests)) {
+                    groupRequests($schedule, $requests);
+                }
+
             }
 
 
             $requests = $dataProvider->getModels();
-            $schedule = array_shift($requests);
+            $schedule[][] = array_shift($requests);
             groupRequests($schedule, $requests);
 
             ?>
