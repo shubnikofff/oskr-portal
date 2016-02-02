@@ -45,9 +45,8 @@ AppAsset::register($this);
             ['label' => '<span class="glyphicon glyphicon-list-alt"></span> Заявки', 'url' => ['/user/requests']],
             ['label' => 'Выход', 'url' => ['/site/logout'], 'linkOptions' => ['data-method' => 'post']]
         ]];
-
-
-    } ?>
+    }
+    $userMenu[] = ['label' => '<span class="glyphicon glyphicon-question-sign"></span> Справка', 'url'=>['/site/about']]; ?>
 
     <?php if(Yii::$app->user->can(SystemPermission::CREATE_REQUEST)): ?>
 
