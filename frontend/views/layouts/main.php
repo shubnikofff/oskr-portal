@@ -54,7 +54,9 @@ AppAsset::register($this);
         'encodeLabels' => false,
         'options' => ['class' => 'navbar-nav navbar-left'],
         'items' => [
-            ['label' => '<span class="glyphicon glyphicon-pencil"></span> Подать заявку', 'url' => ['/vks-request/create']]
+            ['label' => '<span class="glyphicon glyphicon-pencil"></span> Подать заявку', 'url' => ['/vks-request/create']],
+            ['label' => '<span class="glyphicon glyphicon-headphones"></span> Архив аудиозаписей', 'url' => 'http://oskrportal/records/other/'],
+
         ],
     ]); ?>
 
