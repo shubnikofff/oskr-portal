@@ -21,28 +21,37 @@ $maxTime = Yii::$app->params['vks.maxTime'];
 
         <?php if ($dataProvider->totalCount): ?>
 
-            <?php /** @var \frontend\models\vks\Request[] $requests */
-            $requests = $dataProvider->getModels();
-            $groupedRequests[] = [$requests[0]];
-
-            for ($i = 1; $i < count($requests); $i++) {
-                if ($requests[$i]->beginTime < $requests[$i - 1]->endTime) {
-                    $groupedRequests[count($groupedRequests) - 1][] = $requests[$i];
-                } else {
-                    $groupedRequests[] = [$requests[$i]];
+            <?php function groupRequests(&$schedule, $requests)
+            {
+                /** @var \frontend\models\vks\Request[] $requests */
+                foreach ($requests as $key => $request) {
+                    $currentGroup = end($schedule);
+                    if (end($currentGroup)->endTime < $request->beginTime) {
+                        $schedule[count($schedule) - 1][] = $request;
+                        unset($requests[$key]);
+                    }
                 }
-            } ?>
 
-            <?php foreach ($groupedRequests as $requestsGroup) : ?>
+                if (count($requests)) {
+                    $schedule[][] = array_shift($requests);
+                    groupRequests($schedule, $requests);
+                }
+            }
 
-                <table class="vks-request-grid">
+            $requests = $dataProvider->getModels();
+            $schedule[][] = array_shift($requests);
+            groupRequests($schedule, $requests); ?>
 
-                    <tr>
+            <table id="vks-schedule-grid">
 
-                        <?php foreach ($requestsGroup as $request): ?>
-                            <?php /** @var $request \frontend\models\vks\Request */ ?>
+                <tr>
+                    <?php $groupsCount = count($schedule) ?>
 
-                            <td class="vks-request-grid">
+                    <?php foreach ($schedule as $requestGroup): ?>
+
+                        <td class="vks-schedule-grid" style="width: <?= 100/$groupsCount ?>%">
+
+                            <?php foreach ($requestGroup as $request): ?>
 
                                 <?php $top = $request->beginTime - $minTime;
                                 $height = $request->endTime - $request->beginTime;
@@ -61,8 +70,7 @@ $maxTime = Yii::$app->params['vks.maxTime'];
 
                                 <?php $participantList = implode(' - ', $request->participantShortNameList) ?>
 
-                                <div class="vks-request <?= $statusClass ?>"
-                                     style="top: <?= $top ?>px; height: <?= $height ?>px"
+                                <div class="vks-request <?= $statusClass ?>" style="top: <?= $top ?>px; height: <?= $height ?>px"
                                      title="<?= $request->beginTimeString ?> - <?= $request->endTimeString ?> (<?= $participantList ?>)">
 
                                     <div class="vks-request-theme">
@@ -81,15 +89,15 @@ $maxTime = Yii::$app->params['vks.maxTime'];
 
                                 </div>
 
-                            </td>
+                            <?php endforeach; ?>
 
-                        <?php endforeach; ?>
+                        </td>
 
-                    </tr>
+                    <?php endforeach; ?>
 
-                </table>
+                </tr>
 
-            <?php endforeach; ?>
+            </table>
 
         <?php endif; ?>
 
@@ -136,7 +144,8 @@ $maxTime = Yii::$app->params['vks.maxTime'];
 <?php $options = \yii\helpers\Json::encode([
     'timeColumnWidth' => 40,
     'timeGridSelector' => 'table.vks-time-grid',
-    'requestsGridSelector' => 'table.vks-request-grid',
+    'requestsGridSelector' => '#vks-schedule-grid',
+    'requestContainerSelector' => 'div.vks-request',
     'modalWidgetSelector' => '#vks-view-modal-widget',
     'modalContentSelector' => '#vks-view-container',
     'requestReferenceSelector' => 'a.vks-request-theme'
