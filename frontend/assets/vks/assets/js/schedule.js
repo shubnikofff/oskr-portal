@@ -44,6 +44,7 @@
             timeColumnWidth: null,
             timeGridSelector: null,
             requestsGridSelector: null,
+            requestContainerSelector: null,
             modalWidgetSelector: null,
             modalContentSelector: null,
             requestReferenceSelector: null
@@ -72,16 +73,22 @@
         print: function () {
 
             var timeColumnWidth = this.settings.timeColumnWidth;
+            var requestGridWidth = this.$timeGrid.width() - timeColumnWidth;
+            var requestContainerWidth = requestGridWidth / $('td', this.$requestsGrid).length - 2;
+
             this.$requestsGrid.css('margin-left', timeColumnWidth);
-            this.$requestsGrid.width(this.$timeGrid.width() - timeColumnWidth);
+            this.$requestsGrid.width(requestGridWidth);
             this.$requestsGrid.height(this.$timeGrid.height());
+
+            $(this.settings.requestContainerSelector).width(requestContainerWidth);
+
             this.$requestsGrid.fadeIn();
         },
 
         showModal: function (event) {
 
             event.preventDefault();
-            event.data.$content.load($(this).attr('href'), function() {
+            event.data.$content.load($(this).attr('href'), function () {
                 event.data.$widget.modal('show');
             });
         }

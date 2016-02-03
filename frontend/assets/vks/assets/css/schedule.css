@@ -15,18 +15,17 @@ tr.half-hour {
     border-bottom: solid 1px;
 }
 
-table.vks-request-grid {
+#vks-schedule-grid {
     position: absolute;
     display: none;
 }
 
-td.vks-request-grid {
+td.vks-schedule-grid {
     vertical-align: top;
 }
 
 div.vks-request {
-    position: relative;
-    padding: 5px;
+    position: absolute;
     z-index: 100;
 }
 
@@ -37,7 +36,8 @@ div.vks-request div {
 
 div.vks-request-theme {
     height: 40%;
-    font-size: 10pt;
+    padding-top: 5px;
+    font-size: 9pt;
 }
 
 a.vks-request-theme {
@@ -46,7 +46,7 @@ a.vks-request-theme {
 
 div.vks-request-participants {
     height: 40%;
-    font-size: 9pt;
+    font-size: 8pt;
 }
 
 div.vks-request-service-data {

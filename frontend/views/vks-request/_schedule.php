@@ -26,48 +26,34 @@ $maxTime = Yii::$app->params['vks.maxTime'];
                 /** @var \frontend\models\vks\Request[] $requests */
                 foreach ($requests as $key => $request) {
                     $currentGroup = end($schedule);
-                    if(end($currentGroup)->endTime > $request->beginTime) {
-
+                    if (end($currentGroup)->endTime < $request->beginTime) {
+                        $schedule[count($schedule) - 1][] = $request;
+                        unset($requests[$key]);
                     }
                 }
 
-                if(count($requests)) {
+                if (count($requests)) {
+                    $schedule[][] = array_shift($requests);
                     groupRequests($schedule, $requests);
                 }
-
             }
-
 
             $requests = $dataProvider->getModels();
             $schedule[][] = array_shift($requests);
-            groupRequests($schedule, $requests);
+            groupRequests($schedule, $requests); ?>
 
-            ?>
+            <table id="vks-schedule-grid">
 
-            <?php /** @var \frontend\models\vks\Request[] $requests */
-            /*$requests = $dataProvider->getModels();
-            $groupedRequests[] = [$requests[0]];
+                <tr>
+                    <?php $groupsCount = count($schedule) ?>
 
-            for ($i = 1; $i < count($requests); $i++) {
-                if ($requests[$i]->beginTime < $requests[$i - 1]->endTime) {
-                    $groupedRequests[count($groupedRequests) - 1][] = $requests[$i];
-                } else {
-                    $groupedRequests[] = [$requests[$i]];
-                }
-            }*/ ?>
+                    <?php foreach ($schedule as $requestGroup): ?>
 
-            <?php /*foreach ($groupedRequests as $requestsGroup) : */ ?><!--
+                        <td class="vks-schedule-grid" style="width: <?= 100/$groupsCount ?>%">
 
-                <table class="vks-request-grid">
+                            <?php foreach ($requestGroup as $request): ?>
 
-                    <tr>
-
-                        <?php /*foreach ($requestsGroup as $request): */ ?>
-                            <?php /*/** @var $request \frontend\models\vks\Request */ ?>
-
-                            <td class="vks-request-grid">
-
-                                <?php /*$top = $request->beginTime - $minTime;
+                                <?php $top = $request->beginTime - $minTime;
                                 $height = $request->endTime - $request->beginTime;
                                 $statusClass = '';
                                 switch ($request->status) {
@@ -80,39 +66,38 @@ $maxTime = Yii::$app->params['vks.maxTime'];
                                     case $request::STATUS_CONSIDERATION:
                                         $statusClass = 'status-considiration';
                                         break;
-                                } */ ?>
+                                } ?>
 
-                                <?php /*$participantList = implode(' - ', $request->participantShortNameList) */ ?>
+                                <?php $participantList = implode(' - ', $request->participantShortNameList) ?>
 
-                                <div class="vks-request <? /*= $statusClass */ ?>"
-                                     style="top: <? /*= $top */ ?>px; height: <? /*= $height */ ?>px"
-                                     title="<? /*= $request->beginTimeString */ ?> - <? /*= $request->endTimeString */ ?> (<? /*= $participantList */ ?>)">
+                                <div class="vks-request <?= $statusClass ?>" style="top: <?= $top ?>px; height: <?= $height ?>px"
+                                     title="<?= $request->beginTimeString ?> - <?= $request->endTimeString ?> (<?= $participantList ?>)">
 
                                     <div class="vks-request-theme">
-                                        <? /*= Html::a($request->topic, ['/vks-request/view', 'id' => (string)$request->primaryKey], ['class' => 'vks-request-theme',]) */ ?>
+                                        <?= Html::a($request->topic, ['/vks-request/view', 'id' => (string)$request->primaryKey], ['class' => 'vks-request-theme',]) ?>
                                     </div>
                                     <div class="vks-request-participants">
-                                        <b><? /*= $participantList */ ?></b></div>
+                                        <b><?= $participantList ?></b></div>
                                     <div class="vks-request-service-data">
                                         <small>
-                                            <? /*= ($request->deployServer) ? $request->deployServer->name : "" */ ?>&nbsp;
-                                            <?php /*if ($request->audioRecord): */ ?>
+                                            <?= ($request->deployServer) ? $request->deployServer->name : "" ?>&nbsp;
+                                            <?php if ($request->audioRecord): ?>
                                                 <span class="glyphicon glyphicon-headphones"></span>
-                                            <?php /*endif; */ ?>
+                                            <?php endif; ?>
                                         </small>
                                     </div>
 
                                 </div>
 
-                            </td>
+                            <?php endforeach; ?>
 
-                        <?php /*endforeach; */ ?>
+                        </td>
 
-                    </tr>
+                    <?php endforeach; ?>
 
-                </table>
+                </tr>
 
-            --><?php /*endforeach; */ ?>
+            </table>
 
         <?php endif; ?>
 
@@ -159,7 +144,8 @@ $maxTime = Yii::$app->params['vks.maxTime'];
 <?php $options = \yii\helpers\Json::encode([
     'timeColumnWidth' => 40,
     'timeGridSelector' => 'table.vks-time-grid',
-    'requestsGridSelector' => 'table.vks-request-grid',
+    'requestsGridSelector' => '#vks-schedule-grid',
+    'requestContainerSelector' => 'div.vks-request',
     'modalWidgetSelector' => '#vks-view-modal-widget',
     'modalContentSelector' => '#vks-view-container',
     'requestReferenceSelector' => 'a.vks-request-theme'
