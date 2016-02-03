@@ -35,8 +35,6 @@ $this->title = "График";
 
         <?php Modal::end() ?>
 
-        <?= Html::pageHeader($this->title) ?>
-
         <?php $form = ActiveForm::begin([
             'id' => 'vks-search-form',
             'action' => ['vks-request/index'],
