@@ -167,7 +167,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     </div>
 
-    <p>Заявка подана <?= Yii::$app->formatter->asDatetime($model->createdAt->sec, 'long') ?></p>
+    <p>Заявка подана <?= Yii::$app->formatter->asDatetime($model->createdAt->sec, 'd MMMM y г. HH:mm') ?></p>
 
 </div>
 

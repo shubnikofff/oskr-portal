@@ -121,6 +121,10 @@ $maxTime = Yii::$app->params['vks.maxTime'];
 
             <?php endfor; ?>
 
+            <?php $currentTimeTop = \common\components\MinuteFormatter::asInt(date('h:i')) - $minTime?>
+
+            <div id="current-time" style="top: <?= $currentTimeTop?>px;"></div>
+
         </table>
 
     </div>
@@ -144,6 +148,7 @@ $maxTime = Yii::$app->params['vks.maxTime'];
 <?php $options = \yii\helpers\Json::encode([
     'timeColumnWidth' => 40,
     'timeGridSelector' => 'table.vks-time-grid',
+    'currentTimeSelector' => '#current-time',
     'requestsGridSelector' => '#vks-schedule-grid',
     'requestContainerSelector' => 'div.vks-request',
     'modalWidgetSelector' => '#vks-view-modal-widget',

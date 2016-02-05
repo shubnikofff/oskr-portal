@@ -21,7 +21,7 @@ use yii\helpers\ArrayHelper;
  * @var $dataProvider \yii\data\ActiveDataProvider
  */
 
-$this->title = "График";
+$this->title = "Расписание";
 ?>
 
     <div class="vks-request-index">
@@ -59,16 +59,16 @@ $this->title = "График";
         ]) ?>
 
         <?php $query = Participant::find()->select(['_id', 'name', 'companyId'])->with('company');
-            $participants = ArrayHelper::toArray($query->all(),[
-                Participant::className() => [
-                    'id' => function($item) {
-                        return (string)$item->primaryKey;
-                    },
-                    'name',
-                    'company' => 'company.name'
-                ]
-            ]);
-            $participantsIdData = ArrayHelper::map($participants, 'id', 'name', 'company'); ?>
+        $participants = ArrayHelper::toArray($query->all(), [
+            Participant::className() => [
+                'id' => function ($item) {
+                    return (string)$item->primaryKey;
+                },
+                'name',
+                'company' => 'company.name'
+            ]
+        ]);
+        $participantsIdData = ArrayHelper::map($participants, 'id', 'name', 'company'); ?>
 
         <?= $form->field($model, 'participantsId')->widget(Select2::className(), [
             'data' => $participantsIdData,
@@ -81,7 +81,7 @@ $this->title = "График";
             ]
         ]) ?>
 
-        <?= Html::resetButton('Сброс', ['class' => 'btn btn-primary'])?>
+        <?= Html::resetButton('Сброс', ['class' => 'btn btn-primary']) ?>
 
         <?php ActiveForm::end() ?>
 

@@ -43,6 +43,7 @@
         defaultSettings: {
             timeColumnWidth: null,
             timeGridSelector: null,
+            currentTimeSelector: null,
             requestsGridSelector: null,
             requestContainerSelector: null,
             modalWidgetSelector: null,
@@ -72,10 +73,12 @@
 
         print: function () {
 
+            var timeGridWidth = this.$timeGrid.width();
             var timeColumnWidth = this.settings.timeColumnWidth;
-            var requestGridWidth = this.$timeGrid.width() - timeColumnWidth;
+            var requestGridWidth = timeGridWidth - timeColumnWidth;
             var requestContainerWidth = requestGridWidth / $('td', this.$requestsGrid).length - 2;
 
+            $(this.settings.currentTimeSelector).width(timeGridWidth - 2);
             this.$requestsGrid.css('margin-left', timeColumnWidth);
             this.$requestsGrid.width(requestGridWidth);
             this.$requestsGrid.height(this.$timeGrid.height());

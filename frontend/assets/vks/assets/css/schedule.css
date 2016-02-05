@@ -15,6 +15,11 @@ tr.half-hour {
     border-bottom: solid 1px;
 }
 
+#current-time {
+    border: 1px solid red;
+    position: relative;
+}
+
 #vks-schedule-grid {
     position: absolute;
     display: none;

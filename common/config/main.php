@@ -16,6 +16,9 @@ return [
         'authManager' => [
             'class' => \yii\rbac\DbManager::className(),
         ],
+        'formatter' => [
+            'defaultTimeZone' => 'Europe/Moscow',
+        ]
     ],
 
     'modules' => require(__DIR__.'/modules.php'),

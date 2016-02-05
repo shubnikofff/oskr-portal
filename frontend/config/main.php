@@ -13,9 +13,6 @@ return [
     'bootstrap' => ['log'],
     'controllerNamespace' => 'frontend\controllers',
     'defaultRoute' => 'vks-request/index',
-    'controllerMap' => [
-        //'profile' => 'frontend\controllers\UserController'
-    ],
     'components' => require(__DIR__.'/components.php'),
     'params' => $params,
 ];

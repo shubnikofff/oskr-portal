@@ -25,11 +25,5 @@ return [
     'urlManager' => [
         'enablePrettyUrl' => true,
         'showScriptName' => false,
-        'rules' => [
-            /*'<controller:(profile)>/<id:\w+>' => '<controller>/view',
-            '<controller:(profile)>/<id:\w+>/<action:(create|update|delete)>' => '<controller>/<action>',*/
-            //'/user/requests/?status='.\common\models\Request::STATUS_CANCEL => '/user/cancel-requests'
-            //'user/requests/<status:\d+>' => 'user/requests',
-        ]
-    ]
+    ],
 ];
