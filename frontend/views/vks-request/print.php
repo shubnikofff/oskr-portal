@@ -75,7 +75,7 @@ $this->title = "Завяка на помещение";
 
     <?php endif; ?>
 
-    <?php if ($model->mode === $model::MODE_WITHOUT_VKS): ?>
+    <?php if ($model->mode === $model::MODE_WITHOUT_VKS && is_array($model->equipment)): ?>
 
         <p><b>Дополнительное оборудование:</b> <?= implode(', ', $model->equipment) ?></p>
 

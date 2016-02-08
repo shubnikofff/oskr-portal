@@ -72,6 +72,7 @@ $this->title = "Расписание";
 
         <?= $form->field($model, 'participantsId')->widget(Select2::className(), [
             'data' => $participantsIdData,
+            'showToggleAll' => false,
             'options' => [
                 'placeholder' => 'Фильтр по участникам',
                 'multiple' => true,

@@ -69,7 +69,7 @@ class RequestSearch extends Request implements SearchModelInterface
             'query' => $query
         ]);
 
-        $dataProvider->pagination = $this->scenario === $this::SCENARIO_SEARCH_PERSONAL ? new Pagination(['pageSize' => 20]) : false;
+        $dataProvider->pagination = $this->scenario === self::SCENARIO_SEARCH_PERSONAL ? new Pagination(['pageSize' => 20]) : false;
 
         if (!$this->validate()) {
             return $dataProvider;
@@ -78,7 +78,7 @@ class RequestSearch extends Request implements SearchModelInterface
         $query->andFilterWhere(['date' => $this->date]);
 
         if (is_array($this->participantsId)) {
-            $query->andWhere(['participantsId' => ['$all' => $this->participantsId]]);
+            $query->andWhere(['participantsId' => ['$in' => $this->participantsId]]);
         }
 
         $query->andFilterWhere(['createdBy' => $this->createdBy]);
