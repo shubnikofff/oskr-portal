@@ -44,12 +44,20 @@ $maxTime = Yii::$app->params['vks.maxTime'];
 
             <table id="vks-schedule-grid">
 
+                <?php if (gmmktime(0, 0, 0) == $model->date->sec): ?>
+
+                    <?php $currentTimeTop = \common\components\MinuteFormatter::asInt(date('H:i')) - $minTime + 1 ?>
+
+                    <div id="current-time" style="top: <?= $currentTimeTop ?>px;"></div>
+
+                <?php endif; ?>
+
                 <tr>
                     <?php $groupsCount = count($schedule) ?>
 
                     <?php foreach ($schedule as $requestGroup): ?>
 
-                        <td class="vks-schedule-grid" style="width: <?= 100/$groupsCount ?>%">
+                        <td class="vks-schedule-grid" style="width: <?= 100 / $groupsCount ?>%">
 
                             <?php foreach ($requestGroup as $request): ?>
 
@@ -70,7 +78,8 @@ $maxTime = Yii::$app->params['vks.maxTime'];
 
                                 <?php $participantList = implode(' - ', $request->participantShortNameList) ?>
 
-                                <div class="vks-request <?= $statusClass ?>" style="top: <?= $top ?>px; height: <?= $height ?>px"
+                                <div class="vks-request <?= $statusClass ?>"
+                                     style="top: <?= $top ?>px; height: <?= $height ?>px"
                                      title="<?= $request->beginTimeString ?> - <?= $request->endTimeString ?> (<?= $participantList ?>)">
 
                                     <div class="vks-request-theme">
@@ -120,10 +129,6 @@ $maxTime = Yii::$app->params['vks.maxTime'];
                 <?php endif; ?>
 
             <?php endfor; ?>
-
-            <?php $currentTimeTop = \common\components\MinuteFormatter::asInt(date('h:i')) - $minTime?>
-
-            <div id="current-time" style="top: <?= $currentTimeTop?>px;"></div>
 
         </table>
 

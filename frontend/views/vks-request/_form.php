@@ -80,6 +80,9 @@ use common\components\MinuteFormatter;
 
     <div id="vks-audio-record" style="display: <?= $model->mode === $model::MODE_WITH_VKS ? 'block' : 'none' ?>">
         <?= $form->field($model, 'audioRecord')->checkbox() ?>
+        <small class="help-block"><span class="glyphicon glyphicon-info-sign"></span> Срок хранения
+            аудиозаписи - 1 месяц
+        </small>
     </div>
 
     <div id="vks-equipment" style="display: <?= $model->mode === $model::MODE_WITHOUT_VKS ? 'block' : 'none' ?>">
@@ -90,8 +93,6 @@ use common\components\MinuteFormatter;
         ]) ?>
 
     </div>
-
-    <hr>
 
     <p class="lead">Участники</p>
 
