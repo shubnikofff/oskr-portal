@@ -21,6 +21,11 @@
 
             this.formData = $form.serialize();
             this.$form.on('change', {that: this}, this.formChange);
+
+            //this.formSubmit();
+            /*setTimeout(function () {
+             this.$form.submit();
+             }, 5000);*/
         },
 
         formChange: function (event) {
@@ -31,6 +36,14 @@
                 that.$form.submit();
             }
         }
+
+/*        formSubmit: function () {
+            setTimeout(function() {
+                this.formSubmit.apply(this);
+            }, 5000);
+            console.log(this);
+            this.$form.submit();
+        }*/
     };
 
     $.fn.schedule = function (options) {
@@ -47,12 +60,12 @@
             requestsGridSelector: null,
             requestContainerSelector: null,
             modalWidgetSelector: null,
-            modalContentSelector: null,
-            requestReferenceSelector: null
+            modalContentSelector: null
         },
         settings: {},
         $requestsGrid: null,
         $timeGrid: null,
+        $requestContainer: null,
         $modalWidget: null,
         $modalContent: null,
 
@@ -62,10 +75,11 @@
 
             this.$requestsGrid = $(settings.requestsGridSelector, $container);
             this.$timeGrid = $(settings.timeGridSelector, $container);
+            this.$requestContainer = $(settings.requestContainerSelector, $container);
             this.$modalWidget = $(settings.modalWidgetSelector);
             this.$modalContent = $(settings.modalContentSelector);
 
-            $container.on('click', settings.requestReferenceSelector, {
+            this.$requestContainer.on('click', {
                 $content: this.$modalContent,
                 $widget: this.$modalWidget
             }, this.showModal);
@@ -76,26 +90,31 @@
             var timeGridWidth = this.$timeGrid.width();
             var timeColumnWidth = this.settings.timeColumnWidth;
             var requestGridWidth = timeGridWidth - timeColumnWidth;
-            var requestContainerWidth = requestGridWidth / $('td', this.$requestsGrid).length - 2;
+            var requestContainerWidth = requestGridWidth / $('td', this.$requestsGrid).length - 1;
 
             $(this.settings.currentTimeSelector).width(timeGridWidth - 2);
             this.$requestsGrid.css('margin-left', timeColumnWidth);
             this.$requestsGrid.width(requestGridWidth);
             this.$requestsGrid.height(this.$timeGrid.height());
 
-            $(this.settings.requestContainerSelector).width(requestContainerWidth);
+            this.$requestContainer.width(requestContainerWidth);
+            this.$requestContainer.each(function () {
+                var $this = $(this);
+                $this.height($this.data('height')).offset({
+                    top: $this.data('top'),
+                    left: null
+                });
+            });
 
             this.$requestsGrid.fadeIn();
         },
 
         showModal: function (event) {
 
-            event.preventDefault();
-            event.data.$content.load($(this).attr('href'), function () {
+            event.data.$content.load($(this).data('href'), function () {
                 event.data.$widget.modal('show');
             });
         }
-
     };
 
 })(jQuery);

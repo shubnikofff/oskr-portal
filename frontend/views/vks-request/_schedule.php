@@ -19,6 +19,14 @@ $maxTime = Yii::$app->params['vks.maxTime'];
 
     <div id="vks-schedule">
 
+        <?php if (gmmktime(0, 0, 0) == $model->date->sec): ?>
+
+            <?php $currentTimeTop = \common\components\MinuteFormatter::asInt(date('H:i')) - $minTime + 1 ?>
+
+            <div id="current-time" style="top: <?= $currentTimeTop ?>px;"></div>
+
+        <?php endif; ?>
+
         <?php if ($dataProvider->totalCount): ?>
 
             <?php function groupRequests(&$schedule, $requests)
@@ -42,15 +50,7 @@ $maxTime = Yii::$app->params['vks.maxTime'];
             $schedule[][] = array_shift($requests);
             groupRequests($schedule, $requests); ?>
 
-            <table id="vks-schedule-grid">
-
-                <?php if (gmmktime(0, 0, 0) == $model->date->sec): ?>
-
-                    <?php $currentTimeTop = \common\components\MinuteFormatter::asInt(date('H:i')) - $minTime + 1 ?>
-
-                    <div id="current-time" style="top: <?= $currentTimeTop ?>px;"></div>
-
-                <?php endif; ?>
+            <?= Html::beginTag('table', ['id' => 'vks-schedule-grid']) ?>
 
                 <tr>
                     <?php $groupsCount = count($schedule) ?>
@@ -61,8 +61,8 @@ $maxTime = Yii::$app->params['vks.maxTime'];
 
                             <?php foreach ($requestGroup as $request): ?>
 
-                                <?php $top = $request->beginTime - $minTime;
-                                $height = $request->endTime - $request->beginTime;
+                                <?php /** @var \frontend\models\vks\Request $request */
+
                                 $statusClass = '';
                                 switch ($request->status) {
                                     case $request::STATUS_CANCEL:
@@ -78,25 +78,44 @@ $maxTime = Yii::$app->params['vks.maxTime'];
 
                                 <?php $participantList = implode(' - ', $request->participantShortNameList) ?>
 
-                                <div class="vks-request <?= $statusClass ?>"
-                                     style="top: <?= $top ?>px; height: <?= $height ?>px"
-                                     title="<?= $request->beginTimeString ?> - <?= $request->endTimeString ?> (<?= $participantList ?>)">
 
-                                    <div class="vks-request-theme">
-                                        <?= Html::a($request->topic, ['/vks-request/view', 'id' => (string)$request->primaryKey], ['class' => 'vks-request-theme',]) ?>
-                                    </div>
-                                    <div class="vks-request-participants">
-                                        <b><?= $participantList ?></b></div>
-                                    <div class="vks-request-service-data">
-                                        <small>
-                                            <?= ($request->deployServer) ? $request->deployServer->name : "" ?>&nbsp;
-                                            <?php if ($request->audioRecord): ?>
-                                                <span class="glyphicon glyphicon-headphones"></span>
-                                            <?php endif; ?>
-                                        </small>
-                                    </div>
+                                <?= Html::beginTag('button', [
+                                    'class' => $statusClass . ' vks-request',
+                                    'title' => "{$request->beginTimeString} - {$request->endTimeString} ({$participantList})",
+                                    'data' => [
+                                        'href' => \yii\helpers\Url::to(['/vks-request/view', 'id' => (string)$request->primaryKey]),
+                                        'top' => $request->beginTime - $minTime,
+                                        'height' => $request->endTime - $request->beginTime - 1
+                                    ]
+                                ]) ?>
 
-                                </div>
+                                <?= Html::beginTag('div', ['class' => 'vks-request-theme']) ?>
+
+                                <?= Html::beginTag('div', ['class' => 'vks-request-options']) ?>
+
+                                <?php if ($request->mode === $request::MODE_WITH_VKS): ?>
+
+                                    <span class="glyphicon glyphicon-facetime-video"></span>
+
+                                <?php endif; ?>
+
+                                <?php if ($request->audioRecord): ?>
+
+                                    <span class="glyphicon glyphicon-headphones"></span>
+
+                                <?php endif; ?>
+
+                                <?= Html::endTag('div') ?>
+
+                                <?= $request->topic ?>
+
+                                <?= Html::endTag('div') ?>
+
+                                <?= Html::tag('div', "<b>{$participantList}</b>", ['class' => 'vks-request-participants']) ?>
+
+                                <?= Html::tag('div', $request->deployServer ? $request->deployServer->name : "", ['class' => 'vks-request-service-data']) ?>
+
+                                <?= Html::endTag('button') ?>
 
                             <?php endforeach; ?>
 
@@ -106,31 +125,32 @@ $maxTime = Yii::$app->params['vks.maxTime'];
 
                 </tr>
 
-            </table>
+            <?= Html::endTag('table') ?>
 
         <?php endif; ?>
 
-        <table class="vks-time-grid">
 
-            <?php for ($i = $minTime; $i < $maxTime; $i += 30): ?>
+        <?= Html::beginTag('table', ['class' => 'vks-time-grid']) ?>
 
-                <?php if ($i % 60 == 0): ?>
+        <?php for ($i = $minTime; $i < $maxTime; $i += 30): ?>
 
-                    <tr class="vks-time-grid full-hour">
-                        <td><?= (string)($i / 60) ?><sup>00</sup></td>
-                    </tr>
+            <?php if ($i % 60 == 0): ?>
 
-                <?php else: ?>
+                <tr class="vks-time-grid full-hour">
+                    <td><?= (string)($i / 60) ?><sup>00</sup></td>
+                </tr>
 
-                    <tr class="vks-time-grid half-hour">
-                        <td></td>
-                    </tr>
+            <?php else: ?>
 
-                <?php endif; ?>
+                <tr class="vks-time-grid half-hour">
+                    <td></td>
+                </tr>
 
-            <?php endfor; ?>
+            <?php endif; ?>
 
-        </table>
+        <?php endfor; ?>
+
+        <?= Html::endTag('table') ?>
 
     </div>
 
@@ -155,9 +175,8 @@ $maxTime = Yii::$app->params['vks.maxTime'];
     'timeGridSelector' => 'table.vks-time-grid',
     'currentTimeSelector' => '#current-time',
     'requestsGridSelector' => '#vks-schedule-grid',
-    'requestContainerSelector' => 'div.vks-request',
+    'requestContainerSelector' => 'button.vks-request',
     'modalWidgetSelector' => '#vks-view-modal-widget',
     'modalContentSelector' => '#vks-view-container',
-    'requestReferenceSelector' => 'a.vks-request-theme'
 ]);
 $this->registerJs("$('#vks-schedule').schedule({$options});"); ?>

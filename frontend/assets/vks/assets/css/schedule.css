@@ -29,24 +29,25 @@ td.vks-schedule-grid {
     vertical-align: top;
 }
 
-div.vks-request {
+button.vks-request {
     position: absolute;
-    z-index: 100;
+    z-index: 10;
+    padding: 0;
 }
 
-div.vks-request div {
+button.vks-request div {
     overflow: hidden;
     text-align: center;
+    padding: 0 2px;
+}
+
+div.vks-request-options {
+    float: right;
 }
 
 div.vks-request-theme {
     height: 40%;
-    padding-top: 5px;
     font-size: 9pt;
-}
-
-a.vks-request-theme {
-    color: black;
 }
 
 div.vks-request-participants {
@@ -56,6 +57,7 @@ div.vks-request-participants {
 
 div.vks-request-service-data {
     height: 20%;
+    font-size: 7pt;
 }
 
 #vks-schedule-legend {

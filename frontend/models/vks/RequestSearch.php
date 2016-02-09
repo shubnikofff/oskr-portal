@@ -12,6 +12,7 @@ use common\models\SearchModelInterface;
 use yii\data\ActiveDataProvider;
 use yii\data\Pagination;
 use common\rbac\SystemPermission;
+use yii\data\Sort;
 
 class RequestSearch extends Request implements SearchModelInterface
 {
@@ -51,25 +52,38 @@ class RequestSearch extends Request implements SearchModelInterface
     public function search()
     {
         $query = Request::find();
+        $sort = new Sort([
+            'attributes' => [
+                'date' => [
+                    'asc' => ['date' => SORT_ASC, 'beginTime' => SORT_ASC],
+                    'desc' => ['date' => SORT_DESC, 'beginTime' => SORT_DESC],
+                ],
+                'beginTime'
+            ]
+        ]);
 
         $dataProvider = new ActiveDataProvider([
-            'sort' => [
-                'attributes' => [
-                    'date' => [
-                        'asc' => ['date' => SORT_ASC, 'beginTime' => SORT_ASC],
-                        'desc' => ['date' => SORT_DESC, 'beginTime' => SORT_DESC],
-                    ],
-                    'beginTime',
-                ],
-                'defaultOrder' => [
-                    'date' => SORT_DESC,
-                    'beginTime' => SORT_ASC,
-                ]
-            ],
+            'sort' => $sort,
             'query' => $query
         ]);
 
-        $dataProvider->pagination = $this->scenario === self::SCENARIO_SEARCH_PERSONAL ? new Pagination(['pageSize' => 20]) : false;
+
+        if ($this->scenario === self::SCENARIO_SEARCH_SCHEDULE) {
+
+            $dataProvider->pagination = false;
+
+            $sort->defaultOrder = [
+                'date' => SORT_DESC,
+                'beginTime' => SORT_ASC,
+            ];
+        } elseif ($this->scenario === self::SCENARIO_SEARCH_PERSONAL) {
+
+            $dataProvider->pagination = new Pagination(['pageSize' => 20]);
+
+            $sort->defaultOrder = [
+                'date' => SORT_DESC,
+            ];
+        }
 
         if (!$this->validate()) {
             return $dataProvider;
