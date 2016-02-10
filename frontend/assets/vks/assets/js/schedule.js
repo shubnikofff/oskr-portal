@@ -54,6 +54,7 @@
         settings: {},
         $requestsGrid: null,
         $timeGrid: null,
+        $currentTime: null,
         $requestContainer: null,
         $modalWidget: null,
         $modalContent: null,
@@ -64,6 +65,7 @@
 
             this.$requestsGrid = $(settings.requestsGridSelector, $container);
             this.$timeGrid = $(settings.timeGridSelector, $container);
+            this.$currentTime = $(settings.currentTimeSelector, $container);
             this.$requestContainer = $(settings.requestContainerSelector, $container);
             this.$modalWidget = $(settings.modalWidgetSelector);
             this.$modalContent = $(settings.modalContentSelector);
@@ -81,20 +83,18 @@
             var requestGridWidth = timeGridWidth - timeColumnWidth;
             var requestContainerWidth = requestGridWidth / $('td', this.$requestsGrid).length - 1;
 
-            $(this.settings.currentTimeSelector).width(timeGridWidth - 2);
-            this.$requestsGrid.css('margin-left', timeColumnWidth);
-            this.$requestsGrid.width(requestGridWidth);
-            this.$requestsGrid.height(this.$timeGrid.height());
+            this.$currentTime.width(timeGridWidth - 2).css('top', this.$currentTime.data('top'));
+            this.$requestsGrid.css('margin-left', timeColumnWidth).width(requestGridWidth).height(this.$timeGrid.height());
 
-            this.$requestContainer.width(requestContainerWidth);
             this.$requestContainer.each(function () {
                 var $this = $(this);
-                $this.height($this.data('height')).offset({
+                $this.height($this.data('height')).width(requestContainerWidth).offset({
                     top: $this.data('top'),
                     left: null
                 });
             });
 
+            this.$currentTime.fadeIn();
             this.$requestsGrid.fadeIn();
         },
 
