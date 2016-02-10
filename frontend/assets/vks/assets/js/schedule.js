@@ -7,7 +7,6 @@
 
     $.fn.searchForm = function () {
         teleport.searchForm.init(this);
-
     };
 
     teleport.searchForm = {
@@ -18,14 +17,8 @@
         init: function ($form) {
 
             this.$form = $form;
-
             this.formData = $form.serialize();
             this.$form.on('change', {that: this}, this.formChange);
-
-            //this.formSubmit();
-            /*setTimeout(function () {
-             this.$form.submit();
-             }, 5000);*/
         },
 
         formChange: function (event) {
@@ -33,17 +26,13 @@
             var formData = that.$form.serialize();
             if (formData !== that.formData) {
                 that.formData = formData;
-                that.$form.submit();
+                that.submitForm();
             }
-        }
+        },
 
-/*        formSubmit: function () {
-            setTimeout(function() {
-                this.formSubmit.apply(this);
-            }, 5000);
-            console.log(this);
+        submitForm: function () {
             this.$form.submit();
-        }*/
+        }
     };
 
     $.fn.schedule = function (options) {

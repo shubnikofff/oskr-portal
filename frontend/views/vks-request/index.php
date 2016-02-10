@@ -102,7 +102,7 @@ $this->title = "Расписание";
 
     </div>
 
-<?php
-\frontend\assets\vks\SearchFormAsset::register($this);
+<?php \frontend\assets\vks\SearchFormAsset::register($this);
 $this->registerJs("$('#vks-search-form').searchForm();");
-?>
+$refreshPeriod = Yii::$app->params['vks.schedule.refreshPeriod'];
+$this->registerJs("setInterval(function () {teleport.searchForm.submitForm.call(teleport.searchForm)}, {$refreshPeriod});"); ?>
