@@ -45,6 +45,7 @@ AppAsset::register($this);
                     ['label' => 'Участники', 'url' => ['/vks-participant/index']],
                     ['label' => 'Компании', 'url' => ['/vks-company/index']],
                     ['label' => 'Сервера сборки', 'url' => ['/vks-deploy-server/index']],
+                    ['label' => 'Порядок отображения', 'url' => ['/order/save']],
                 ]],
 
                 ['label' => 'Безопасность', 'items' => [

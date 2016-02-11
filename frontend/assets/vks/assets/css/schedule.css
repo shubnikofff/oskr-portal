@@ -39,6 +39,7 @@ button.vks-request {
 button.vks-request div {
     text-align: center;
     padding: 0 2px;
+    overflow: hidden;
 }
 
 div.vks-request-options {
@@ -48,19 +49,16 @@ div.vks-request-options {
 div.vks-request-theme {
     height: 40%;
     font-size: 9pt;
-    overflow: auto;
 }
 
 div.vks-request-participants {
     height: 40%;
     font-size: 8pt;
-    overflow: auto;
 }
 
 div.vks-request-service-data {
     height: 20%;
     font-size: 7pt;
-    overflow: hidden;
 }
 
 #vks-schedule-legend {

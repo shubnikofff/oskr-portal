@@ -75,7 +75,7 @@ $participants = Participant::findAllByRequest($model)
 
                 <div class="btn-group-vertical btn-block">
 
-                    <?php foreach (Company::find()->all() as $company): ?>
+                    <?php foreach (Company::find()->orderBy('order')->all() as $company): ?>
 
                         <?= Html::button($company->name, [
                             'class' => 'btn btn-default vks-company',
