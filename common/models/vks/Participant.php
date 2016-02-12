@@ -130,13 +130,15 @@ class Participant extends ActiveRecord
                 'date' => 1,
                 'participantsId' => 1,
                 'beginTime' => 1,
-                'endTime' => 1
+                'endTime' => 1,
+                'status' => 1
             ]],
             ['$match' => [
                 '_id' => ['$ne' => $request->primaryKey],
                 'date' => $request->date,
                 'beginTime' => ['$lt' => $request->endTime],
-                'endTime' => ['$gt' => $request->beginTime]
+                'endTime' => ['$gt' => $request->beginTime],
+                'status' => ['$ne' => $request::STATUS_CANCEL]
             ]],
             ['$unwind' => '$participantsId'],
             ['$project' => ['_id' => 0, 'id' => '$participantsId', 'beginTime' => 1, 'endTime' => 1]]
