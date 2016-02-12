@@ -73,11 +73,15 @@ $this->params['breadcrumbs'][] = $this->title;
         <dd><?= $model->owner->phone ?></dd>
     </dl>
 
-    <p>Совещание в режиме ВКС: <b><?= Yii::$app->formatter->asBoolean($model->mode === $model::MODE_WITH_VKS)?></b></p>
+    <p>Совещание в режиме ВКС: <b><?= Yii::$app->formatter->asBoolean($model->mode === $model::MODE_WITH_VKS) ?></b></p>
 
     <?php if ($model->mode === $model::MODE_WITH_VKS): ?>
 
-        <p>Сделать аудиозапись: <b><?= Yii::$app->formatter->asBoolean($model->audioRecord) ?></b></p>
+        <?php if ($model->audioRecord): ?>
+
+            <p class="text-danger" style="font-size: 11pt"><strong>Необходима аудиозапись ВКС</strong></p>
+
+        <?php endif; ?>
 
         <?php if (Yii::$app->user->can(SystemPermission::APPROVE_REQUEST)): ?>
 

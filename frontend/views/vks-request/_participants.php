@@ -73,7 +73,7 @@ $participants = Participant::findAllByRequest($model)
 
             <div class="col-lg-5">
 
-                <div class="btn-group-vertical btn-block">
+                <div class="btn-group-vertical btn-block" style="overflow-x: hidden; overflow-y: scroll; max-height: 300px">
 
                     <?php foreach (Company::find()->orderBy('order')->all() as $company): ?>
 
