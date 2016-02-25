@@ -3,9 +3,9 @@ use kartik\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model \common\models\RoomGroup */
 
-$this->title = $model->name;
+$this->title = 'Новая группа';
 ?>
-<div class="vks-company-update">
+<div>
 
     <?= Html::pageHeader($this->title) ?>
 

@@ -7,9 +7,9 @@ use yii\grid\GridView;
 /* @var $model \app\models\RoomGroupSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Компании';
+$this->title = 'Группы помещений';
 ?>
-<div class="vks-company-index">
+<div>
 
     <?= Html::pageHeader($this->title) ?>
 
@@ -25,7 +25,7 @@ $this->title = 'Компании';
                 'contentOptions' => ['width' => '1px;']
             ],
             'name',
-            'address:ntext',
+            'description:ntext',
             [
                 'class' => 'yii\grid\ActionColumn',
                 'template' => '{delete}',

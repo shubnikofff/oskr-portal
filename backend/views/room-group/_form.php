@@ -8,13 +8,13 @@ use yii\widgets\ActiveForm;
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="vks-company-form col-md-6">
+<div class="row col-md-6">
 
     <?php $form = ActiveForm::begin(); ?>
 
     <?= $form->field($model, 'name') ?>
 
-    <?= $form->field($model, 'address')->textarea() ?>
+    <?= $form->field($model, 'description')->textarea() ?>
 
     <div class="form-group">
 

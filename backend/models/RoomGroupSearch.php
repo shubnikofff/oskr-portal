@@ -19,7 +19,7 @@ class RoomGroupSearch extends RoomGroup implements SearchModelInterface
     public function rules()
     {
         return [
-            [['name', 'address'], 'safe'],
+            [['name', 'description'], 'safe'],
         ];
     }
 
@@ -28,7 +28,6 @@ class RoomGroupSearch extends RoomGroup implements SearchModelInterface
      */
     public function scenarios()
     {
-        // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
 
@@ -45,13 +44,11 @@ class RoomGroupSearch extends RoomGroup implements SearchModelInterface
         ]);
 
         if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
             return $dataProvider;
         }
 
         $query->andFilterWhere(['like', 'name', $this->name])
-            ->andFilterWhere(['like', 'address', $this->address]);
+            ->andFilterWhere(['like', 'description', $this->description]);
 
         return $dataProvider;
     }

@@ -2,7 +2,6 @@
 
 namespace backend\controllers;
 
-use Yii;
 use app\models\RoomGroupSearch;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -16,7 +15,7 @@ use common\components\actions\UpdateAction;
 /**
  * CompanyController implements the CRUD actions for RoomGroup model.
  */
-class VksCompanyController extends Controller
+class RoomGroupController extends Controller
 {
     public function behaviors()
     {
