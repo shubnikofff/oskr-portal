@@ -6,12 +6,12 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\SearchModelInterface;
-use common\models\Company;
+use common\models\RoomGroup;
 
 /**
- * VksCompanySearch represents the model behind the search form about `common\models\Company`.
+ * RoomGroupSearch represents the model behind the search form about `common\models\RoomGroup`.
  */
-class VksCompanySearch extends Company implements SearchModelInterface
+class RoomGroupSearch extends RoomGroup implements SearchModelInterface
 {
     /**
      * @inheritdoc
@@ -38,7 +38,7 @@ class VksCompanySearch extends Company implements SearchModelInterface
      */
     public function search()
     {
-        $query = Company::find();
+        $query = RoomGroup::find();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

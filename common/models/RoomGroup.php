@@ -2,8 +2,6 @@
 
 namespace common\models;
 
-use Yii;
-use yii\mongodb\ActiveQuery;
 use yii\mongodb\ActiveRecord;
 
 /**
@@ -13,7 +11,7 @@ use yii\mongodb\ActiveRecord;
  * @property string $name
  * @property string $address
  */
-class Company extends ActiveRecord
+class RoomGroup extends ActiveRecord
 {
     /**
      * @return string
@@ -34,23 +32,6 @@ class Company extends ActiveRecord
             'address'
         ];
     }
-
-    /**
-     * @inheritDoc
-     */
-/*    public function fields()
-    {
-        return array_merge(parent::fields(),[
-            'id' => function(){return (string)$this->getPrimaryKey();}
-        ]);
-    }*/
-
-    /**
-     *  @return ActiveQuery;
-     */
-/*    public function getRooms() {
-        return $this->hasMany(Participant::className(),['companyId'=>'_id']);
-    }*/
 
     /**
      * @return array

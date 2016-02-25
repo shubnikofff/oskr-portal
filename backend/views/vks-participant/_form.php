@@ -2,7 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use common\models\Company;
+use common\models\RoomGroup;
 use yii\widgets\MaskedInput;
 use common\components\helpers\ViewHelper;
 
@@ -19,7 +19,7 @@ use common\components\helpers\ViewHelper;
 
     <?= $form->field($model, 'shortName') ?>
 
-    <?= $form->field($model, 'companyId')->dropDownList(ViewHelper::items(Company::className(), '_id', 'name')) ?>
+    <?= $form->field($model, 'companyId')->dropDownList(ViewHelper::items(RoomGroup::className(), '_id', 'name')) ?>
 
     <?= $form->field($model, 'ahuConfirmation')->checkbox() ?>
 

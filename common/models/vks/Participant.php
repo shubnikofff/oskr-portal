@@ -2,7 +2,7 @@
 
 namespace common\models\vks;
 
-use common\models\Company;
+use common\models\RoomGroup;
 use frontend\models\vks\Request;
 use yii\helpers\ArrayHelper;
 use yii\mongodb\ActiveRecord;
@@ -16,7 +16,7 @@ use yii\mongodb\Collection;
  * @property string $name
  * @property string $shortName
  * @property \MongoId|string $companyId
- * @property Company $company
+ * @property RoomGroup $company
  * @property boolean $ahuConfirmation
  * @property string $phone
  * @property string $contact
@@ -80,7 +80,7 @@ class Participant extends ActiveRecord
             [['name', 'shortName'], 'required'],
 
             ['companyId', MongoIdValidator::className(), 'forceFormat' => 'object'],
-            ['companyId', 'exist', 'targetClass' => Company::className(), 'targetAttribute' => '_id'],
+            ['companyId', 'exist', 'targetClass' => RoomGroup::className(), 'targetAttribute' => '_id'],
 
             ['ahuConfirmation', 'boolean'],
             ['ahuConfirmation', 'filter', 'filter' => function ($value) {
@@ -94,7 +94,7 @@ class Participant extends ActiveRecord
 
     public function getCompany()
     {
-        return $this->hasOne(Company::className(), ['_id' => 'companyId']);
+        return $this->hasOne(RoomGroup::className(), ['_id' => 'companyId']);
     }
 
     public function attributeLabels()

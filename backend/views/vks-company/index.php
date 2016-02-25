@@ -4,7 +4,7 @@ use kartik\helpers\Html;
 use yii\grid\GridView;
 
 /* @var $this yii\web\View */
-/* @var $model \app\models\VksCompanySearch */
+/* @var $model \app\models\RoomGroupSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Компании';

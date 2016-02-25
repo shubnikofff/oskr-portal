@@ -2,7 +2,7 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
-use common\models\Company;
+use common\models\RoomGroup;
 use common\components\helpers\ViewHelper;
 
 /* @var $this yii\web\View */
@@ -23,7 +23,7 @@ $this->title = 'Переговорные комнаты';
         'columns' => [
             'shortName',
             [
-                'filter' => ViewHelper::items(Company::className(), '_id', 'name'),
+                'filter' => ViewHelper::items(RoomGroup::className(), '_id', 'name'),
                 'attribute' => 'companyId',
                 'value' => 'company.name'
             ],

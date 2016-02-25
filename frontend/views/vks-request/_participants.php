@@ -7,7 +7,7 @@
 use yii\helpers\Html;
 use yii\helpers\ArrayHelper;
 use common\components\MinuteFormatter;
-use common\models\Company;
+use common\models\RoomGroup;
 use yii\helpers\BaseHtml;
 use common\models\vks\Participant;
 
@@ -75,7 +75,7 @@ $participants = Participant::findAllByRequest($model)
 
                 <div class="btn-group-vertical btn-block" style="overflow-x: hidden; overflow-y: scroll; max-height: 300px">
 
-                    <?php foreach (Company::find()->orderBy('order')->all() as $company): ?>
+                    <?php foreach (RoomGroup::find()->orderBy('order')->all() as $company): ?>
 
                         <?= Html::button($company->name, [
                             'class' => 'btn btn-default vks-company',
