@@ -9,14 +9,14 @@ use yii\helpers\ArrayHelper;
 use common\components\MinuteFormatter;
 use common\models\RoomGroup;
 use yii\helpers\BaseHtml;
-use common\models\vks\Participant;
+use common\models\Room;
 
 /**
  * @var $form \kartik\form\ActiveForm
  * @var $this \yii\web\View
  * @var $model \frontend\models\vks\RequestForm
  */
-$participants = Participant::findAllByRequest($model)
+$participants = Room::findAllByRequest($model)
 ?>
 
 <div id="vks-participants">
@@ -34,13 +34,13 @@ $participants = Participant::findAllByRequest($model)
                     <?= Html::beginTag('div', ['class' => 'btn-group checked-room', 'data' => ['room-id' => (string)$participant->getPrimaryKey()]]) ?>
 
                     <?php $popoverContent = Html::beginTag('dl') .
-                        Html::tag('dt', 'Название') . Html::tag('dd', $participant->name) .
-                        Html::tag('dt', 'Организация') . Html::tag('dd', $participant->company->name) .
-                        Html::tag('dt', 'Технический специалист') . Html::tag('dd', $participant->contact) .
+                        Html::tag('dt', 'Название') . Html::tag('dd', $participant->description) .
+                        Html::tag('dt', 'Организация') . Html::tag('dd', $participant->group->name) .
+                        Html::tag('dt', 'Технический специалист') . Html::tag('dd', $participant->contactPerson) .
                         Html::tag('dt', 'IP адрес') . Html::tag('dd', $participant->ipAddress) .
                         Html::endTag('dl'); ?>
 
-                    <?= Html::button($participant->shortName, ['class' => 'btn btn-default btn-room-info', 'data' => [
+                    <?= Html::button($participant->name, ['class' => 'btn btn-default btn-room-info', 'data' => [
                         'toggle' => 'popover',
                         'placement' => 'top',
                         'container' => '#vks-participants',
@@ -99,11 +99,11 @@ $participants = Participant::findAllByRequest($model)
                 <div class="row">
 
                     <?= BaseHtml::activeCheckboxList($model, 'participantsId', ArrayHelper::map($participants, function ($item) {
-                        /** @var $item \common\models\vks\Participant */
+                        /** @var $item \common\models\Room */
                         return (string)$item->primaryKey;
                     }, 'name'), [
                         'item' => function ($index, $label, $name, $checked, $value) use ($participants) {
-                            /** @var Participant $participant */
+                            /** @var Room $participant */
                             $participant = $participants[$index];
 
                             $defaultOptions = [
@@ -119,10 +119,10 @@ $participants = Participant::findAllByRequest($model)
                             ] : [
                                 'label' => $label,
                                 'data' => [
-                                    'name' => $participant->name,
-                                    'short-name' => $participant->shortName,
-                                    'company-name' => $participant->company->name,
-                                    'contact' => $participant->contact,
+                                    'name' => $participant->description,
+                                    'short-name' => $participant->name,
+                                    'company-name' => $participant->group->name,
+                                    'contact' => $participant->contactPerson,
                                     'ip-address' => $participant->ipAddress,
                                 ],
                             ]);

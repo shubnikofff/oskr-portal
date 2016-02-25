@@ -42,8 +42,8 @@ AppAsset::register($this);
             'items' => [
 
                 ['label' => 'Бронирование помещений', 'items' => [
-                    ['label' => 'Участники', 'url' => ['/vks-participant/index']],
-                    ['label' => 'Группы помещений', 'url' => ['/room-group/index']],
+                    ['label' => 'Переговорные комнаты', 'url' => ['/room/index']],
+                    ['label' => 'Группы комнат', 'url' => ['/room-group/index']],
                     ['label' => 'Сервера сборки', 'url' => ['/vks-deploy-server/index']],
                     ['label' => 'Порядок отображения', 'url' => ['/order/save']],
                 ]],

@@ -1,34 +1,30 @@
 <?php
 
-namespace common\models\vks;
+namespace common\models;
 
-use common\models\RoomGroup;
 use frontend\models\vks\Request;
 use yii\helpers\ArrayHelper;
 use yii\mongodb\ActiveRecord;
-use yii\mongodb\validators\MongoIdValidator;
 use yii\mongodb\Collection;
 
 /**
- * This is the model class for collection "vks.participant".
+ * This is the model class for collection "room".
  *
  * @property \MongoId|string $_id
  * @property string $name
- * @property string $shortName
- * @property \MongoId|string $companyId
- * @property RoomGroup $company
- * @property boolean $ahuConfirmation
+ * @property \MongoId|string $groupId
+ * @property RoomGroup $group
+ * @property boolean $bookingAgreement
  * @property string $phone
- * @property string $contact
- * @property string $model
+ * @property string $contactPerson
+ * @property string $equipment
  * @property string $ipAddress
- * @property string $gatekeeperNumber
- * @property string $note
+ * @property string $description
  * @property bool|null $isBusy
  * @property int|null $busyFrom
  * @property int|null $busyTo
  */
-class Participant extends ActiveRecord
+class Room extends ActiveRecord
 {
     /**
      * @var bool is busy this participant in minute range
@@ -48,7 +44,7 @@ class Participant extends ActiveRecord
      */
     public static function collectionName()
     {
-        return 'vks.participant';
+        return 'room';
     }
 
     /**
@@ -59,64 +55,38 @@ class Participant extends ActiveRecord
         return [
             '_id',
             'name',
-            'shortName',
-            'companyId',
-            'ahuConfirmation',
+            'groupId',
+            'bookingAgreement',
             'phone',
-            'contact',
-            'model',
+            'contactPerson',
+            'equipment',
             'ipAddress',
-            'gatekeeperNumber',
-            'note',
+            'description',
         ];
-    }
-
-    /**
-     * @return array
-     */
-    public function rules()
-    {
-        return [
-            [['name', 'shortName'], 'required'],
-
-            ['companyId', MongoIdValidator::className(), 'forceFormat' => 'object'],
-            ['companyId', 'exist', 'targetClass' => RoomGroup::className(), 'targetAttribute' => '_id'],
-
-            ['ahuConfirmation', 'boolean'],
-            ['ahuConfirmation', 'filter', 'filter' => function ($value) {
-                return boolval($value);
-            }],
-
-            ['ipAddress', 'match', 'pattern' => '/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/'],
-            [['phone', 'contact', 'model', 'gatekeeperNumber', 'note'], 'safe'],
-        ];
-    }
-
-    public function getCompany()
-    {
-        return $this->hasOne(RoomGroup::className(), ['_id' => 'companyId']);
     }
 
     public function attributeLabels()
     {
         return [
             'name' => 'Название',
-            'shortName' => 'Краткое название',
-            'status' => 'Статус',
-            'companyId' => 'Компания',
-            'ahuConfirmation' => 'Необходимость согласования с АХУ',
+            'groupId' => 'Группа',
+            'bookingAgreement' => 'Согласовывать бронирование',
             'phone' => 'Телефон',
-            'contact' => 'Контактное лицо',
-            'model' => 'Модель оборудования',
+            'contactPerson' => 'Контактное лицо',
+            'equipment' => 'Оборудование',
             'ipAddress' => 'IP адрес',
-            'gatekeeperNumber' => 'Номер на GateKeeper',
-            'note' => 'Примечание',
+            'description' => 'Описание',
         ];
+    }
+
+    public function getGroup()
+    {
+        return $this->hasOne(RoomGroup::className(), ['_id' => 'groupId']);
     }
 
     /**
      * @param Request $request
-     * @return Participant[]
+     * @return Room[]
      * @throws \yii\base\InvalidConfigException
      * @throws \yii\mongodb\Exception
      */
@@ -144,7 +114,7 @@ class Participant extends ActiveRecord
             ['$project' => ['_id' => 0, 'id' => '$participantsId', 'beginTime' => 1, 'endTime' => 1]]
         ]);
 
-        /** @var Participant[] $participants */
+        /** @var Room[] $participants */
         $participants = self::find()->with('company')->orderBy('name')->all();
         $busyParticipantsId = ArrayHelper::getColumn($busyParticipants, 'id');
 

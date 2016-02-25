@@ -6,12 +6,13 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\SearchModelInterface;
-use common\models\vks\Participant;
+use common\models\Room;
+use yii\mongodb\validators\MongoIdValidator;
 
 /**
- * VksParticipantSearch represents the model behind the search form about `common\models\vks\Participant`.
+ * RoomSearch represents the model behind the search form about `common\models\Room`.
  */
-class VksParticipantSearch extends Participant implements SearchModelInterface
+class RoomSearch extends Room implements SearchModelInterface
 {
     /**
      * @inheritdoc
@@ -19,7 +20,8 @@ class VksParticipantSearch extends Participant implements SearchModelInterface
     public function rules()
     {
         return [
-            [['name', 'shortName', 'companyId', 'ipAddress', 'note'], 'safe'],
+            [['name', 'ipAddress', 'description'], 'safe'],
+            ['groupId', MongoIdValidator::className(), 'forceFormat' => 'object']
         ];
     }
 
@@ -28,7 +30,6 @@ class VksParticipantSearch extends Participant implements SearchModelInterface
      */
     public function scenarios()
     {
-        // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
 
@@ -39,7 +40,7 @@ class VksParticipantSearch extends Participant implements SearchModelInterface
      */
     public function search()
     {
-        $query = Participant::find()->with('company');
+        $query = Room::find()->with('group');
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -52,10 +53,9 @@ class VksParticipantSearch extends Participant implements SearchModelInterface
         }
 
         $query->andFilterWhere(['like', 'name', $this->name])
-            ->andFilterWhere(['like', 'shortName', $this->shortName])
-            ->andFilterWhere(['companyId' => $this->companyId])
+            ->andFilterWhere(['groupId' => $this->groupId])
             ->andFilterWhere(['like', 'ipAddress', $this->ipAddress])
-            ->andFilterWhere(['like', 'note', $this->note]);
+            ->andFilterWhere(['like', 'description', $this->description]);
 
         return $dataProvider;
     }

@@ -6,7 +6,7 @@ use common\models\RoomGroup;
 use common\components\helpers\ViewHelper;
 
 /* @var $this yii\web\View */
-/* @var $model \app\models\VksParticipantSearch */
+/* @var $model \app\models\RoomSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Переговорные комнаты';
@@ -21,14 +21,14 @@ $this->title = 'Переговорные комнаты';
         'dataProvider' => $dataProvider,
         'filterModel' => $model,
         'columns' => [
-            'shortName',
+            'name',
             [
-                'filter' => ViewHelper::items(RoomGroup::className(), '_id', 'name'),
-                'attribute' => 'companyId',
-                'value' => 'company.name'
+                'filter' => \app\models\RoomForm::groupItems(),
+                'attribute' => 'groupId',
+                'value' => 'group.name'
             ],
             'ipAddress',
-            'note:ntext',
+            'description',
 
             [
                 'class' => 'yii\grid\ActionColumn',

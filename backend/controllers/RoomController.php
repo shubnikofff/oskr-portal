@@ -2,21 +2,22 @@
 
 namespace backend\controllers;
 
+use app\models\RoomForm;
 use Yii;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
-use common\models\vks\Participant;
+use common\models\Room;
 use common\components\actions\CreateAction;
 use common\components\actions\DeleteAction;
 use common\components\actions\SearchAction;
 use common\components\actions\UpdateAction;
 use common\components\actions\ViewAction;
-use app\models\VksParticipantSearch;
+use app\models\RoomSearch;
 /**
- * RoomController implements the CRUD actions for Participant model.
+ * RoomController implements the CRUD actions for Room model.
  */
-class VksParticipantController extends Controller
+class RoomController extends Controller
 {
     public function behaviors()
     {
@@ -48,23 +49,23 @@ class VksParticipantController extends Controller
         return [
             'index' => [
                 'class' => SearchAction::className(),
-                'modelClass' => VksParticipantSearch::className()
+                'modelClass' => RoomSearch::className()
             ],
             'view' => [
                 'class' => ViewAction::className(),
-                'modelClass' => Participant::className()
+                'modelClass' => Room::className()
             ],
             'create' => [
                 'class' => CreateAction::className(),
-                'modelClass' => Participant::className(),
+                'modelClass' => RoomForm::className(),
             ],
             'update' => [
                 'class' => UpdateAction::className(),
-                'modelClass' => Participant::className()
+                'modelClass' => RoomForm::className()
             ],
             'delete' => [
                 'class' => DeleteAction::className(),
-                'modelClass' => Participant::className()
+                'modelClass' => Room::className()
             ]
         ];
     }

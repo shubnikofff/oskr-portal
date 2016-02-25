@@ -1,41 +1,37 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\ActiveForm;
-use common\models\RoomGroup;
+use yii\bootstrap\ActiveForm;
 use yii\widgets\MaskedInput;
-use common\components\helpers\ViewHelper;
 
 /* @var $this yii\web\View */
-/* @var $model \common\models\vks\Participant */
+/* @var $model \app\models\RoomForm */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="vks-room-form col-md-6">
+<div class="row col-md-6">
 
     <?php $form = ActiveForm::begin(); ?>
 
     <?= $form->field($model, 'name') ?>
 
-    <?= $form->field($model, 'shortName') ?>
+    <?= $form->field($model, 'description') ?>
 
-    <?= $form->field($model, 'companyId')->dropDownList(ViewHelper::items(RoomGroup::className(), '_id', 'name')) ?>
+    <?= $form->field($model, 'groupId')->widget(\kartik\select2\Select2::className(), [
+        'data' => \app\models\RoomForm::groupItems()
+    ]) ?>
 
-    <?= $form->field($model, 'ahuConfirmation')->checkbox() ?>
+    <?= $form->field($model, 'bookingAgreement')->checkbox() ?>
 
-    <?= $form->field($model, 'contact')->textarea() ?>
+    <?= $form->field($model, 'contactPerson')->textarea() ?>
 
     <?= $form->field($model, 'phone') ?>
 
-    <?= $form->field($model, 'model') ?>
+    <?= $form->field($model, 'equipment') ?>
 
     <?= $form->field($model, 'ipAddress')->widget(MaskedInput::className(), [
         'mask' => '9[9][9].9[9][9].9[9][9].9[9][9]'
     ]) ?>
-
-    <?= $form->field($model, 'gatekeeperNumber') ?>
-
-    <?= $form->field($model, 'note')->textarea() ?>
 
     <div class="form-group">
         <?= Html::submitButton('<span class="glyphicon '. ($model->isNewRecord ? 'glyphicon-plus' : 'glyphicon-ok') . '"></span> ' .

@@ -37,6 +37,7 @@ abstract class Request extends ActiveRecord
     public function behaviors()
     {
         return [
+            //TODO Сделать на базе основных классов поведения
             'common\components\behaviors\TimestampBehavior',
             'common\components\behaviors\BlameableBehavior',
         ];
