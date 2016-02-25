@@ -5,11 +5,11 @@ namespace common\models;
 use yii\mongodb\ActiveRecord;
 
 /**
- * This is the model class for collection "vks.company".
+ * This is the model class for collection "room.group".
  *
- * @property \MongoId|string $_id
+ * @property \MongoId $_id
  * @property string $name
- * @property string $address
+ * @property string $description
  */
 class RoomGroup extends ActiveRecord
 {
@@ -18,7 +18,7 @@ class RoomGroup extends ActiveRecord
      */
     public static function collectionName()
     {
-        return 'company';
+        return 'room.group';
     }
 
     /**
@@ -29,7 +29,7 @@ class RoomGroup extends ActiveRecord
         return [
             '_id',
             'name',
-            'address'
+            'description'
         ];
     }
 
@@ -40,7 +40,7 @@ class RoomGroup extends ActiveRecord
     {
         return [
             ['name', 'required'],
-            ['address', 'safe']
+            ['description', 'safe']
         ];
     }
 
@@ -50,8 +50,8 @@ class RoomGroup extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'name' => 'Наименование',
-            'address' => 'Адрес',
+            'name' => 'Имя',
+            'description' => 'Описание',
         ];
     }
 }
