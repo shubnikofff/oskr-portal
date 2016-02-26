@@ -30,7 +30,9 @@ use yii\widgets\MaskedInput;
     <?= $form->field($model, 'equipment') ?>
 
     <?= $form->field($model, 'ipAddress')->widget(MaskedInput::className(), [
-        'mask' => '9[9][9].9[9][9].9[9][9].9[9][9]'
+        'clientOptions' => [
+            'alias' =>  'ip'
+        ],
     ]) ?>
 
     <div class="form-group">

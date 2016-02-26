@@ -55,13 +55,13 @@ class Room extends ActiveRecord
         return [
             '_id',
             'name',
+            'description',
             'groupId',
             'bookingAgreement',
             'phone',
             'contactPerson',
-            'equipment',
             'ipAddress',
-            'description',
+            'note'
         ];
     }
 

@@ -19,7 +19,7 @@ class RoomGroup extends ActiveRecord
      */
     public static function collectionName()
     {
-        return 'room.group';
+        return 'roomGroup';
     }
 
     /**
