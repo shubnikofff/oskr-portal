@@ -35,7 +35,7 @@ class RoomForm extends Room
             ['bookingAgreement', 'filter', 'filter' => 'boolval'],
 
             ['ipAddress', 'ip', 'ipv6' => false],
-            [['phone', 'contactPerson', 'equipment'], 'safe'],
+            [['phone', 'contactPerson', 'note'], 'safe'],
         ];
     }
 

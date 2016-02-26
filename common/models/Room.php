@@ -12,14 +12,14 @@ use yii\mongodb\Collection;
  *
  * @property \MongoId|string $_id
  * @property string $name
+ * @property string $description
  * @property \MongoId|string $groupId
  * @property RoomGroup $group
  * @property boolean $bookingAgreement
  * @property string $phone
  * @property string $contactPerson
- * @property string $equipment
  * @property string $ipAddress
- * @property string $description
+ * @property string $note
  * @property bool|null $isBusy
  * @property int|null $busyFrom
  * @property int|null $busyTo
@@ -69,13 +69,13 @@ class Room extends ActiveRecord
     {
         return [
             'name' => 'Название',
+            'description' => 'Описание',
             'groupId' => 'Группа',
             'bookingAgreement' => 'Согласовывать бронирование',
             'phone' => 'Телефон',
             'contactPerson' => 'Контактное лицо',
-            'equipment' => 'Оборудование',
             'ipAddress' => 'IP адрес',
-            'description' => 'Описание',
+            'note' => 'Примечание'
         ];
     }
 

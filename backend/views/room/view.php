@@ -6,7 +6,9 @@ use kartik\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model \common\models\Room */
 
-$this->title = "Комната &laquo;{$model->name}&raquo;"; ?>
+$this->title = $model->name;
+$this->params['breadcrumbs'][] = ['label' => 'Помещения', 'url' => \yii\helpers\Url::to(['room/index'])];
+$this->params['breadcrumbs'][] = $this->title; ?>
 
 <div>
 
@@ -37,8 +39,8 @@ $this->title = "Комната &laquo;{$model->name}&raquo;"; ?>
                 'bookingAgreement:boolean',
                 'contactPerson:ntext',
                 'phone',
-                'equipment',
-                'ipAddress'
+                'ipAddress',
+                'note'
             ],
         ]) ?>
 

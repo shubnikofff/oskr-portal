@@ -1,13 +1,12 @@
 <?php
-use kartik\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model \common\models\RoomGroup */
 
-$this->title = "Группа &laquo;{$model->name}&raquo;";
-?>
-<div>
+$this->title = $model->name;
+$this->params['breadcrumbs'][] = ['label' => 'Группы помещений', 'url' => \yii\helpers\Url::to(['room-group/index'])];
+$this->params['breadcrumbs'][] = $this->title; ?>
 
-    <?= Html::pageHeader($this->title) ?>
+<div>
 
     <?= $this->render('_form', [
         'model' => $model,

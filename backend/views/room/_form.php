@@ -27,13 +27,13 @@ use yii\widgets\MaskedInput;
 
     <?= $form->field($model, 'phone') ?>
 
-    <?= $form->field($model, 'equipment') ?>
-
     <?= $form->field($model, 'ipAddress')->widget(MaskedInput::className(), [
         'clientOptions' => [
             'alias' =>  'ip'
         ],
     ]) ?>
+
+    <?= $form->field($model, 'note')->textarea() ?>
 
     <div class="form-group">
         <?= Html::submitButton('<span class="glyphicon '. ($model->isNewRecord ? 'glyphicon-plus' : 'glyphicon-ok') . '"></span> ' .

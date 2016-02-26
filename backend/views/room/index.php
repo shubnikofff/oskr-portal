@@ -2,24 +2,22 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
-use common\models\RoomGroup;
-use common\components\helpers\ViewHelper;
 
 /* @var $this yii\web\View */
 /* @var $model \app\models\RoomSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Переговорные комнаты';
+$this->title = 'Помещения';
+$this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="vks-room-index">
 
-    <div class="page-header"><h2><?= $this->title ?></h2></div>
-
-    <?= Html::a('<span class="glyphicon glyphicon-plus"></span>', ['create'], ['class' => 'btn btn-sm btn-default']) ?>
+    <?= Html::a('<span class="glyphicon glyphicon-plus"></span> Новое помещение', ['create'], ['class' => 'btn btn-success']) ?>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $model,
+        'summaryOptions' => ['class' => 'summary text-right'],
         'columns' => [
             'name',
             [

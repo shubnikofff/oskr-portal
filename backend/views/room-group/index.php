@@ -8,16 +8,16 @@ use yii\grid\GridView;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Группы помещений';
-?>
+$this->params['breadcrumbs'][] = $this->title; ?>
+
 <div>
 
-    <?= Html::pageHeader($this->title) ?>
-
-    <?= Html::a('<span class="glyphicon glyphicon-plus"></span>', ['create'], ['class' => 'btn btn-sm btn-default']) ?>
+    <?= Html::a('<span class="glyphicon glyphicon-plus"></span> Новая группа', ['create'], ['class' => 'btn btn-success']) ?>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $model,
+        'summaryOptions' => ['class' => 'summary text-right'],
         'columns' => [
             [
                 'class' => 'yii\grid\ActionColumn',
