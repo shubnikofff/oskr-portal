@@ -27,12 +27,15 @@ AppAsset::register($this);
 <?php $this->beginBody() ?>
 <div class="wrap">
     <?php NavBar::begin([
-        'brandLabel' => 'Расписание',//Yii::$app->name,
+        'brandLabel' => Yii::$app->name,
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar-inverse navbar-fixed-top',
         ],
     ]);
+
+    $userMenu[] = ['label' => '<span class="glyphicon glyphicon-calendar"></span> Расписание', 'url' => Yii::$app->homeUrl];
+    $userMenu[] = ['label' => '<span class="glyphicon glyphicon-list-alt"></span> Формы заявок', 'url'=>['/site/request-forms']];
 
     if (Yii::$app->user->isGuest) {
         $userMenu[] = ['label' => '<span class="glyphicon glyphicon-log-in"></span> Вход', 'url' => ['/site/login']];
