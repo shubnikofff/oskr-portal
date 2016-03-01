@@ -20,3 +20,5 @@ phpunit.phar
 /phpunit.xml
 
 docker-compose.yml
+
+xdebug.ini
