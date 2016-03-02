@@ -18,7 +18,7 @@ AppAsset::register($this);
 <head>
     <meta charset="<?= Yii::$app->charset ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta http-equiv="X-UA-Compatible" content="IE=100" >
+    <meta http-equiv="X-UA-Compatible" content="IE=100">
     <?= Html::csrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
@@ -27,12 +27,18 @@ AppAsset::register($this);
 <?php $this->beginBody() ?>
 <div class="wrap">
     <?php NavBar::begin([
-        'brandLabel' => 'Расписание',//Yii::$app->name,
+        'brandLabel' => Yii::$app->name,
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar-inverse navbar-fixed-top',
         ],
     ]);
+
+    $leftMenuItems[] = ['label' => '<span class="glyphicon glyphicon-calendar"></span> Расписание', 'url' => ['vks-request/index']];
+
+    if (Yii::$app->user->can(SystemPermission::CREATE_REQUEST)) {
+        $leftMenuItems[] = ['label' => '<span class="glyphicon glyphicon-pencil"></span> Подать заявку', 'url' => ['/vks-request/create']];
+    }
 
     if (Yii::$app->user->isGuest) {
         $userMenu[] = ['label' => '<span class="glyphicon glyphicon-log-in"></span> Вход', 'url' => ['/site/login']];
@@ -45,27 +51,24 @@ AppAsset::register($this);
             ['label' => '<span class="glyphicon glyphicon-list-alt"></span> Заявки', 'url' => ['/user/requests']],
             ['label' => 'Выход', 'url' => ['/site/logout'], 'linkOptions' => ['data-method' => 'post']]
         ]];
+        $leftMenuItems[] = ['label' => '<span class="glyphicon glyphicon-headphones"></span> Архив аудиозаписей', 'url' => 'http://oskrportal/records/other/', 'linkOptions' => ['target' => '_blank']];
     }
-    $userMenu[] = ['label' => '<span class="glyphicon glyphicon-question-sign"></span> Справка', 'url'=>['/site/about']]; ?>
 
-    <?php if(Yii::$app->user->can(SystemPermission::CREATE_REQUEST)): ?>
+    $leftMenuItems[] = ['label' => '<span class="glyphicon glyphicon-list-alt"></span> Формы заявок', 'url' => ['/site/request-forms']]; ?>
 
     <?= Nav::widget([
         'encodeLabels' => false,
         'options' => ['class' => 'navbar-nav navbar-left'],
-        'items' => [
-            ['label' => '<span class="glyphicon glyphicon-pencil"></span> Подать заявку', 'url' => ['/vks-request/create']],
-            ['label' => '<span class="glyphicon glyphicon-headphones"></span> Архив аудиозаписей', 'url' => 'http://oskrportal/records/other/', 'linkOptions' => ['target' => '_blank']],
-
-        ],
+        'items' => $leftMenuItems,
     ]); ?>
 
-    <?php endif; ?>
+    <?php $rightMenuItems = $userMenu;
+    $rightMenuItems[] = ['label' => '<span class="glyphicon glyphicon-question-sign"></span> Справка', 'url' => ['/site/about']] ?>
 
     <?= Nav::widget([
         'encodeLabels' => false,
         'options' => ['class' => 'navbar-nav navbar-right'],
-        'items' => $userMenu
+        'items' => $rightMenuItems
     ]); ?>
 
     <?php NavBar::end() ?>
