@@ -22,3 +22,5 @@ phpunit.phar
 docker-compose.yml
 
 xdebug.ini
+
+build_production.sh
