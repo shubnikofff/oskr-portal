@@ -2,7 +2,6 @@
 
 namespace common\models;
 
-use frontend\models\vks\Request;
 use yii\helpers\ArrayHelper;
 use yii\mongodb\ActiveRecord;
 use yii\mongodb\Collection;
@@ -115,7 +114,7 @@ class Room extends ActiveRecord
         ]);
 
         /** @var Room[] $participants */
-        $participants = self::find()->with('company')->orderBy('name')->all();
+        $participants = self::find()->with('group')->orderBy('name')->all();
         $busyParticipantsId = ArrayHelper::getColumn($busyParticipants, 'id');
 
         foreach ($participants as $key => $participant) {

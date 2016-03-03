@@ -84,7 +84,7 @@ $participants = Room::findAllByRequest($model)
                                 'toggle' => 'tooltip',
                                 'placement' => 'left',
                                 'container' => '#vks-participants',
-                                'title' => $company->address
+                                'title' => $company->description
                             ]
                         ]) ?>
 
@@ -108,7 +108,7 @@ $participants = Room::findAllByRequest($model)
 
                             $defaultOptions = [
                                 'value' => $value,
-                                'data' => ['company-id' => (string)$participant->companyId]
+                                'data' => ['company-id' => (string)$participant->groupId]
                             ];
 
                             $options = array_merge_recursive($defaultOptions, ($participant->isBusy) ? [

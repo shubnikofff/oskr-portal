@@ -13,7 +13,7 @@ use Yii;
  *
  * BlameableBehavior
  */
-
+//TODO Delete this class
 class BlameableBehavior extends \yii\behaviors\BlameableBehavior
 {
     /**

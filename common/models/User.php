@@ -171,7 +171,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function getId()
     {
-        return (string)$this->getPrimaryKey();
+        return $this->getPrimaryKey();
     }
 
     /**

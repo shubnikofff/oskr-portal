@@ -10,6 +10,7 @@ namespace common\components\behaviors;
 
 use yii\db\Expression;
 
+//TODO Delete this class
 class TimestampBehavior extends \yii\behaviors\TimestampBehavior
 {
     /**
