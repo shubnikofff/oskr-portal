@@ -13,6 +13,7 @@ use common\components\actions\ModelMethodAction;
 use frontend\models\vks\RequestForm;
 use frontend\models\vks\RequestSearch;
 use yii\filters\VerbFilter;
+use yii\helpers\Html;
 use yii\web\Controller;
 use yii\web\HttpException;
 use yii\web\NotFoundHttpException;
@@ -47,12 +48,12 @@ class VksRequestController extends Controller
     public function actions()
     {
         return [
-            'index' => [
+            /*'index' => [
                 'class' => SearchAction::className(),
                 'modelClass' => RequestSearch::className(),
                 'scenario' => RequestSearch::SCENARIO_SEARCH_SCHEDULE,
                 'pjaxView' => '_schedule'
-            ],
+            ],*/
             'create' => [
                 'class' => CreateAction::className(),
                 'modelClass' => RequestForm::className(),
@@ -132,5 +133,10 @@ class VksRequestController extends Controller
             return $this->renderPartial('print', ['model' => $model]);
         }
         throw new NotFoundHttpException;
+    }
+
+    public function actionIndex()
+    {
+        echo date('zH-is');
     }
 }

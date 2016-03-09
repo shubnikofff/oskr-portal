@@ -17,6 +17,9 @@ use common\models\User;
  * @author Shubnikov Alexey <a.shubnikov@niaep.ru>
  *
  * Request model class
+ *
+ * @property \MongoId $_id
+ * @property string $number
  * @property int $status
  * @property null|string $statusName
  * @property User $owner
@@ -35,6 +38,20 @@ abstract class Request extends ActiveRecord
     const STATUS_UNDER_CONSIDERATION = 2;
     const STATUS_COMPLETE = 3;
 
+    const NUMBER_PREFIX = '';
+
+    /**
+     * @inheritDoc
+     */
+    public function init()
+    {
+        parent::init();
+
+        if ($this->isNewRecord) {
+            $this->number = self::NUMBER_PREFIX . date('zH-is');
+        }
+    }
+
     /**
      * @inheritDoc
      */
@@ -42,6 +59,7 @@ abstract class Request extends ActiveRecord
     {
         return [
             '_id',
+            'number',
             'status',
             'createdBy',
             'updatedBy',
