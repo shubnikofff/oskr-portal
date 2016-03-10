@@ -9,7 +9,6 @@
 namespace frontend\controllers;
 
 use common\components\actions\DeleteAction;
-use common\components\actions\ModelMethodAction;
 use frontend\models\vks\RequestForm;
 use frontend\models\vks\RequestSearch;
 use yii\filters\VerbFilter;
@@ -75,14 +74,14 @@ class VksRequestController extends Controller
                 'class' => ViewAction::className(),
                 'modelClass' => Request::className(),
             ],
-            'approve' => [
+            /*'approve' => [
                 'class' => ModelMethodAction::className(),
                 'modelClass' => Request::className(),
                 'modelMethod' => ['approve'],
                 'scenario' => Request::SCENARIO_APPROVE,
                 'permission' => SystemPermission::APPROVE_REQUEST,
                 'successMessage' => 'Заявка согласована'
-            ],
+            ],*/
             'cancel' => [
                 'class' => UpdateAction::className(),
                 'modelClass' => Request::className(),

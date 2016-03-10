@@ -1,28 +1,16 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: bill
- * Date: 06.10.15
- * Time: 15:00
+ * Copyright (c) 2016. OSKR JSC "NIAEP"
  */
 
 namespace common\components\actions;
 
-use yii\widgets\ActiveForm;
-use yii\web\Response;
 /**
  * Class UpdateAction
  * @package common\components\actions
  */
-class UpdateAction extends CrudAction
+class UpdateAction extends SaveAction
 {
-    /**
-     * Which method will be run after model load
-     * First element is a method name
-     * Second element is an array of method params
-     * @var array
-     */
-    public $modelMethod = ['save'];
     /**
      * @inheritdoc
      */
@@ -32,35 +20,24 @@ class UpdateAction extends CrudAction
      */
     public $successMessage = 'Данные успешно сохранены';
     /**
+     * @var string
+     */
+    public $scenario;
+
+    /**
      * @inheritdoc
      */
     public function run($id)
     {
-        parent::run($id);
+        return parent::run($id);
+    }
 
-        $model = $this->_model;
+    protected function setModel($id)
+    {
+        $this->_model = $this->findModel($id);
 
-        $request = \Yii::$app->request;
-
-        if ($this->_model->load($request->post())) {
-
-            if ($request->isAjax) {
-                \Yii::$app->response->format = Response::FORMAT_JSON;
-                return ActiveForm::validate($this->_model);
-            }
-
-            $methodParam =  $this->modelMethod[1];
-
-            $methodResult = $methodParam ? call_user_func([$model, $this->modelMethod[0]], $methodParam) : call_user_func([$model, $this->modelMethod[0]]);
-
-            if($methodResult) {
-                \Yii::$app->session->setFlash('success', $this->successMessage);
-                return $this->controller->redirect($this->redirectUrl);
-            }
-
+        if (isset($this->scenario)) {
+            $this->_model->scenario = $this->scenario;
         }
-
-        return $this->controller->render($this->view, ['model' => $model]);
-
     }
 }

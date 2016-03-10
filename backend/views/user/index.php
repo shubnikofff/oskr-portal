@@ -8,7 +8,7 @@
 use kartik\helpers\Html;
 /**
  * @var $this \yii\web\View
- * @var $model \backend\models\UserSearch
+ * @var $filterModel \backend\models\UserSearch
  * @var $dataProvider \yii\data\ActiveDataProvider
  */
 $this->title = "Пользователи";
@@ -20,7 +20,7 @@ $this->title = "Пользователи";
 
     <?= \yii\grid\GridView::widget([
         'dataProvider' => $dataProvider,
-        'filterModel' => $model,
+        'filterModel' => $filterModel,
         'columns' => [
             [
                 'class' => '\yii\grid\ActionColumn',
@@ -40,7 +40,7 @@ $this->title = "Пользователи";
             ],
             [
                 'attribute' => 'status',
-                'filter' => [$model::STATUS_ACTIVE => 'Активный', $model::STATUS_BLOCKED => 'Заблокирован',],
+                'filter' => [$filterModel::STATUS_ACTIVE => 'Активный', $filterModel::STATUS_BLOCKED => 'Заблокирован',],
                 'contentOptions' => ['class' => 'text-center'],
                 'content' => function ($model) {
                     $content = '';

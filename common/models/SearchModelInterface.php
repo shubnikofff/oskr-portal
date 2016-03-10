@@ -15,4 +15,10 @@ interface SearchModelInterface {
      * @return BaseDataProvider
      */
     public function search();
+
+    /**
+     * @param $params array
+     * @return bool
+     */
+    public function load($params);
 }

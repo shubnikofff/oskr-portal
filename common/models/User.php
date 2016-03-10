@@ -5,7 +5,7 @@ use Yii;
 use yii\base\NotSupportedException;
 use yii\mongodb\ActiveRecord;
 use yii\web\IdentityInterface;
-use common\components\behaviors\TimestampBehavior;
+use yii\behaviors\TimestampBehavior;
 
 /**
  * User model
@@ -46,7 +46,12 @@ class User extends ActiveRecord implements IdentityInterface
     public function behaviors()
     {
         return [
-            TimestampBehavior::className(),
+            [
+                'class' => TimestampBehavior::className(),
+                'createdAtAttribute' => 'createdAt',
+                'updatedAtAttribute' => 'updatedAt',
+                'value' => new \MongoDate()
+            ]
         ];
     }
 

@@ -1,30 +1,42 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: bill
- * Date: 06.10.15
- * Time: 16:12
+ * Copyright (c) 2016. OSKR JSC "NIAEP"
  */
 
 namespace common\components\actions;
+
+use yii\helpers\Url;
+
 /**
  * Class DeleteAction
  * @package common\components\actions
  */
-class DeleteAction extends CrudAction
+class DeleteAction extends BaseAction
 {
-    public $successMessage = 'Данные удалены';
+    /**
+     * @var string
+     */
+    public $successMessage = 'Данные успешно удалены';
+
     /**
      * @inheritdoc
      */
     public function run($id)
     {
-        parent::run($id);
+        return parent::run($id);
+    }
 
-        $this->_model->delete();
+    protected function setModel($id)
+    {
+        $this->_model = $this->findModel($id);
+    }
 
-        \Yii::$app->session->setFlash('success', $this->successMessage);
+    protected function processRequest()
+    {
+        if ($this->_model->delete()) {
+            \Yii::$app->session->setFlash('success', $this->successMessage);
+        }
 
-        return $this->controller->redirect($this->redirectUrl);
+        return $this->controller->redirect(Url::previous());
     }
 }
