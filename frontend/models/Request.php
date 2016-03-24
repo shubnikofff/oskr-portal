@@ -48,7 +48,7 @@ abstract class Request extends ActiveRecord
         parent::init();
 
         if ($this->isNewRecord) {
-            $this->number = self::NUMBER_PREFIX . date('zH-is');
+            $this->number = $this::NUMBER_PREFIX . date('zH-is');
         }
     }
 
@@ -74,7 +74,7 @@ abstract class Request extends ActiveRecord
     public function rules()
     {
         return [
-            ['status', 'in', 'range' => [self::STATUS_CANCEL, self::STATUS_AGREED, self::STATUS_UNDER_CONSIDERATION, self::STATUS_COMPLETE]]
+            ['status', 'in', 'allowArray' => true,'range' => [self::STATUS_CANCEL, self::STATUS_AGREED, self::STATUS_UNDER_CONSIDERATION, self::STATUS_COMPLETE]]
         ];
     }
 

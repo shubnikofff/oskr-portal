@@ -14,7 +14,8 @@ use yii\mongodb\Collection;
  * @property string $description
  * @property \MongoId|string $groupId
  * @property RoomGroup $group
- * @property boolean $bookingAgreement
+ * @property bool $bookingAgreement
+ * @property bool $multipleBooking
  * @property string $phone
  * @property string $contactPerson
  * @property string $ipAddress
@@ -25,22 +26,7 @@ use yii\mongodb\Collection;
  */
 class Room extends ActiveRecord
 {
-    /**
-     * @var bool is busy this participant in minute range
-     */
-    private $_busy;
-    /**
-     * @var int start minute of busy range
-     */
-    private $_busyFrom;
-    /**
-     * @var int end minute of busy range
-     */
-    private $_busyTo;
 
-    /**
-     * @return string
-     */
     public static function collectionName()
     {
         return 'room';
@@ -57,6 +43,7 @@ class Room extends ActiveRecord
             'description',
             'groupId',
             'bookingAgreement',
+            'multipleBooking',
             'phone',
             'contactPerson',
             'ipAddress',
@@ -70,7 +57,8 @@ class Room extends ActiveRecord
             'name' => 'Название',
             'description' => 'Описание',
             'groupId' => 'Группа',
-            'bookingAgreement' => 'Согласовывать бронирование',
+            'bookingAgreement' => 'Бронирование должно быть согласовано',
+            'multipleBooking' => 'Возможно бронирование в нескольких мероприятиях одновременно',
             'phone' => 'Телефон',
             'contactPerson' => 'Контактное лицо',
             'ipAddress' => 'IP адрес',
@@ -128,48 +116,4 @@ class Room extends ActiveRecord
         return $participants;
     }
 
-    public function setBusy()
-    {
-        $this->_busy = true;
-    }
-
-    /**
-     * @return bool
-     */
-    public function getIsBusy()
-    {
-        return $this->_busy === true ? true : false;
-    }
-
-    /**
-     * @return int|null
-     */
-    public function getBusyFrom()
-    {
-        return $this->_busyFrom;
-    }
-
-    /**
-     * @param int $busyFrom
-     */
-    public function setBusyFrom($busyFrom)
-    {
-        $this->_busyFrom = $busyFrom;
-    }
-
-    /**
-     * @return int|null
-     */
-    public function getBusyTo()
-    {
-        return $this->_busyTo;
-    }
-
-    /**
-     * @param int $busyTo
-     */
-    public function setBusyTo($busyTo)
-    {
-        $this->_busyTo = $busyTo;
-    }
 }

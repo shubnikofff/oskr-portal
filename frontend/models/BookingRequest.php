@@ -6,6 +6,7 @@
  */
 
 namespace frontend\models;
+use common\components\Minute;
 
 
 /**
@@ -14,8 +15,8 @@ namespace frontend\models;
  * BookingRequest
  *
  * @property \MongoDate $date
- * @property int $fromTime
- * @property int $toTime
+ * @property Minute $fromTime
+ * @property Minute $toTime
  * @property array $rooms
  * @property string $meetingTopic
  * @property array $options
@@ -50,7 +51,7 @@ class BookingRequest extends Request
             'fromTime',
             'toTime',
             'rooms',
-            'meetingTopic',
+            'eventPurpose',
             'options',
             'cancellationReason',
             'note'
@@ -60,7 +61,7 @@ class BookingRequest extends Request
     public function rules()
     {
         return array_merge(parent::rules(), [
-            ['options', 'in', 'range' => [self::OPTION_VKS, self::OPTION_AUDIO_RECORD, self::OPTION_PROJECTOR, self::OPTION_SCREEN]]
+            ['options', 'in', 'range' => [self::OPTION_VKS, self::OPTION_AUDIO_RECORD, self::OPTION_PROJECTOR, self::OPTION_SCREEN], 'allowArray' => true]
         ]);
     }
 
@@ -71,11 +72,29 @@ class BookingRequest extends Request
             'fromTime' => 'с',
             'toTime' => 'по',
             'rooms' => 'Помещения',
-            'meetingTopic' => 'Тема совещания',
+            'eventPurpose' => 'Цель мероприятия',
             'options' => 'Опции',
             'cancellationReason' => 'Причина отмены',
             'note' => 'Примечание'
         ]);
+    }
+
+    public function afterFind()
+    {
+        parent::afterFind();
+
+        $this->fromTime = new Minute($this->fromTime);
+        $this->toTime = new Minute($this->toTime);
+    }
+
+    public function beforeSave($insert)
+    {
+        if(parent::beforeSave($insert)) {
+            $this->fromTime = $this->fromTime->int;
+            $this->toTime = $this->toTime->int;
+            return true;
+        }
+        return false;
     }
 
 

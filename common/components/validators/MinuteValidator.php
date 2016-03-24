@@ -8,67 +8,78 @@
 
 namespace common\components\validators;
 
+use common\components\Minute;
 use Yii;
 use yii\base\InvalidConfigException;
+use yii\validators\NumberValidator;
 use yii\validators\Validator;
-use common\components\MinuteFormatter;
 
 class MinuteValidator extends Validator
 {
+    /**
+     * @var Minute
+     */
     public $min;
+    /**
+     * @var Minute
+     */
     public $max;
+    /**
+     * @var string
+     */
     public $tooBig;
+    /**
+     * @var string
+     */
     public $tooSmall;
-    public $minString;
-    public $maxString;
+    /**
+     * @var string
+     */
     public $minuteAttribute;
 
     public function init()
     {
         parent::init();
+
         if ($this->message === null) {
-            $this->message = Yii::t('yii', 'The format of {attribute} is invalid.');
+            $this->message = '{attribute} имеет неверный формат';
         }
-        if ($this->min !== null && $this->tooSmall === null) {
-            $this->tooSmall = Yii::t('yii', '{attribute} must be no less than {min}.');
-        }
-        if ($this->max !== null && $this->tooBig === null) {
-            $this->tooBig = Yii::t('yii', '{attribute} must be no greater than {max}.');
-        }
-        if ($this->maxString === null) {
-            $this->maxString = (string)$this->max;
-        }
-        if ($this->minString === null) {
-            $this->minString = (string)$this->min;
-        }
-        if ($this->min !== null && is_string($this->min)) {
-            $time = MinuteFormatter::asInt($this->min);
-            if ($time === null) {
-                throw new InvalidConfigException("Invalid min time value: {$this->min}");
+
+        if ($this->max !== null) {
+            if (!$this->max instanceof Minute) {
+                throw new InvalidConfigException("Property 'max' must be instance of Minute");
+            } elseif ($this->tooBig === null) {
+                $this->tooBig = '{attribute} должно быть не больше ' . $this->max;
             }
-            $this->min = $time;
-        }
-        if ($this->max !== null && is_string($this->max)) {
-            $time = MinuteFormatter::asInt($this->max);
-            if ($time === null) {
-                throw new InvalidConfigException("Invalid max time value: {$this->max}");
+            if (!$this->min instanceof Minute) {
+                throw new InvalidConfigException("Property 'min' must be instance of Minute");
+            } elseif ($this->tooSmall === null) {
+                $this->tooSmall = '{attribute} должно быть не меньше ' . $this->min;
             }
-            $this->max = $time;
         }
     }
 
     public function validateAttribute($model, $attribute)
     {
-        $value = $model->{$attribute};
-        $time = MinuteFormatter::asInt($value);
-        if ($time === null) {
-            $this->addError($model, $attribute, $this->message, []);
-        } elseif ($this->min !== null && $time < $this->min) {
-            $this->addError($model, $attribute, $this->tooSmall, ['min' => $this->minString]);
-        } elseif ($this->max !== null && $time > $this->max) {
-            $this->addError($model, $attribute, $this->tooBig, ['max' => $this->maxString]);
+        try {
+            $value = new Minute($model->{$attribute});
+        } catch (\Exception $e) {
+            $this->addError($model, $attribute, $this->message);
+            return;
+        }
+
+        $numberValidator = new NumberValidator([
+            'min' => $this->min->int,
+            'max' => $this->max->int,
+            'tooBig' => $this->tooBig,
+            'tooSmall' => $this->tooSmall
+        ]);
+        $numberValidator->validate($value->int, $error);
+
+        if ($error !== null) {
+            $this->addError($model, $attribute, $error);
         } elseif ($this->minuteAttribute !== null) {
-            $model->{$this->minuteAttribute} = $time;
+            $model->{$this->minuteAttribute} = $value;
         }
     }
 }

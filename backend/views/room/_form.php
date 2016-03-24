@@ -23,6 +23,8 @@ use yii\widgets\MaskedInput;
 
     <?= $form->field($model, 'bookingAgreement')->checkbox() ?>
 
+    <?= $form->field($model, 'multipleBooking')->checkbox() ?>
+
     <?= $form->field($model, 'contactPerson')->textarea() ?>
 
     <?= $form->field($model, 'phone') ?>

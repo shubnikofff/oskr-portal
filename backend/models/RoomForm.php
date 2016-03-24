@@ -31,8 +31,8 @@ class RoomForm extends Room
             ['groupId', MongoIdValidator::className(), 'forceFormat' => 'object'],
             ['groupId', 'exist', 'targetClass' => RoomGroup::className(), 'targetAttribute' => '_id'],
 
-            ['bookingAgreement', 'boolean'],
-            ['bookingAgreement', 'filter', 'filter' => 'boolval'],
+            [['bookingAgreement', 'multipleBooking'], 'boolean'],
+            [['bookingAgreement', 'multipleBooking'], 'filter', 'filter' => 'boolval'],
 
             ['ipAddress', 'ip', 'ipv6' => false],
             [['phone', 'contactPerson', 'note'], 'safe'],

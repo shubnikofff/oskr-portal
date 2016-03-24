@@ -37,6 +37,8 @@ class m160226_092734_rename_participant_collection extends \yii\mongodb\Migratio
             'contact' => 'contactPerson',
         ]]);
 
+        $collection->update([], ['$set' => ['multipleBooking' => false]]);
+
         $collection->update([], ['$unset' => [
             'model' => '',
             'gatekeeperNumber' => ''
@@ -53,6 +55,10 @@ class m160226_092734_rename_participant_collection extends \yii\mongodb\Migratio
             'groupId' => 'companyId',
             'bookingAgreement' => 'ahuConfirmation',
             'contactPerson' => 'contact'
+        ]]);
+
+        $collection->update([], ['$unset' => [
+            'multipleBooking' => ''
         ]]);
 
         $this->_adminDB->executeCommand([

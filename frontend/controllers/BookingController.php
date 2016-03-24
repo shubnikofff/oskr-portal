@@ -6,6 +6,9 @@
  */
 
 namespace frontend\controllers;
+use common\components\actions\CreateAction;
+use frontend\models\BookingRequestForm;
+use yii\web\Controller;
 
 
 /**
@@ -14,7 +17,21 @@ namespace frontend\controllers;
  * BookingController
  */
 
-class BookingController
+class BookingController extends Controller
 {
+    public function actions()
+    {
+        return [
+            'create' => [
+                'class' => CreateAction::className(),
+                'modelClass' => BookingRequestForm::className(),
+                'view' => 'form'
+            ]
+        ];
+    }
 
+    public function actionIndex()
+    {
+        return $this->render('index');
+    }
 }
