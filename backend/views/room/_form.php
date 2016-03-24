@@ -18,7 +18,7 @@ use yii\widgets\MaskedInput;
     <?= $form->field($model, 'description') ?>
 
     <?= $form->field($model, 'groupId')->widget(\kartik\select2\Select2::className(), [
-        'data' => \app\models\RoomForm::groupItems()
+        'data' => \app\models\RoomForm::groupItems() //TODO добавить описание группы
     ]) ?>
 
     <?= $form->field($model, 'bookingAgreement')->checkbox() ?>

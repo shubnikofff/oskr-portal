@@ -18,7 +18,11 @@ class BookingFormAsset extends AssetBundle
     public $sourcePath = '@app/assets';
 
     public $js = [
-        'js/bookingForm.js'
+        'js/bookingForm.js',
+    ];
+
+    public $css = [
+        'css/bookingForm.css'
     ];
 
     public $depends = [

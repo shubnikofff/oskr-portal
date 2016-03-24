@@ -1,0 +1,23 @@
+/*
+ * Copyright (c) 2016. OSKR JSC "NIAEP"
+ */
+
+#room-group-container {
+    overflow-x: hidden;
+    overflow-y: scroll;
+    max-height: 350px;
+    border-top: 1px solid #d5d5d5;
+    border-bottom: 1px solid #d5d5d5;
+}
+
+button.room-group:first-child {
+    border-top: hidden;
+}
+
+button.room-group:last-child {
+    border-bottom: hidden;
+}
+
+button.room-group {
+    white-space: normal;
+}

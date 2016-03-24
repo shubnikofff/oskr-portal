@@ -9,14 +9,15 @@ namespace frontend\models;
 
 use common\components\Minute;
 use common\components\validators\MinuteValidator;
+use common\models\Room;
+use common\models\RoomGroup;
 use yii\mongodb\validators\MongoDateValidator;
-use yii\validators\CompareValidator;
-
 
 /**
  * @author Shubnikov Alexey <a.shubnikov@niaep.ru>
  *
  * BookingRequestForm
+ * @property array $busyRooms
  */
 class BookingRequestForm extends BookingRequest
 {
@@ -78,5 +79,24 @@ class BookingRequestForm extends BookingRequest
         ];
     }
 
+    /**
+     * @return array|RoomGroup[]
+     */
+    static public function roomGroups()
+    {
+        return RoomGroup::find()->orderBy(['order'])->all();
+    }
 
+    /**
+     * @return array|Room[]
+     */
+    static public function rooms()
+    {
+        return Room::find()->orderBy(['name'])->all();
+    }
+
+    public function getBusyRooms()
+    {
+
+    }
 }
