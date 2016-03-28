@@ -93,21 +93,15 @@ $options = [
 
         <div class="col-md-4">
 
-            <?php $buttons = ArrayHelper::toArray($model::roomGroups(), [
-                \common\models\RoomGroup::className() => [
-                    'label' => function ($group) {
-                        /** @var \common\models\RoomGroup $group */
-                        return Html::tag('div', $group->name) . Html::tag('div', Html::tag('small', $group->description, ['class' => 'text-muted']));
-                    },
-                    'options' => function ($group) {
-                        /** @var \common\models\RoomGroup $group */
-                        return [
-                            'id' => (string)$group->_id,
-                            'class' => 'btn-default room-group'
-                        ];
-                    }
-                ]
-            ]) ?>
+            <?php $buttons = array_map(function ($item) {
+                return [
+                    'label' => Html::tag('div', $item['name']) . Html::tag('div', Html::tag('small', $item['description'], ['class' => 'text-muted'])),
+                    'options' => [
+                        'id' => (string)$item['_id'],
+                        'class' => 'btn-default room-group'
+                    ]
+                ];
+            }, $model::roomGroups()) ?>
 
             <?= \yii\bootstrap\ButtonGroup::widget([
                 'options' => [
@@ -180,5 +174,5 @@ $options = [
 
 <?php \frontend\assets\BookingFormAsset::register($this);
 $this->registerJs('$("input[value=\'' . $model::OPTION_VKS . '\']").optionActivator(\'div.' . $vksOptionGroup . '\', \'div.' . $equipmentOptionGroup . '\')');
-$this->registerJs('$(function () {$(\'[data-toggle="tooltip"]\').tooltip()})')?>
+$this->registerJs('$(function () {$(\'[data-toggle="tooltip"]\').tooltip()})') ?>
 

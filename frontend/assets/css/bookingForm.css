@@ -5,7 +5,7 @@
 #room-group-container {
     overflow-x: hidden;
     overflow-y: scroll;
-    max-height: 350px;
+    max-height: 500px;
     border-top: 1px solid #d5d5d5;
     border-bottom: 1px solid #d5d5d5;
 }

@@ -11,6 +11,7 @@ use common\components\Minute;
 use common\components\validators\MinuteValidator;
 use common\models\Room;
 use common\models\RoomGroup;
+use yii\mongodb\Collection;
 use yii\mongodb\validators\MongoDateValidator;
 
 /**
@@ -80,19 +81,54 @@ class BookingRequestForm extends BookingRequest
     }
 
     /**
-     * @return array|RoomGroup[]
+     * @return array
      */
     static public function roomGroups()
     {
-        return RoomGroup::find()->orderBy(['order'])->all();
+        /** @var Collection $collection */
+        $collection = \Yii::$app->get('mongodb')->getCollection(RoomGroup::collectionName());
+
+        return $collection->aggregate([
+            ['$project' => [
+                'name' => 1,
+                'description' => 1,
+                'order' => 1
+            ]],
+            ['$sort' => [
+                'order' => 1
+            ]]
+        ]);
     }
 
     /**
-     * @return array|Room[]
+     * @return array
      */
     static public function rooms()
     {
-        return Room::find()->orderBy(['name'])->all();
+        /** @var \MongoCollection $collection */
+        $collection = \Yii::$app->get('mongodb')->getCollection(Room::collectionName());
+
+        return $collection->aggregate([
+            [
+                '$lookup' => [
+                    'from' => RoomGroup::collectionName(),
+                    'localField' => 'groupId',
+                    'foreignField' => '_id',
+                    'as' => 'group'
+                ]
+            ],
+            [
+                '$unwind' => '$group'
+            ],
+            [
+                '$project' => [
+                    'name' => true,
+                    'description' => true,
+
+                    'abbreviation' => '$group.abbreviation'
+                ]
+            ]
+        ]);
     }
 
     public function getBusyRooms()
