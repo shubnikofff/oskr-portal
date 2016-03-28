@@ -12,12 +12,22 @@ class m160226_092734_rename_participant_collection extends \yii\mongodb\Migratio
      * @var \yii\mongodb\Database
      */
     private $_adminDB;
+    /**
+     * @var array
+     */
+    private $_fields;
 
     public function init()
     {
         parent::init();
         $this->_db = Yii::$app->get('mongodb')->getDatabase();
         $this->_adminDB = Yii::$app->get('mongodb')->getDatabase('admin');
+        $this->_fields = [
+            'shortName' => 'description',
+            'companyId' => 'groupId',
+            'ahuConfirmation' => 'bookingAgreement',
+            'contact' => 'contactPerson',
+        ];
     }
 
     public function up()
@@ -29,13 +39,7 @@ class m160226_092734_rename_participant_collection extends \yii\mongodb\Migratio
 
         $collection = $this->_db->getCollection(self::NAME_NEW);
 
-        $collection->update([], ['$rename' => ['name' => 'description']]);
-        $collection->update([], ['$rename' => [
-            'shortName' => 'name',
-            'companyId' => 'groupId',
-            'ahuConfirmation' => 'bookingAgreement',
-            'contact' => 'contactPerson',
-        ]]);
+        $collection->update([], ['$rename' => $this->_fields]);
 
         $collection->update([], ['$set' => ['multipleBooking' => false]]);
 
@@ -49,13 +53,7 @@ class m160226_092734_rename_participant_collection extends \yii\mongodb\Migratio
     {
         $collection = $this->_db->getCollection(self::NAME_NEW);
 
-        $collection->update([], ['$rename' => ['name' => 'shortName',]]);
-        $collection->update([], ['$rename' => [
-            'description' => 'name',
-            'groupId' => 'companyId',
-            'bookingAgreement' => 'ahuConfirmation',
-            'contactPerson' => 'contact'
-        ]]);
+        $collection->update([], ['$rename' => array_flip($this->_fields)]);
 
         $collection->update([], ['$unset' => [
             'multipleBooking' => ''

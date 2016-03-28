@@ -10,6 +10,11 @@
     border-bottom: 1px solid #d5d5d5;
 }
 
+button.room-group {
+    white-space: normal;
+    text-align: left;
+}
+
 button.room-group:first-child {
     border-top: hidden;
 }
@@ -18,6 +23,10 @@ button.room-group:last-child {
     border-bottom: hidden;
 }
 
-button.room-group {
-    white-space: normal;
+div.room {
+    /*display: none;*/
+}
+
+div.room label:after{
+    content: "";
 }

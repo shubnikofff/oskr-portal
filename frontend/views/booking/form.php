@@ -7,6 +7,7 @@ use yii\bootstrap\Html;
 use yii\helpers\ArrayHelper;
 use kartik\date\DatePicker;
 use kartik\time\TimePicker;
+use yii\bootstrap\BaseHtml;
 
 /**
  * @var $this \yii\web\View
@@ -76,44 +77,92 @@ $options = [
 
 <?= $form->field($model, 'options', ['enableClientValidation' => false])
     ->checkboxList(ArrayHelper::getColumn($options, 'label'), ['item' => function ($index, $label, $name, $checked, $value) use ($options) {
-        return Html::beginTag('div', ['class' => 'checkbox ' . $options[$value]['group']]) . Html::checkbox($name, $checked, [
+        $checkBox = Html::checkbox($name, $checked, [
             'value' => $value,
             'label' => $label,
-        ]) . Html::endTag('div');
+        ]);
+        return Html::tag('div', $checkBox, ['class' => 'checkbox ' . $options[$value]['group']]);
     }]) ?>
 
-<div id="rooms" class="row">
 
-    <div class="col-md-4">
+<div id="rooms" class="form-group required">
 
-        <?php $buttons = ArrayHelper::toArray($model::roomGroups(), [
-            \common\models\RoomGroup::className() => [
-                'label' => function ($group) {
-                    /** @var \common\models\RoomGroup $group */
-                    return Html::tag('div', $group->name) . Html::tag('div', Html::tag('small', $group->description, ['class' => 'text-muted']));
+    <?= Html::label($model->getAttributeLabel('rooms')) ?>
+
+    <div class="row">
+
+        <div class="col-md-4">
+
+            <?php $buttons = ArrayHelper::toArray($model::roomGroups(), [
+                \common\models\RoomGroup::className() => [
+                    'label' => function ($group) {
+                        /** @var \common\models\RoomGroup $group */
+                        return Html::tag('div', $group->name) . Html::tag('div', Html::tag('small', $group->description, ['class' => 'text-muted']));
+                    },
+                    'options' => function ($group) {
+                        /** @var \common\models\RoomGroup $group */
+                        return [
+                            'id' => (string)$group->_id,
+                            'class' => 'btn-default room-group'
+                        ];
+                    }
+                ]
+            ]) ?>
+
+            <?= \yii\bootstrap\ButtonGroup::widget([
+                'options' => [
+                    'id' => 'room-group-container',
+                    'class' => 'btn-group-vertical'
+                ],
+                'buttons' => $buttons,
+                'encodeLabels' => false
+            ]) ?>
+
+        </div>
+
+        <div class="col-md-8">
+
+            <?php $rooms = $model::rooms();
+            $items = ArrayHelper::map($rooms,
+                function ($item) {
+                    return (string)$item->_id;
                 },
-                'options' => function ($group) {
-                    /** @var \common\models\RoomGroup $group */
-                    return [
-                        'id' => (string)$group->_id,
-                        'class' => 'btn-default room-group'
-                    ];
-                }
-            ]
-        ]) ?>
+                function ($item) {
+                    return $item->name;
+                });
 
-        <?= \yii\bootstrap\ButtonGroup::widget([
-            'options' => [
-                'id' => 'room-group-container',
-                'class' => 'btn-group-vertical'
-            ],
-            'buttons' => $buttons,
-            'encodeLabels' => false
-        ]) ?>
+            $options = [
+                'item' => function ($index, $label, $name, $checked, $value) use ($rooms) {
+
+                    $checkbox = Html::checkbox($name, $checked, [
+                        'value' => $value,
+                        'label' => $label,
+                        'labelOptions' => [
+                            'data' => [
+                                'toggle' => 'tooltip',
+                                'placement' => 'top',
+                                'title' => $rooms[$index]->description,
+                                'container' => 'body'
+                            ]
+                        ]
+                    ]);
+                    return Html::tag('div', $checkbox, [
+                        'class' => 'room checkbox col-md-4',
+                        'id' => $value,
+
+                    ]);
+                }
+            ]; ?>
+
+            <div class="row">
+
+                <?= $form->field($model, 'rooms', ['enableClientValidation' => false])->checkboxList($items, $options)->label(false) ?>
+
+            </div>
+
+        </div>
 
     </div>
-
-    <div class="col-md-8" style="border: dashed 1px">4567</div>
 
 </div>
 
@@ -130,5 +179,6 @@ $options = [
 <?php ActiveForm::end() ?>
 
 <?php \frontend\assets\BookingFormAsset::register($this);
-$this->registerJs('$("input[value=\'' . $model::OPTION_VKS . '\']").optionActivator(\'' . $vksOptionGroup . '\', \'' . $equipmentOptionGroup . '\')'); ?>
+$this->registerJs('$("input[value=\'' . $model::OPTION_VKS . '\']").optionActivator(\'div.' . $vksOptionGroup . '\', \'div.' . $equipmentOptionGroup . '\')');
+$this->registerJs('$(function () {$(\'[data-toggle="tooltip"]\').tooltip()})')?>
 

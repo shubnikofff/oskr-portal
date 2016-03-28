@@ -20,10 +20,10 @@
         }
     };
 
-    $.fn.optionActivator = function (vksClass, equipmentClass) {
+    $.fn.optionActivator = function (vksOptSelector, equipmentOptSelector) {
 
-        var vksOpt = new OptionGroup('.' + vksClass);
-        var equipmentOpt = new OptionGroup('.' + equipmentClass);
+        var vksOpt = new OptionGroup(vksOptSelector);
+        var equipmentOpt = new OptionGroup(equipmentOptSelector);
 
         this.on('change', function () {
             if (this.checked) {

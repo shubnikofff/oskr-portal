@@ -99,4 +99,21 @@ class BookingRequestForm extends BookingRequest
     {
 
     }
+
+    static public function testLookup()
+    {
+        /** @var \MongoCollection $collection */
+        $collection = \Yii::$app->get('mongodb')->getCollection(Room::collectionName());
+
+        return $collection->aggregate([
+            [
+                '$lookup' => [
+                    'from' => RoomGroup::collectionName(),
+                    'localField' => 'groupId',
+                    'foreignField' => '_id',
+                    'as' => 'group'
+                ]
+            ]
+        ]);
+    }
 }

@@ -14,6 +14,8 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'name') ?>
 
+    <?= $form->field($model, 'abbreviation') ?>
+
     <?= $form->field($model, 'description')->textarea() ?>
 
     <div class="form-group">

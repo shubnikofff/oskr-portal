@@ -25,6 +25,7 @@ $this->params['breadcrumbs'][] = $this->title; ?>
                 'contentOptions' => ['width' => '1px;']
             ],
             'name',
+            'abbreviation',
             'description:ntext',
             [
                 'class' => 'yii\grid\ActionColumn',

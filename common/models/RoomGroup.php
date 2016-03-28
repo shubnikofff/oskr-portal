@@ -9,6 +9,7 @@ use yii\mongodb\ActiveRecord;
  *
  * @property \MongoId $_id
  * @property string $name
+ * @property string $abbreviation
  * @property string $description
  * @property int $order
  */
@@ -30,6 +31,7 @@ class RoomGroup extends ActiveRecord
         return [
             '_id',
             'name',
+            'abbreviation',
             'description',
             'order'
         ];
@@ -42,7 +44,7 @@ class RoomGroup extends ActiveRecord
     {
         return [
             ['name', 'required'],
-            ['description', 'safe']
+            [['description', 'abbreviation'], 'safe']
         ];
     }
 
@@ -53,6 +55,7 @@ class RoomGroup extends ActiveRecord
     {
         return [
             'name' => 'Имя',
+            'abbreviation' => 'Аббревиатура',
             'description' => 'Описание',
         ];
     }
