@@ -26,7 +26,7 @@ class RoomForm extends Room
     public function rules()
     {
         return [
-            [['name', 'groupId', 'description'], 'required'],
+            [['name', 'groupId'], 'required'],
 
             ['groupId', MongoIdValidator::className(), 'forceFormat' => 'object'],
             ['groupId', 'exist', 'targetClass' => RoomGroup::className(), 'targetAttribute' => '_id'],
@@ -35,7 +35,7 @@ class RoomForm extends Room
             [['bookingAgreement', 'multipleBooking'], 'filter', 'filter' => 'boolval'],
 
             ['ipAddress', 'ip', 'ipv6' => false],
-            [['phone', 'contactPerson', 'note'], 'safe'],
+            [['description', 'phone', 'contactPerson', 'note'], 'safe'],
         ];
     }
 

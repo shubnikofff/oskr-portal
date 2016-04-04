@@ -37,6 +37,7 @@ $this->params['breadcrumbs'][] = $this->title; ?>
                     'value' => $model->group->name
                 ],
                 'bookingAgreement:boolean',
+                'multipleBooking:boolean',
                 'contactPerson:ntext',
                 'phone',
                 'ipAddress',

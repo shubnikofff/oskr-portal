@@ -23,10 +23,19 @@ button.room-group:last-child {
     border-bottom: hidden;
 }
 
+div.room-group {
+    display: none;
+}
+
 div.room {
-    /*display: none;*/
+    display: inline-block;
+    width: 32%;
 }
 
 div.room label:after{
     content: "";
+}
+
+.found {
+    background-color: yellow;
 }

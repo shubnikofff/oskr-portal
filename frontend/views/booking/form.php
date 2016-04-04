@@ -2,12 +2,11 @@
 /**
  * Copyright (c) 2016. OSKR JSC "NIAEP"
  */
+use yii\helpers\ArrayHelper;
 use yii\bootstrap\ActiveForm;
 use yii\bootstrap\Html;
-use yii\helpers\ArrayHelper;
 use kartik\date\DatePicker;
 use kartik\time\TimePicker;
-use yii\bootstrap\BaseHtml;
 
 /**
  * @var $this \yii\web\View
@@ -25,6 +24,9 @@ $this->params['breadcrumbs'][] = $this->title; ?>
     <div class="col-md-2">
         <?= $form->field($model, 'dateString')->widget(DatePicker::className(), [
             'type' => DatePicker::TYPE_INPUT,
+            'options' => [
+                'class' => 'date-time'
+            ],
             'pluginOptions' => [
                 'autoclose' => true,
                 'startDate' => '0d',
@@ -37,6 +39,7 @@ $this->params['breadcrumbs'][] = $this->title; ?>
     <?php $timePickerOptions = [
         'options' => [
             'placeholder' => 'ЧЧ:ММ',
+            'class' => 'date-time'
         ],
         'pluginOptions' => [
             'defaultTime' => false,
@@ -75,7 +78,7 @@ $options = [
     $model::OPTION_SCREEN => ['label' => 'Выдать экран', 'group' => $equipmentOptionGroup]
 ]; ?>
 
-<?= $form->field($model, 'options', ['enableClientValidation' => false])
+<?= $form->field($model, 'options')
     ->checkboxList(ArrayHelper::getColumn($options, 'label'), ['item' => function ($index, $label, $name, $checked, $value) use ($options) {
         $checkBox = Html::checkbox($name, $checked, [
             'value' => $value,
@@ -91,17 +94,27 @@ $options = [
 
     <div class="row">
 
-        <div class="col-md-4">
+        <div class="col-lg-4 form-group">
+
+            <input id="room-finder" placeholder="Поиск по названию помещений" class="form-control">
+
+        </div>
+
+    </div>
+
+    <div class="row">
+
+        <div class="col-lg-4">
 
             <?php $buttons = array_map(function ($item) {
                 return [
                     'label' => Html::tag('div', $item['name']) . Html::tag('div', Html::tag('small', $item['description'], ['class' => 'text-muted'])),
                     'options' => [
-                        'id' => (string)$item['_id'],
+                        'group-id' => (string)$item['_id'],
                         'class' => 'btn-default room-group'
                     ]
                 ];
-            }, $model::roomGroups()) ?>
+            }, $model->roomGroups) ?>
 
             <?= \yii\bootstrap\ButtonGroup::widget([
                 'options' => [
@@ -114,45 +127,40 @@ $options = [
 
         </div>
 
-        <div class="col-md-8">
+        <div class="col-lg-8">
 
-            <?php $rooms = $model::rooms();
-            $items = ArrayHelper::map($rooms,
-                function ($item) {
-                    return (string)$item->_id;
-                },
-                function ($item) {
-                    return $item->name;
-                });
+            <?php foreach ($model->roomGroups as $roomGroup) {
 
-            $options = [
-                'item' => function ($index, $label, $name, $checked, $value) use ($rooms) {
+                $items = ArrayHelper::map($roomGroup['rooms'],
+                    function ($item) {
+                        return (string)$item['_id'];
+                    }, 'name');
 
-                    $checkbox = Html::checkbox($name, $checked, [
-                        'value' => $value,
-                        'label' => $label,
-                        'labelOptions' => [
+                $options = [
+                    'id' => (string)$roomGroup['_id'],
+                    'class' => 'room-group',
+                    'unselect' => null,
+                    'item' => function ($index, $label, $name, $checked, $value) use ($roomGroup) {
+                        $rooms = $roomGroup['rooms'];
+
+                        $agreement = ($rooms[$index]['bookingAgreement']) ? ' ' . Html::tag('span', '', ['class' => 'text-warning glyphicon glyphicon-star']) : '';
+                        $label = Html::tag('div', $label . $agreement) . Html::tag('div', Html::tag('small', $rooms[$index]['description']), ['class' => 'text-muted']);
+
+                        $checkbox = Html::checkbox($name, $checked, [
+                            'label' => $label,
+                            'value' => $value,
                             'data' => [
-                                'toggle' => 'tooltip',
-                                'placement' => 'top',
-                                'title' => $rooms[$index]->description,
-                                'container' => 'body'
+                                'abbreviation' => $roomGroup['abbreviation']
                             ]
-                        ]
-                    ]);
-                    return Html::tag('div', $checkbox, [
-                        'class' => 'room checkbox col-md-4',
-                        'id' => $value,
+                        ]);
 
-                    ]);
-                }
-            ]; ?>
+                        return Html::tag('div', $checkbox, ['class' => 'checkbox room']);
+                    }
+                ];
 
-            <div class="row">
+                echo \yii\helpers\BaseHtml::activeCheckboxList($model, 'rooms', $items, $options);
 
-                <?= $form->field($model, 'rooms', ['enableClientValidation' => false])->checkboxList($items, $options)->label(false) ?>
-
-            </div>
+            } ?>
 
         </div>
 
@@ -172,7 +180,5 @@ $options = [
 
 <?php ActiveForm::end() ?>
 
-<?php \frontend\assets\BookingFormAsset::register($this);
-$this->registerJs('$("input[value=\'' . $model::OPTION_VKS . '\']").optionActivator(\'div.' . $vksOptionGroup . '\', \'div.' . $equipmentOptionGroup . '\')');
-$this->registerJs('$(function () {$(\'[data-toggle="tooltip"]\').tooltip()})') ?>
+<?php \frontend\assets\BookingFormAsset::register($this); ?>
 

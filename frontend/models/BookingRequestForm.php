@@ -18,6 +18,7 @@ use yii\mongodb\validators\MongoDateValidator;
  * @author Shubnikov Alexey <a.shubnikov@niaep.ru>
  *
  * BookingRequestForm
+ * @property array $roomGroups
  * @property array $busyRooms
  */
 class BookingRequestForm extends BookingRequest
@@ -35,6 +36,10 @@ class BookingRequestForm extends BookingRequest
      * @var string
      */
     public $toTimeString;
+    /**
+     * @var array
+     */
+    private $_roomGroups;
 
     public function rules()
     {
@@ -83,52 +88,41 @@ class BookingRequestForm extends BookingRequest
     /**
      * @return array
      */
-    static public function roomGroups()
+    public function getRoomGroups()
     {
-        /** @var Collection $collection */
-        $collection = \Yii::$app->get('mongodb')->getCollection(RoomGroup::collectionName());
+        if (!isset($this->_roomGroups)) {
+            /** @var Collection $collection */
+            $collection = \Yii::$app->get('mongodb')->getCollection(RoomGroup::collectionName());
 
-        return $collection->aggregate([
-            ['$project' => [
-                'name' => 1,
-                'description' => 1,
-                'order' => 1
-            ]],
-            ['$sort' => [
-                'order' => 1
-            ]]
-        ]);
-    }
+            $this->_roomGroups = $collection->aggregate([
+                [
+                    '$lookup' => [
+                        'from' => Room::collectionName(),
+                        'localField' => '_id',
+                        'foreignField' => 'groupId',
+                        'as' => 'rooms'
+                    ]
+                ],
+                [
+                    '$sort' => [
+                        'order' => 1
+                    ]
+                ],
+                [
+                    '$project' => [
+                        'name' => true,
+                        'abbreviation' => true,
+                        'description' => true,
+                        'rooms._id' => true,
+                        'rooms.name' => true,
+                        'rooms.description' => true,
+                        'rooms.bookingAgreement' => true,
+                    ]
+                ],
+            ]);
+        }
 
-    /**
-     * @return array
-     */
-    static public function rooms()
-    {
-        /** @var \MongoCollection $collection */
-        $collection = \Yii::$app->get('mongodb')->getCollection(Room::collectionName());
-
-        return $collection->aggregate([
-            [
-                '$lookup' => [
-                    'from' => RoomGroup::collectionName(),
-                    'localField' => 'groupId',
-                    'foreignField' => '_id',
-                    'as' => 'group'
-                ]
-            ],
-            [
-                '$unwind' => '$group'
-            ],
-            [
-                '$project' => [
-                    'name' => true,
-                    'description' => true,
-
-                    'abbreviation' => '$group.abbreviation'
-                ]
-            ]
-        ]);
+        return $this->_roomGroups;
     }
 
     public function getBusyRooms()
@@ -136,20 +130,4 @@ class BookingRequestForm extends BookingRequest
 
     }
 
-    static public function testLookup()
-    {
-        /** @var \MongoCollection $collection */
-        $collection = \Yii::$app->get('mongodb')->getCollection(Room::collectionName());
-
-        return $collection->aggregate([
-            [
-                '$lookup' => [
-                    'from' => RoomGroup::collectionName(),
-                    'localField' => 'groupId',
-                    'foreignField' => '_id',
-                    'as' => 'group'
-                ]
-            ]
-        ]);
-    }
 }
