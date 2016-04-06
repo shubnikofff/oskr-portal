@@ -18,31 +18,9 @@
         return that;
     };
 
-    var roomgroupbutton = function (selector) {
+    var container = function (selector) {
 
-        var that = control(selector || 'button.room-group'), current;
-
-        var click = function () {
-            if (current !== undefined) {
-                current.hide();
-            }
-            current = roomgroupcontainer('#' + this.getAttribute('group-id'));
-            current.show();
-        };
-
-        that.on('click', function (event) {
-            event.preventDefault();
-            click.apply(this);
-        });
-
-        that.click = click;
-
-        return that;
-    };
-
-    var roomgroupcontainer = function (selector) {
-
-        var that = control(selector || 'div.room-group');
+        var that = control(selector);
 
         var set_visible = function () {
             that.get_set().fadeIn();
@@ -58,7 +36,23 @@
         };
     };
 
-    var roomfinder = function () {
+    /* VKS Option */
+    (function () {
+        var that = control('input[value="vks"]'),
+            change = function () {
+
+                container(this.checked ? 'div.option-vks' : 'div.option-equipment').show();
+                container(this.checked ? 'div.option-equipment' : 'div.option-vks').hide();
+            };
+
+        that.on('change',change);
+
+        change();
+
+    })();
+
+    /* Room Finder */
+    (function () {
 
         var that = control('#room-finder'), timeoutId, $found;
 
@@ -68,7 +62,7 @@
                 $found.removeClass('found');
             }
 
-            if(this.value.length > 0) {
+            if (this.value.length > 0) {
                 $found = $("div.room:contains('" + this.value + "')");
                 $found.parent().each(function () {
                     $found = $found.add("button[group-id='" + this.id + "']");
@@ -86,59 +80,36 @@
             }, 800);
         });
 
-        return that;
-    };
-    
-    roomgroupbutton().get_set(0).click();
-    roomfinder();
+    })();
 
-    /*$.fn.bookingForm = function (selectors) {
-     //$(selectors.options.vksOption).optionActivator(selectors.options.vksGroup, selectors.options.equipmentGroup);
+    /* Room Group Button */
+    (function () {
 
+        var that = control('button.room-group'), current;
 
-     var buttongroup = roomgroupbutton(selectors.roomGroupButtons);
+        var click = function () {
+            if (current !== undefined) {
+                current.hide();
+            }
+            current = container('#' + this.getAttribute('group-id'));
+            current.show();
+        };
 
+        that.on('click', function (event) {
+            event.preventDefault();
+            click.apply(this);
+        });
 
-     };*/
+        click.apply(that.get_set(0));
 
-    /*var OptionGroup = function (groupSelector) {
-     this.container = $(groupSelector);
-     this.input = $("input[type=checkbox]", this.container);
-     };
+    })();
 
-     OptionGroup.prototype = {
-     show: function () {
-     this.container.show();
-     this.input.prop('disabled', false);
-     },
+    /* For :contain case insensitive */
+    $.expr[":"].contains = $.expr.createPseudo(function (arg) {
+        return function (elem) {
+            return $(elem).text().toUpperCase().indexOf(arg.toUpperCase()) >= 0;
+        };
+    });
 
-     hide: function () {
-     this.container.hide();
-     this.input.prop('disabled', true);
-     }
-     };
-
-     $.fn.bookingForm = function (selectors) {
-     $(selectors.options.vksOption).optionActivator(selectors.options.vksGroup, selectors.options.equipmentGroup);
-     };
-
-     $.fn.optionActivator = function (vksOptSelector, equipmentOptSelector) {
-
-     var vksOpt = new OptionGroup(vksOptSelector);
-     var equipmentOpt = new OptionGroup(equipmentOptSelector);
-
-     this.on('change', function () {
-     if (this.checked) {
-     vksOpt.show();
-     equipmentOpt.hide();
-     } else {
-     vksOpt.hide();
-     equipmentOpt.show();
-     }
-     });
-
-     this.trigger('change');
-
-     };*/
 
 })(jQuery);

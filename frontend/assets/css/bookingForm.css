@@ -2,6 +2,10 @@
  * Copyright (c) 2016. OSKR JSC "NIAEP"
  */
 
+div.option-vks, div.option-equipment {
+    display: none;
+}
+
 #room-group-container {
     overflow-x: hidden;
     overflow-y: scroll;

@@ -17,7 +17,7 @@ $this->params['breadcrumbs'][] = $this->title; ?>
 
 <h3>Заявка №<?= $model->number ?></h3>
 
-<?php $form = ActiveForm::begin() ?>
+<?php $form = ActiveForm::begin(['enableClientValidation' => false]) ?>
 
 <div class="row">
 
