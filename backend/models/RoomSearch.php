@@ -18,7 +18,10 @@ class RoomSearch extends Room
     public function rules()
     {
         return [
-            [['name', 'ipAddress', 'description'], 'safe'],
+            ['name', 'safe'],
+
+            [['bookingAgreement', 'multipleBooking'], 'filter', 'filter' => 'boolval'],
+            
             ['groupId', MongoIdValidator::className(), 'forceFormat' => 'object']
         ];
     }
@@ -52,8 +55,8 @@ class RoomSearch extends Room
 
         $query->andFilterWhere(['like', 'name', $this->name])
             ->andFilterWhere(['groupId' => $this->groupId])
-            ->andFilterWhere(['like', 'ipAddress', $this->ipAddress])
-            ->andFilterWhere(['like', 'description', $this->description]);
+            ->andFilterWhere(['bookingAgreement' => $this->bookingAgreement])
+            ->andFilterWhere(['multipleBooking'=> $this->multipleBooking]);
 
         return $dataProvider;
     }
