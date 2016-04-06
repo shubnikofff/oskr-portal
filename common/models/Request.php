@@ -38,8 +38,8 @@ abstract class Request extends ActiveRecord
     {
         return [
             //TODO Сделать на базе основных классов поведения
-            'common\components\behaviors\TimestampBehavior',
-            'common\components\behaviors\BlameableBehavior',
+            /*'common\components\behaviors\TimestampBehavior',
+            'common\components\behaviors\BlameableBehavior',*/
         ];
     }
 

@@ -2,17 +2,15 @@
 
 namespace app\models;
 
-use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use common\models\SearchModelInterface;
 use common\models\Room;
 use yii\mongodb\validators\MongoIdValidator;
 
 /**
  * RoomSearch represents the model behind the search form about `common\models\Room`.
  */
-class RoomSearch extends Room implements SearchModelInterface
+class RoomSearch extends Room
 {
     /**
      * @inheritdoc

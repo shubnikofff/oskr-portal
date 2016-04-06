@@ -4,7 +4,7 @@ use yii\grid\GridView;
 use kartik\helpers\Html;
 use yii\grid\ActionColumn;
 /* @var $this yii\web\View */
-/* @var $dataProvider yii\data\ActiveDataProvider */
+/* @var $searchModel \app\models\VksDeployServerSearch */
 
 $this->title = 'Сервера сборки';
 $this->params['breadcrumbs'][] = $this->title;
@@ -18,7 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
     </p>
 
     <?= GridView::widget([
-        'dataProvider' => $dataProvider,
+        'dataProvider' => $searchModel->search(),
         'columns' => [
             [
                 'class' => ActionColumn::className(),

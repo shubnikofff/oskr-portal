@@ -9,7 +9,6 @@
 namespace common\components\actions;
 
 use yii\base\InvalidConfigException;
-use common\models\SearchModelInterface;
 use yii\helpers\Url;
 use yii\base\Model;
 
@@ -17,7 +16,7 @@ use yii\base\Model;
  * Class SearchAction
  * @package common\components\actions
  *
- * @property Model|SearchModelInterface $_model
+ * @property Model $_model
  */
 class SearchAction extends BaseAction
 {
@@ -36,8 +35,8 @@ class SearchAction extends BaseAction
 
     public function init()
     {
-        if (!is_subclass_of($this->modelClass, Model::className()) || !is_subclass_of($this->modelClass, 'common\models\SearchModelInterface')) {
-            throw new InvalidConfigException("Provided model class '{$this->modelClass}' must extend Model class and implement SearchModelInterface");
+        if (!is_subclass_of($this->modelClass, Model::className())) {
+            throw new InvalidConfigException("Provided model class '{$this->modelClass}' must extend Model class");
         }
     }
 
@@ -59,10 +58,7 @@ class SearchAction extends BaseAction
     {
         $this->_model->load(\Yii::$app->request->get());
 
-        $viewParams = [
-            'filterModel' => $this->_model,
-            'dataProvider' => $this->_model->search()
-        ];
+        $viewParams = ['searchModel' => $this->_model];
 
         if (\Yii::$app->request->isPjax && isset($this->resultsView)) {
             return $this->controller->renderAjax($this->resultsView, $viewParams);

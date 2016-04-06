@@ -4,8 +4,7 @@ use kartik\helpers\Html;
 use yii\grid\GridView;
 
 /* @var $this yii\web\View */
-/* @var $model \app\models\RoomGroupSearch */
-/* @var $dataProvider yii\data\ActiveDataProvider */
+/* @var $searchModel \app\models\RoomGroupSearch */
 
 $this->title = 'Группы помещений';
 $this->params['breadcrumbs'][] = $this->title; ?>
@@ -15,8 +14,8 @@ $this->params['breadcrumbs'][] = $this->title; ?>
     <?= Html::a('<span class="glyphicon glyphicon-plus"></span> Новая группа', ['create'], ['class' => 'btn btn-success']) ?>
 
     <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $model,
+        'dataProvider' => $searchModel->search(),
+        'filterModel' => $searchModel,
         'summaryOptions' => ['class' => 'summary text-right'],
         'columns' => [
             [

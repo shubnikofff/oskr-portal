@@ -7,12 +7,10 @@
  */
 namespace backend\models;
 
-use Yii;
-use common\models\SearchModelInterface;
 use common\models\User;
 use yii\data\ActiveDataProvider;
 
-class UserSearch extends User implements SearchModelInterface
+class UserSearch extends User
 {
 
     public function rules()
@@ -28,7 +26,7 @@ class UserSearch extends User implements SearchModelInterface
 
     public function search()
     {
-        $query = User::find()->where(['username' => ['$ne' => Yii::$app->params['admin.name']]]);
+        $query = User::find()->where(['username' => ['$ne' => \Yii::$app->params['admin.name']]]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query

@@ -8,13 +8,12 @@
 
 namespace frontend\models\vks;
 
-use common\models\SearchModelInterface;
 use yii\data\ActiveDataProvider;
 use yii\data\Pagination;
 use common\rbac\SystemPermission;
 use yii\data\Sort;
 
-class RequestSearch extends Request implements SearchModelInterface
+class RequestSearch extends Request
 {
     const SCENARIO_SEARCH_SCHEDULE = 'search_schedule';
     const SCENARIO_SEARCH_PERSONAL = 'search_personal';
