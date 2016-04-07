@@ -1,6 +1,7 @@
 <?php
 
 use yii\helpers\Html;
+use yii\helpers\ArrayHelper;
 
 /* @var $this yii\web\View */
 /* @var $searchModel \app\models\RoomSearch */
@@ -20,7 +21,17 @@ $this->params['breadcrumbs'][] = $this->title;
             'name',
             [
                 'attribute' => 'groupId',
-                'filter' => \app\models\RoomForm::groupItems(),
+                'filter' => ArrayHelper::map(\app\models\RoomForm::groups(),
+                    function ($item) {
+                        return (string)$item['_id'];
+                    }, function ($item) {
+                        $name = $item['name'];
+                        if (!empty($item['description'])) {
+                            $name .= ' - ' . $item['description'];
+                        }
+                        return $name;
+                    }),
+                'filterOptions' => ['style' => 'max-width: 300px'],
                 'value' => 'group.name'
             ],
             [

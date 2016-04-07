@@ -20,8 +20,8 @@ class RoomSearch extends Room
         return [
             ['name', 'safe'],
 
-            [['bookingAgreement', 'multipleBooking'], 'filter', 'filter' => 'boolval'],
-            
+            [['bookingAgreement', 'multipleBooking'], 'filter', 'filter' => 'boolval', 'skipOnEmpty' => true],
+
             ['groupId', MongoIdValidator::className(), 'forceFormat' => 'object']
         ];
     }

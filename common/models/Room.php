@@ -15,6 +15,7 @@ use yii\mongodb\Collection;
  * @property \MongoId|string $groupId
  * @property RoomGroup $group
  * @property bool $bookingAgreement
+ * @property array $agreementPerson
  * @property bool $multipleBooking
  * @property string $phone
  * @property string $contactPerson
@@ -43,6 +44,7 @@ class Room extends ActiveRecord
             'description',
             'groupId',
             'bookingAgreement',
+            'agreementPerson',
             'multipleBooking',
             'phone',
             'contactPerson',

@@ -9,8 +9,6 @@ namespace app\models;
 
 use common\models\Room;
 use common\models\RoomGroup;
-use yii\helpers\ArrayHelper;
-use yii\mongodb\Query;
 use yii\mongodb\validators\MongoIdValidator;
 
 /**
@@ -42,11 +40,22 @@ class RoomForm extends Room
     /**
      * @return array
      */
-    static public function groupItems()
+    static public function groups()
     {
-        $query = (new Query())->select(['_id', 'name'])->from(RoomGroup::collectionName());
-        return ArrayHelper::map($query->all(), function ($item) {
-            return (string)$item['_id'];
-        }, 'name');
+        /** @var \MongoCollection $collection */
+        $collection = \Yii::$app->get('mongodb')->getCollection(RoomGroup::collectionName());
+        return $collection->aggregate([
+            [
+                '$sort' => [
+                    'order' => 1
+                ]
+            ],
+            [
+                '$project' => [
+                    'name' => 1,
+                    'description' => 1,
+                ]
+            ],
+        ]);
     }
 }
