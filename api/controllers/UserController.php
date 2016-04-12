@@ -7,7 +7,6 @@ namespace app\controllers;
 
 use yii\rest\ActiveController;
 
-
 /**
  * @author Shubnikov Alexey <a.shubnikov@niaep.ru>
  *
@@ -17,4 +16,14 @@ use yii\rest\ActiveController;
 class UserController extends ActiveController
 {
     public $modelClass = 'common\models\User';
+
+    public function actions()
+    {
+        $actions = parent::actions();
+        unset($actions['create'],$actions['update'],$actions['delete']);
+
+        return $actions;
+    }
+
+
 }

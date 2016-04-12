@@ -23,20 +23,17 @@ return [
             ],
         ],
     ],
-/*    'errorHandler' => [
-        'errorAction' => 'site/error',
-    ],*/
     'urlManager' => [
         'enablePrettyUrl' => true,
         'enableStrictParsing' => true,
         'showScriptName' => false,
         'rules' => [
-            ['class' => 'yii\rest\UrlRule', 'controller' => 'user'],
+            ['class' => 'yii\rest\UrlRule', 'controller' => 'user', 'tokens' => ['{id}' => '<id:\w+>']],
         ],
     ],
     'request' => [
         'parsers' => [
             'application/json' => 'yii\web\JsonParser',
         ]
-    ]
+    ],
 ];

@@ -11,12 +11,12 @@ $params = array_merge(
 );
 
 return [
-    'id' => 'teleport-api',
-    'name' => 'ОСКР Портал',
+    'id' => 'oskr-api',
+    'name' => 'oskr api',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'controllerNamespace' => 'app\controllers',
-    'defaultRoute' => 'users',
+    //'defaultRoute' => 'users',
     'components' => require(__DIR__.'/components.php'),
     'params' => $params,
 ];
