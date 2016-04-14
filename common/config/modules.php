@@ -8,6 +8,7 @@
 //use kartik\datecontrol\Module as DateControl;
 
 return [
+    'rest' => 'common\modules\rest\Module'
     /*'datecontrol' => [
         'class' => DateControl::className(),
 

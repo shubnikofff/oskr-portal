@@ -11,24 +11,23 @@ return [
         'identityClass' => 'common\models\User',
         'enableAutoLogin' => false,
     ],
-
-    'log' => [
-        'traceLevel' => YII_DEBUG ? 3 : 0,
-        'targets' => [
-            [
-                'class' => 'yii\log\FileTarget',
-                'levels' => ['error', 'warning'],
-            ],
-        ],
-    ],
+    
     'errorHandler' => [
         'errorAction' => 'site/error',
     ],
+    
     'urlManager' => [
         'enablePrettyUrl' => true,
         'showScriptName' => false,
         'rules' => [
             '<controller:(permission|role|user|vks-room)>s' => '<controller>/index',
+            [
+                'class' => 'yii\rest\UrlRule',
+                'controller' => 'rest/user', 
+                'tokens' => [
+                    '{id}' => '<id:\w+>'
+                ]
+            ],
         ]
     ]
 ];

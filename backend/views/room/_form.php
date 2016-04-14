@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use yii\widgets\MaskedInput;
 use yii\helpers\ArrayHelper;
-
+use yii\web\JsExpression;
 
 /* @var $this yii\web\View */
 /* @var $model \app\models\RoomForm */
@@ -47,6 +47,18 @@ use yii\helpers\ArrayHelper;
 
     <?= $form->field($model, 'bookingAgreement')->checkbox() ?>
 
+    <?= $form->field($model, 'agreementPerson')->widget(\kartik\select2\Select2::className(), [
+        'initValueText' => '12',
+        //'options' => ['placeholder' => 'Search for a city ...'],
+        'pluginOptions' => [
+            'ajax' => [
+                'url' => 'http://'.\Yii::getAlias('@api/users'),
+                'dataType' => 'json',
+                'data' => new JsExpression('function(params){return {name: params.term};}')
+            ]
+        ]
+    ]) ?>
+
     <?= $form->field($model, 'multipleBooking')->checkbox() ?>
 
     <?= $form->field($model, 'contactPerson')->textarea() ?>
@@ -69,7 +81,9 @@ use yii\helpers\ArrayHelper;
 
     <?php ActiveForm::end(); ?>
 
-    <?php \kartik\select2\Select2Asset::register($this);
-    $this->registerJs('$("#list").select2()'); ?>
+    <?php \backend\assets\RoomFormAsset::register($this); ?>
+
+    <?php /*\kartik\select2\Select2Asset::register($this);
+    $this->registerJs('$("#list").select2()');*/ ?>
 
 </div>
