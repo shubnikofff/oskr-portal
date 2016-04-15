@@ -9,6 +9,7 @@ namespace app\models;
 
 use common\models\Room;
 use common\models\RoomGroup;
+use common\models\User;
 use yii\mongodb\validators\MongoIdValidator;
 
 /**
@@ -32,8 +33,17 @@ class RoomForm extends Room
             [['bookingAgreement', 'multipleBooking'], 'boolean'],
             [['bookingAgreement', 'multipleBooking'], 'filter', 'filter' => 'boolval'],
 
+            ['agreementPerson', 'required', 'when' => function ($model) {
+                return $model->bookingAgreement;
+            }],
+            ['agreementPerson', 'exist', 'targetClass' => User::className(), 'targetAttribute' => '_id', 'allowArray' => true],
+            
             ['ipAddress', 'ip', 'ipv6' => false],
             [['description', 'phone', 'contactPerson', 'note'], 'safe'],
+            
+            ['agreementPerson', 'each', 'rule' => ['filter', 'filter' => function ($value) {
+                return new \MongoId($value);
+            }]]
         ];
     }
 

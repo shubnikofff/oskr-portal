@@ -5,6 +5,7 @@ use yii\bootstrap\ActiveForm;
 use yii\widgets\MaskedInput;
 use yii\helpers\ArrayHelper;
 use yii\web\JsExpression;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $model \app\models\RoomForm */
@@ -47,16 +48,41 @@ use yii\web\JsExpression;
 
     <?= $form->field($model, 'bookingAgreement')->checkbox() ?>
 
-    <?= $form->field($model, 'agreementPerson')->widget(\kartik\select2\Select2::className(), [
+    <?php
+    /*$resultsJs = <<< JS
+function (data) {
+        return {
+                results: $.map(data, function (item) {
+                    return {
+                        text: item.fullName,
+                        //slug: '123',
+                        id: item.id
+                    }
+                })
+            };
+        }
+JS;*/
+    ?>
+
+
+    <? /*= $form->field($model, 'agreementPerson')->widget(\kartik\select2\Select2::className(), [
+        'options' => [ 'id' => '123',],
         'initValueText' => '12',
         //'options' => ['placeholder' => 'Search for a city ...'],
         'pluginOptions' => [
             'ajax' => [
-                'url' => 'http://'.\Yii::getAlias('@api/users'),
+                'url' => Url::to('/rest/users'),
                 'dataType' => 'json',
-                'data' => new JsExpression('function(params){return {name: params.term};}')
-            ]
+                'data' => new JsExpression('function(params){return {name: params.term};}'),
+                'processResults' => new JsExpression($resultsJs),
+            ],
         ]
+    ]) */ ?>
+
+    <?= $form->field($model, 'agreementPerson', ['enableClientValidation' => false])->checkboxList([
+        '569dea1c6fe10a07008b4567' => 'Шубников АВ',
+        '569deaf16fe10a1c008b4567' => 'Серяков ИВ',
+        '569df2426fe10a37008b4567' => 'Артамонов ОЮ'
     ]) ?>
 
     <?= $form->field($model, 'multipleBooking')->checkbox() ?>
