@@ -4,7 +4,7 @@ namespace common\models;
 use yii\base\NotSupportedException;
 use yii\mongodb\ActiveRecord;
 use yii\web\IdentityInterface;
-use yii\behaviors\TimestampBehavior;
+use common\components\behaviors\TimestampBehavior;
 use yii\web\Link;
 use yii\web\Linkable;
 use yii\helpers\Url;
@@ -49,12 +49,7 @@ class User extends ActiveRecord implements IdentityInterface
     public function behaviors()
     {
         return [
-            [
-                'class' => TimestampBehavior::className(),
-                'createdAtAttribute' => 'createdAt',
-                'updatedAtAttribute' => 'updatedAt',
-                'value' => new \MongoDate()
-            ]
+            TimestampBehavior::className()
         ];
     }
 
@@ -179,7 +174,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function getId()
     {
-        return $this->getPrimaryKey();
+        return (string)$this->_id;
     }
 
     /**
