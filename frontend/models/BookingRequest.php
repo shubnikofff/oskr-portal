@@ -73,24 +73,5 @@ class BookingRequest extends Request
             'note' => 'Примечание'
         ]);
     }
-
-    /*public function afterFind()
-    {
-        parent::afterFind();
-
-        $this->fromTime = new Minute($this->fromTime);
-        $this->toTime = new Minute($this->toTime);
-    }
-
-    public function beforeSave($insert)
-    {
-        if(parent::beforeSave($insert)) {
-            $this->fromTime = $this->fromTime->int;
-            $this->toTime = $this->toTime->int;
-            return true;
-        }
-        return false;
-    }*/
-
-
+    
 }
