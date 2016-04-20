@@ -7,83 +7,155 @@
 
 namespace frontend\models;
 
-use common\components\Minute;
-use common\components\validators\MinuteValidator;
 use common\models\Room;
 use common\models\RoomGroup;
 use yii\mongodb\Collection;
-use yii\mongodb\validators\MongoDateValidator;
+use yii\validators\DateValidator;
 
 /**
  * @author Shubnikov Alexey <a.shubnikov@niaep.ru>
  *
  * BookingRequestForm
+ *
  * @property array $roomGroups
- * @property array $busyRooms
  */
 class BookingRequestForm extends BookingRequest
 {
-    const FORMAT_DATE_STRING = 'd LLLL y';
+    const FORMAT_DATE_TIME = 'd.m.Y H:i';
+    const FORMAT_DURATION = 'H:i';
+
     /**
      * @var string
      */
-    public $dateString;
+    public $duration;
     /**
-     * @var string
+     * @var int
      */
-    public $fromTimeString;
+    protected $maxTime;
     /**
-     * @var string
+     * @var int
      */
-    public $toTimeString;
+    protected $minTime;
+    /**
+     * @var int
+     */
+    protected $minHour;
+    /**
+     * @var int
+     */
+    protected $maxHour;
+    /**
+     * @var \DateTime
+     */
+    private $_fromDateTime;
+    /**
+     * @var \DateTime
+     */
+    private $_toDateTime;
     /**
      * @var array
      */
     private $_roomGroups;
 
+    public function init()
+    {
+        parent::init();
+
+        $this->minHour = \Yii::$app->params['booking.minHour'];
+        $this->maxHour = \Yii::$app->params['booking.maxHour'];
+        $this->minTime = mktime($this->minHour, 0, 0);
+        $this->maxTime = mktime($this->maxHour, 0, 0, date('n'), date('j') + 7);
+    }
+
+    public function afterFind()
+    {
+        parent::afterFind();
+
+        if ($this->toTime instanceof \MongoDate) {
+            $diff = $this->fromTime->toDateTime()->diff($this->toTime->toDateTime());
+            $this->duration = $diff->format('%H:%i');
+        }
+
+        if ($this->fromTime instanceof \MongoDate) {
+            $this->fromTime = \Yii::$app->formatter->asDatetime($this->fromTime->toDateTime(), 'php:' . self::FORMAT_DATE_TIME);
+        }
+    }
+
+
     public function rules()
     {
-        $minDate = mktime(0, 0, 0);
-        $maxDate = strtotime("+1 week");
-        $minTime = new Minute(\Yii::$app->params['booking.minTime']);
-        $maxTime = new Minute(\Yii::$app->params['booking.maxTime']);
-        return array_merge(parent::rules(), [
-            [['dateString', 'fromTimeString', 'toTimeString', 'rooms', 'eventPurpose'], 'required'],
+        return [
 
-            ['dateString', MongoDateValidator::className(), 'format' => self::FORMAT_DATE_STRING,
-                'min' => $minDate, 'minString' => \Yii::$app->formatter->asDate($minDate, 'long'),
-                'max' => $maxDate, 'maxString' => \Yii::$app->formatter->asDate($maxDate, 'long'),
-                'mongoDateAttribute' => 'date'
-            ],
+            [['fromTime', 'duration','eventPurpose', 'rooms'], 'required'],
 
-            ['fromTimeString', MinuteValidator::className(), 'min' => $minTime, 'max' => $maxTime, 'minuteAttribute' => 'fromTime'],
+            ['fromTime', 'checkFromTime'],
+            ['duration', 'checkDuration'],
 
-            ['toTimeString', MinuteValidator::className(), 'min' => $minTime, 'max' => $maxTime, 'minuteAttribute' => 'toTime'],
-
-            ['fromTimeString', function ($attribute) {
-                if ($this->fromTime->int >= $this->toTime->int) {
-                    $this->addError($attribute, 'время начала должно быть меньше времени окончания');
-                }
-            }],
-
-        ]);
+            ['rooms', 'exist', 'targetClass' => Room::className(), 'targetAttribute' => '_id', 'allowArray' => true],
+        ];
     }
+
+    public function checkFromTime($attribute)
+    {
+        (new DateValidator([
+            'format' => 'php:' . self::FORMAT_DATE_TIME,
+            'min' => $this->minTime,
+            'max' => $this->maxTime,
+            'minString' => \Yii::$app->formatter->asDatetime($this->minTime),
+            'maxString' => \Yii::$app->formatter->asDatetime($this->maxTime)
+        ]))->validateAttribute($this, $attribute);
+
+        if (!$this->hasErrors($attribute)) {
+            $this->_fromDateTime = date_create_from_format(self::FORMAT_DATE_TIME, $this->{$attribute});
+            $hour = (int)date('G', $this->_fromDateTime->getTimestamp());
+            if (!($hour >= $this->minHour && $hour < $this->maxHour)) {
+                $this->addError($attribute, "Время должно быть в интервале от {$this->minHour}:00 до {$this->maxHour}:00");
+            }
+        }
+    }
+
+    public function checkDuration($attribute)
+    {
+        (new DateValidator(['format' => 'php:' . self::FORMAT_DURATION]))->validateAttribute($this, $attribute);
+
+        if (!$this->hasErrors($attribute) && $this->_fromDateTime !== null) {
+            list($hour, $minute) = explode(':', $this->{$attribute});
+            $duration = new \DateInterval("PT{$hour}H{$minute}M");
+            $this->_toDateTime = date_add(clone $this->_fromDateTime, $duration);
+            $maxDateTime = new \DateTime($this->_fromDateTime->format('Y-m-d') . $this->maxHour . ':00');
+
+            if ($this->_toDateTime > $maxDateTime) {
+                $diff = $this->_fromDateTime->diff($maxDateTime)->format("%hч. %iмин.");
+                $this->addError($attribute, $this->getAttributeLabel($attribute) . " не может превышать " . $diff);
+            }
+        }
+    }
+
+    public function afterValidate()
+    {
+        parent::afterValidate();
+
+        $this->fromTime = new \MongoDate($this->_fromDateTime->getTimestamp());
+        $this->toTime = new \MongoDate($this->_toDateTime->getTimestamp());
+    }
+
 
     public function attributeLabels()
     {
         return array_merge(parent::attributeLabels(), [
-            'dateString' => 'Дата',
-            'fromTimeString' => 'Время начала',
-            'toTimeString' => 'Время окончания'
+            'fromTime' => 'Дата и время начала',
+            'duration' => 'Продолжительность'
         ]);
     }
 
-    public function attributeHints()
+    /*public function attributeHints()
     {
         return [
-            //'dateString' => 'Максимальная дата'
+            'fromTime' => 'дата должна быть не больше неде',
+            'duration' => 'количество часов и минут'
         ];
-    }
+    }*/
+
 
     /**
      * @return array
@@ -123,11 +195,6 @@ class BookingRequestForm extends BookingRequest
         }
 
         return $this->_roomGroups;
-    }
-
-    public function getBusyRooms()
-    {
-
     }
 
 }

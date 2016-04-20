@@ -6,17 +6,14 @@
  */
 
 namespace frontend\models;
-use common\components\Minute;
-
 
 /**
  * @author Shubnikov Alexey <a.shubnikov@niaep.ru>
  *
  * BookingRequest
  *
- * @property \MongoDate $date
- * @property Minute $fromTime
- * @property Minute $toTime
+ * @property \MongoDate $fromTime
+ * @property \MongoDate $toTime
  * @property array $rooms
  * @property string $meetingTopic
  * @property array $options
@@ -47,7 +44,6 @@ class BookingRequest extends Request
     public function attributes()
     {
         return array_merge(parent::attributes(),[
-            'date',
             'fromTime',
             'toTime',
             'rooms',
@@ -68,7 +64,6 @@ class BookingRequest extends Request
     public function attributeLabels()
     {
         return array_merge(parent::attributeLabels(),[
-            'date' => 'Дата',
             'fromTime' => 'с',
             'toTime' => 'по',
             'rooms' => 'Помещения',
@@ -79,7 +74,7 @@ class BookingRequest extends Request
         ]);
     }
 
-    public function afterFind()
+    /*public function afterFind()
     {
         parent::afterFind();
 
@@ -95,7 +90,7 @@ class BookingRequest extends Request
             return true;
         }
         return false;
-    }
+    }*/
 
 
 }

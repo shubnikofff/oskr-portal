@@ -28,6 +28,7 @@
     "kartik-v/yii2-datecontrol": "dev-master",
     "kartik-v/yii2-widget-datepicker": "*",
     "kartik-v/yii2-widget-timepicker": "*",
+    "kartik-v/yii2-widget-datetimepicker": "*",
     "kartik-v/yii2-widget-select2": "@dev",
     "kartik-v/yii2-helpers": "dev-master",
     "kartik-v/yii2-sortable-input": "*",
