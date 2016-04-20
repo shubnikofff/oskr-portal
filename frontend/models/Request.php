@@ -7,8 +7,9 @@
 
 namespace frontend\models;
 
-use yii\behaviors\BlameableBehavior;
-use yii\behaviors\TimestampBehavior;
+
+use common\components\behaviors\BlameableBehavior;
+use common\components\behaviors\TimestampBehavior;
 use yii\mongodb\ActiveRecord;
 use common\models\User;
 
@@ -84,17 +85,8 @@ abstract class Request extends ActiveRecord
     public function behaviors()
     {
         return [
-            [
-                'class' => BlameableBehavior::className(),
-                'createdByAttribute' => 'createdBy',
-                'updatedByAttribute' => 'updatedBy',
-            ],
-            [
-                'class' => TimestampBehavior::className(),
-                'createdAtAttribute' => 'createdAt',
-                'updatedAtAttribute' => 'updatedAt',
-                'value' => new \MongoDate()
-            ]
+            TimestampBehavior::className(),
+            BlameableBehavior::className()
         ];
     }
 

@@ -5,8 +5,8 @@
 use yii\helpers\ArrayHelper;
 use yii\bootstrap\ActiveForm;
 use yii\bootstrap\Html;
-use kartik\date\DatePicker;
 use kartik\time\TimePicker;
+use kartik\datetime\DateTimePicker;
 
 /**
  * @var $this \yii\web\View
@@ -21,51 +21,59 @@ $this->params['breadcrumbs'][] = $this->title; ?>
 
 <div class="row">
 
-    <div class="col-md-2">
-        <?= $form->field($model, 'dateString')->widget(DatePicker::className(), [
-            'type' => DatePicker::TYPE_INPUT,
-            'options' => [
-                'class' => 'date-time'
-            ],
-            'pluginOptions' => [
-                'autoclose' => true,
-                'startDate' => '0d',
-                'endDate' => '+7d',
-                'format' => 'd MM yyyy'
-            ]
-        ]) ?>
-    </div>
-
-    <?php $timePickerOptions = [
-        'options' => [
-            'placeholder' => 'ЧЧ:ММ',
-            'class' => 'date-time'
-        ],
-        'pluginOptions' => [
-            'defaultTime' => false,
-            'showSeconds' => false,
-            'showMeridian' => false,
-        ],
-        'addonOptions' => [
-            'asButton' => true,
-            'buttonOptions' => ['class' => 'btn btn-info']
-        ]
-
-    ] ?>
-
-    <div class="col-md-2">
-        <?= $form->field($model, 'fromTimeString')->widget(TimePicker::className(), $timePickerOptions) ?>
-    </div>
-
-    <div class="col-md-2">
-        <?= $form->field($model, 'toTimeString')->widget(TimePicker::className(), $timePickerOptions) ?>
-    </div>
+    <div class="col-md-6"><?= $form->field($model, 'eventPurpose')->textarea() ?></div>
 
 </div>
 
 <div class="row">
 
-    <div class="col-md-6"><?= $form->field($model, 'eventPurpose')->textarea() ?></div>
+    <div class="col-lg-4">
+
+        <div class="row">
+
+            <div class="col-lg-6">
+
+                <?= $form->field($model, 'fromTime')->widget(DateTimePicker::className(), [
+                    'type' => DateTimePicker::TYPE_INPUT,
+                    'options' => [
+                        //'class' => 'date-time'
+                        'placeholder' => 'дд.мм.гггг чч:мм'
+                    ],
+                    'removeButton' => false, 
+                    'pluginOptions' => [
+                        'format' => 'dd.mm.yyyy HH:ii',
+                        'todayHighlight' => true,
+                        'autoclose' => true,
+                        'startDate' => new \yii\web\JsExpression('new Date()'),
+                        'endDate' => '+7d',
+                    ]
+                ]) ?>
+
+            </div>
+
+            <div class="col-lg-6">
+
+                <?= $form->field($model, 'duration')->widget(TimePicker::className(), [
+                    'options' => [
+                        'placeholder' => 'чч:мм',
+                        //'class' => 'date-time'
+                    ],
+                    'pluginOptions' => [
+                        'defaultTime' => false,
+                        'showSeconds' => false,
+                        'showMeridian' => false,
+                    ],
+                    'addonOptions' => [
+                        'asButton' => true,
+                        'buttonOptions' => ['class' => 'btn btn-info']
+                    ]
+                ]) ?>
+
+            </div>
+
+        </div>
+
+    </div>
 
 </div>
 

@@ -7,6 +7,7 @@
 
 namespace frontend\controllers;
 use common\components\actions\CreateAction;
+use common\components\actions\UpdateAction;
 use frontend\models\BookingRequestForm;
 use yii\web\Controller;
 
@@ -24,6 +25,11 @@ class BookingController extends Controller
         return [
             'create' => [
                 'class' => CreateAction::className(),
+                'modelClass' => BookingRequestForm::className(),
+                'view' => 'form'
+            ],
+            'update' => [
+                'class' => UpdateAction::className(),
                 'modelClass' => BookingRequestForm::className(),
                 'view' => 'form'
             ]
