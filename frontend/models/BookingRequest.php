@@ -54,12 +54,12 @@ class BookingRequest extends Request
         ]);
     }
 
-    public function rules()
+/*    public function rules()
     {
         return array_merge(parent::rules(), [
-            ['options', 'in', 'range' => [self::OPTION_VKS, self::OPTION_AUDIO_RECORD, self::OPTION_PROJECTOR, self::OPTION_SCREEN], 'allowArray' => true]
+            
         ]);
-    }
+    }*/
 
     public function attributeLabels()
     {

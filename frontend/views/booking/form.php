@@ -36,10 +36,10 @@ $this->params['breadcrumbs'][] = $this->title; ?>
                 <?= $form->field($model, 'fromTime')->widget(DateTimePicker::className(), [
                     'type' => DateTimePicker::TYPE_INPUT,
                     'options' => [
-                        //'class' => 'date-time'
+                        //'class' => 'date-time',
                         'placeholder' => 'дд.мм.гггг чч:мм'
                     ],
-                    'removeButton' => false, 
+                    'removeButton' => false,
                     'pluginOptions' => [
                         'format' => 'dd.mm.yyyy HH:ii',
                         'todayHighlight' => true,
@@ -98,7 +98,9 @@ $options = [
 
 <div id="rooms" class="form-group required">
 
-    <?= Html::label($model->getAttributeLabel('rooms')) ?>
+    <?= Html::activeLabel($model, 'rooms', ['class' => $model->hasErrors('rooms') ? 'text-danger' : '']) ?>
+
+    <?= Html::error($model, 'rooms', ['class' => 'text-danger']) ?>
 
     <div class="row">
 
@@ -183,7 +185,7 @@ $options = [
 </div>
 
 <?= Html::submitButton($model->isNewRecord ? '<span class="glyphicon glyphicon-send"></span> Отправить' :
-    '<span class="glyphicon glyphicon-save"></span> Сохранить',
+    '<span class="glyphicon glyphicon-ok"></span> Сохранить',
     ['class' => 'btn btn-' . ($model->isNewRecord ? 'success' : 'primary')]) ?>
 
 <?php ActiveForm::end() ?>

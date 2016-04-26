@@ -9,7 +9,8 @@ namespace frontend\models;
 
 use common\models\Room;
 use common\models\RoomGroup;
-use yii\mongodb\Collection;
+use yii\mongodb\Connection;
+use yii\mongodb\validators\MongoIdValidator;
 use yii\validators\DateValidator;
 
 /**
@@ -21,13 +22,18 @@ use yii\validators\DateValidator;
  */
 class BookingRequestForm extends BookingRequest
 {
+    const SCENARIO_BUSY_ROOMS = 'busy_rooms';
     const FORMAT_DATE_TIME = 'd.m.Y H:i';
-    const FORMAT_DURATION = 'H:i';
+    const FORMAT_TIME = 'H:i';
 
     /**
      * @var string
      */
     public $duration;
+    /**
+     * @var \MongoId
+     */
+    public $requestId;
     /**
      * @var int
      */
@@ -73,7 +79,7 @@ class BookingRequestForm extends BookingRequest
 
         if ($this->toTime instanceof \MongoDate) {
             $diff = $this->fromTime->toDateTime()->diff($this->toTime->toDateTime());
-            $this->duration = $diff->format('%H:%i');
+            $this->duration = $diff->format('%H:%I');
         }
 
         if ($this->fromTime instanceof \MongoDate) {
@@ -81,18 +87,31 @@ class BookingRequestForm extends BookingRequest
         }
     }
 
+    public function scenarios()
+    {
+        return array_merge(parent::scenarios(), [
+            self::SCENARIO_BUSY_ROOMS => ['requestId', 'fromTime', 'duration']
+        ]);
+    }
+
 
     public function rules()
     {
-        return [
+        return array_merge(parent::rules(), [
 
-            [['fromTime', 'duration','eventPurpose', 'rooms'], 'required'],
+            [['fromTime', 'duration', 'eventPurpose', 'rooms'], 'required'],
 
             ['fromTime', 'checkFromTime'],
             ['duration', 'checkDuration'],
 
+            ['options', 'in', 'range' => [self::OPTION_VKS, self::OPTION_AUDIO_RECORD, self::OPTION_PROJECTOR, self::OPTION_SCREEN], 'allowArray' => true],
+
             ['rooms', 'exist', 'targetClass' => Room::className(), 'targetAttribute' => '_id', 'allowArray' => true],
-        ];
+
+            ['note', 'safe'],
+
+            ['requestId', MongoIdValidator::className(), 'forceFormat' => 'object']
+        ]);
     }
 
     public function checkFromTime($attribute)
@@ -116,29 +135,33 @@ class BookingRequestForm extends BookingRequest
 
     public function checkDuration($attribute)
     {
-        (new DateValidator(['format' => 'php:' . self::FORMAT_DURATION]))->validateAttribute($this, $attribute);
+        (new DateValidator(['format' => 'php:' . self::FORMAT_TIME]))->validateAttribute($this, $attribute);
 
-        if (!$this->hasErrors($attribute) && $this->_fromDateTime !== null) {
+        if (!$this->hasErrors($attribute) && $this->_fromDateTime instanceof \DateTime) {
             list($hour, $minute) = explode(':', $this->{$attribute});
             $duration = new \DateInterval("PT{$hour}H{$minute}M");
             $this->_toDateTime = date_add(clone $this->_fromDateTime, $duration);
-            $maxDateTime = new \DateTime($this->_fromDateTime->format('Y-m-d') . $this->maxHour . ':00');
+            $maxToTime = new \DateTime($this->_fromDateTime->format('Y-m-d') . $this->maxHour . ':00');
 
-            if ($this->_toDateTime > $maxDateTime) {
-                $diff = $this->_fromDateTime->diff($maxDateTime)->format("%hч. %iмин.");
+            if ($this->_toDateTime > $maxToTime) {
+                $diff = $this->_fromDateTime->diff($maxToTime)->format("%hч. %iмин.");
                 $this->addError($attribute, $this->getAttributeLabel($attribute) . " не может превышать " . $diff);
             }
         }
     }
 
-    public function afterValidate()
+    public function beforeSave($insert)
     {
-        parent::afterValidate();
-
-        $this->fromTime = new \MongoDate($this->_fromDateTime->getTimestamp());
-        $this->toTime = new \MongoDate($this->_toDateTime->getTimestamp());
+        if (parent::beforeSave($insert)) {
+            $this->fromTime = new \MongoDate($this->_fromDateTime->getTimestamp());
+            $this->toTime = new \MongoDate($this->_toDateTime->getTimestamp());
+            $this->rooms = array_map(function ($item) {
+                return new \MongoId($item);
+            }, $this->rooms);
+            return true;
+        }
+        return false;
     }
-
 
     public function attributeLabels()
     {
@@ -156,17 +179,14 @@ class BookingRequestForm extends BookingRequest
         ];
     }*/
 
-
     /**
      * @return array
      */
     public function getRoomGroups()
     {
         if (!isset($this->_roomGroups)) {
-            /** @var Collection $collection */
-            $collection = \Yii::$app->get('mongodb')->getCollection(RoomGroup::collectionName());
 
-            $this->_roomGroups = $collection->aggregate([
+            $pipeline = [
                 [
                     '$lookup' => [
                         'from' => Room::collectionName(),
@@ -190,11 +210,60 @@ class BookingRequestForm extends BookingRequest
                         'rooms.description' => true,
                         'rooms.bookingAgreement' => true,
                     ]
-                ],
-            ]);
+                ]
+            ];
+
+            /** @var Connection $mongodb */
+            $mongodb = \Yii::$app->get('mongodb');
+            $this->_roomGroups = $mongodb->getCollection(RoomGroup::collectionName())->aggregate($pipeline);
         }
 
         return $this->_roomGroups;
+    }
+
+    public function getBusyRooms($idToString = false)
+    {
+        $result = [];
+
+        if ($this->validate()) {
+            $pipeline = [
+                [
+                    '$match' => [
+                        '_id' => ['$ne' => $this->requestId],
+                        'fromTime' => ['$lt' => new \MongoDate($this->_toDateTime->getTimestamp())],
+                        'toTime' => ['$gt' => new \MongoDate($this->_fromDateTime->getTimestamp())],
+                        'status' => ['$ne' => self::STATUS_CANCEL]
+                    ]
+                ],
+                [
+                    '$unwind' => '$rooms'
+                ],
+                [
+                    '$project' => [
+                        '_id' => 0,
+                        'id' => '$rooms',
+                        'fromTime' => 1,
+                        'toTime' => 1
+                    ]
+                ]
+            ];
+            /** @var Connection $mongodb */
+            $mongodb = \Yii::$app->get('mongodb');
+            $result = $mongodb->getCollection(self::collectionName())->aggregate($pipeline);
+
+            $result = array_map(function ($item) use ($idToString) {
+                if ($idToString) {
+                    $item['id'] = (string)$item['id'];
+                }
+                $item['fromTime'] = \Yii::$app->formatter->asTime($item['fromTime']->toDateTime(), 'php:' . self::FORMAT_TIME);
+                $item['toTime'] = \Yii::$app->formatter->asTime($item['toTime']->toDateTime(), 'php:' . self::FORMAT_TIME);
+                return $item;
+            }, $result);
+        } else {
+            $result = $this->getErrors();
+        }
+        
+        return $result;
     }
 
 }

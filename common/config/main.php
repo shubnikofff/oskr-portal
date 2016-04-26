@@ -23,7 +23,14 @@ return [
         ],
 
         'cache' => [
-            'class' => 'yii\caching\FileCache',
+            'class' => 'yii\caching\MemCache',
+            'servers' => [
+                [
+                    'host' => 'memcached',
+                    'port' => 11211,
+                    'weight' => 100,
+                ]
+            ]
         ],
         
         'assetManager' => [

@@ -9,7 +9,9 @@ namespace frontend\controllers;
 use common\components\actions\CreateAction;
 use common\components\actions\UpdateAction;
 use frontend\models\BookingRequestForm;
+use frontend\models\BookingRequestSearch;
 use yii\web\Controller;
+use yii\web\Response;
 
 
 /**
@@ -39,5 +41,15 @@ class BookingController extends Controller
     public function actionIndex()
     {
         return $this->render('index');
+    }
+
+    public function actionBusyRooms()
+    {
+        \Yii::$app->response->format = Response::FORMAT_JSON;
+        $model = new BookingRequestForm(['scenario' => BookingRequestForm::SCENARIO_BUSY_ROOMS]);
+        if (!$model->load(\Yii::$app->request->get())) {
+            throw new \HttpInvalidParamException();
+        }
+        return $model->getBusyRooms(true);
     }
 }
