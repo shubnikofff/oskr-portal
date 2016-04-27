@@ -5,7 +5,9 @@
 
 namespace frontend\assets;
 
+use common\assets\DomAsset;
 use yii\web\AssetBundle;
+use yii\web\JqueryAsset;
 
 
 /**
@@ -26,7 +28,7 @@ class BookingFormAsset extends AssetBundle
     ];
 
     public $depends = [
-        'yii\web\JqueryAsset',
-        'frontend\assets\AppAsset',
+        DomAsset::class,
+        JqueryAsset::class
     ];
 }

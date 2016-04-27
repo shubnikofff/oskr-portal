@@ -25,10 +25,10 @@ class AppAsset extends AssetBundle
     ];
 
     public $depends = [
-        Html5ShivAsset::class,
-        RespondAsset::class,
         YiiAsset::class,
         BootstrapAsset::class,
-        OskrAsset::class
+        Html5ShivAsset::class,
+        RespondAsset::class,
+        IE8Asset::class
     ];
 }
