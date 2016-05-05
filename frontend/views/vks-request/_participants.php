@@ -63,6 +63,12 @@ $participants = Participant::findAllByRequest($model)
 
     </div>
 
+    <div>
+        <!--[if lt IE 9]><label for="room-filter">Поиск помещений</label><![endif]-->
+        <input id="room-filter" placeholder="Поиск помещений"/>
+
+    </div>
+
     <small class="help-block"><span class="glyphicon glyphicon-info-sign"></span> Для получения информации о занятости
         переговрных помещений в других ВКС, дата и время совещания должны быть указаны полностью
     </small>
@@ -73,7 +79,8 @@ $participants = Participant::findAllByRequest($model)
 
             <div class="col-lg-5">
 
-                <div class="btn-group-vertical btn-block" style="overflow-x: hidden; overflow-y: scroll; max-height: 300px">
+                <div class="btn-group-vertical btn-block"
+                     style="overflow-x: hidden; overflow-y: scroll; max-height: 300px">
 
                     <?php foreach (Company::find()->orderBy('order')->all() as $company): ?>
 

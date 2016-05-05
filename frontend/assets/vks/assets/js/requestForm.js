@@ -134,6 +134,12 @@
         }
     };
 
+    $.expr[":"].contains = $.expr.createPseudo(function (arg) {
+        return function (elem) {
+            return $(elem).text().toUpperCase().indexOf(arg.toUpperCase()) >= 0;
+        };
+    });
+
     $.fn.participants = function (options) {
 
         teleport.participants.init(this, options);
@@ -175,6 +181,7 @@
             this.$companyButtons.on('click', {that: this}, this.companyButtonClick);
             this.$checkBoxes.on('change', {that: this}, this.checkBoxChange);
             $container.on('click', settings.uncheckButtonsSelector, {that: this}, this.uncheckButtonClick);
+            $('#room-filter').on('keyup', this.searchRooms);
 
             this.$infoButtons.popover({html: true});
             this.$companyButtons.tooltip();
@@ -266,6 +273,44 @@
             this.$uncheckButtons = this.$uncheckButtons.add($uncheckButton);
 
             return $container;
+        },
+
+        searchRooms: function () {
+            var value = this.value,
+                prev = this.prev || null,
+                result = {
+                    $rooms: null,
+                    $groups: null
+                },
+                groupIds = [],
+                i, max, selector;
+
+
+            if (prev !== null) {
+                prev.$rooms.removeClass('found-room');
+                prev.$groups.removeClass('found-room');
+            }
+
+            if (value.length > 1) {
+                result.$rooms = $("div.vks-room:contains('" + value + "')");
+
+                result.$rooms.each(function () {
+                    var id = $('input', this).data('company-id');
+                    if ($.inArray(id, groupIds) === -1) {
+                        groupIds.push(id);
+                    }
+                });
+
+                for (i = 0, max = groupIds.length; i < max; i += 1) {
+                    selector = "button[data-id='" + groupIds[i] + "']";
+                    result.$groups = result.$groups === null ? $(selector) : result.$groups.add(selector);
+                }
+
+                result.$groups.addClass('found-room');
+                result.$rooms.addClass('found-room');
+                this.prev = result;
+            }
+
         }
     };
 

@@ -19,6 +19,7 @@ tr.half-hour {
     border: 1px solid red;
     position: relative;
     display: none;
+    z-index: 100;
 }
 
 #vks-schedule-grid {

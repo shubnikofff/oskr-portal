@@ -10,3 +10,11 @@ button.vks-company {
     text-align: left;
     white-space: normal;
 }
+
+#room-filter {
+    padding: 4px;
+}
+
+.found-room {
+    background-color: #feff90;
+}
