@@ -4,10 +4,32 @@
 (function () {
     
     var dom = OSKR.dom,
-        node = document.getElementById('super-button');
+        util = OSKR.util,
 
-    dom.addListener(node, 'click', function () {
-        alert('I am working!');
-    })
+        superButton = document.getElementById('super-button'),
+        countBorder = document.getElementById('count-board'),
+
+        publisher = {
+
+            count: 0,
+            addCount: function () {
+                this.count += 1;
+                this.fire('countchange', this.count);
+            }
+        };
+
+    countBorder.refresh = function (count) {
+        this.innerHTML = 'Count: ' + count;
+    };
+
+    util.makePublisher(publisher);
+
+    publisher.on('countchange', 'refresh', countBorder);
+
+    dom.addListener(superButton, 'click', function () {
+        publisher.addCount();
+    });
+
+
     
 })();

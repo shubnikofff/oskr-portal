@@ -201,6 +201,25 @@ class BookingRequestForm extends BookingRequest
                     ]
                 ],
                 [
+                    '$unwind' => '$rooms'
+                ],
+                [
+                    '$group' => [
+                        '_id' => ['_id' => '$_id', 'name' => '$name'],
+                        'tags' => [
+                            '$push' => ['descr' => '$rooms.description', 'name' => '$rooms.name']
+                        ]
+                    ]
+                ],
+                [
+                    '$project' => [
+                        '_id' => 0,
+                        'id' => '$_id._id',
+                        'name' => '$_id.name',
+                        'tags' => 1
+                    ]
+                ]
+                /*[
                     '$project' => [
                         'name' => true,
                         'abbreviation' => true,
@@ -210,7 +229,7 @@ class BookingRequestForm extends BookingRequest
                         'rooms.description' => true,
                         'rooms.bookingAgreement' => true,
                     ]
-                ]
+                ]*/
             ];
 
             /** @var Connection $mongodb */

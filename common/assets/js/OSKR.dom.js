@@ -5,11 +5,11 @@ OSKR.namespace('OSKR.dom');
 
 OSKR.dom = (function () {
 
-    var getNode,
+    var stop,
         addListener,
         removeListener;
 
-    if (typeof window.addEventListener === 'function') {
+    if (document.addEventListener) {
         addListener = function (node, type, handler) {
             node.addEventListener(type, handler, false);
         };
@@ -17,7 +17,7 @@ OSKR.dom = (function () {
             node.removeEventListener(type, handler, false);
         };
 
-    } else if (typeof document.attachEvent === 'function') {
+    } else if (document.attachEvent) {
         addListener = function (node, type, handler) {
             node.attachEvent('on' + type, handler);
         };
@@ -33,9 +33,21 @@ OSKR.dom = (function () {
             node['on' + type] = null;
         };
     }
+    //TODO create xhr same as listeners
+    stop = function (e, preventDefault, stopPropagation) {
+        preventDefault = preventDefault || true;
+        stopPropagation = stopPropagation || true;
+
+        if(preventDefault === true && e.preventDefault() === "function") {
+            e.preventDefault()
+        }
+
+        if(stopPropagation) {
+
+        }
+    };
     
     return {
-        getNode: getNode,
         addListener: addListener,
         removeListener: removeListener
     };
