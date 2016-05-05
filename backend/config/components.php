@@ -11,6 +11,12 @@ return [
         'identityClass' => 'common\models\User',
         'enableAutoLogin' => false,
     ],
+
+    'request' => [
+        'parsers' => [
+            'application/json' => 'yii\web\JsonParser',
+        ]
+    ],
     
     'errorHandler' => [
         'errorAction' => 'site/error',
