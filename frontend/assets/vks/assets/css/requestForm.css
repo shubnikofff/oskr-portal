@@ -11,10 +11,6 @@ button.vks-company {
     white-space: normal;
 }
 
-#room-filter {
-    padding: 4px;
-}
-
-.found-room {
+div.found-room {
     background-color: #feff90;
 }

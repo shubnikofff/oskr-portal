@@ -63,10 +63,16 @@ $participants = Participant::findAllByRequest($model)
 
     </div>
 
-    <div>
-        <!--[if lt IE 9]><label for="room-filter">Поиск помещений</label><![endif]-->
-        <input id="room-filter" placeholder="Поиск помещений"/>
-
+    <div class="row">
+        <div class="col-lg-3">
+            <!--[if lt IE 9]><label for="room-filter">Поиск помещений</label><![endif]-->
+            <div class="input-group">
+                <input id="room-filter-input" type="text" class="form-control" placeholder="Поиск помещений"/>
+                <span class="input-group-btn">
+                    <button id="room-filter-reset" class="btn btn-default" type="button"><span class="glyphicon glyphicon-remove"></span></button>
+                </span>
+            </div>
+        </div>
     </div>
 
     <small class="help-block"><span class="glyphicon glyphicon-info-sign"></span> Для получения информации о занятости

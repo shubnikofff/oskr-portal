@@ -165,6 +165,7 @@
         $uncheckButtons: null,
         $checkedRoomsContainer: null,
         $infoButtons: null,
+        $roomFilterInput: null,
 
         init: function ($container, options) {
 
@@ -177,23 +178,25 @@
             this.$checkedRooms = $(settings.checkedRoomsSelector, $container);
             this.$infoButtons = $(settings.infoButtonsSelector, $container);
             this.$uncheckButtons = $(settings.uncheckButtonsSelector, $container);
+            this.$roomFilterInput = $('#room-filter-input');
 
-            this.$companyButtons.on('click', {that: this}, this.companyButtonClick);
+            this.$companyButtons.on('click', this.companyButtonClick);
             this.$checkBoxes.on('change', {that: this}, this.checkBoxChange);
             $container.on('click', settings.uncheckButtonsSelector, {that: this}, this.uncheckButtonClick);
-            $('#room-filter').on('keyup', this.searchRooms);
+            this.$roomFilterInput.on('keyup', this.searchRooms);
+            $('#room-filter-reset').on('click', this.resetFilter);
 
             this.$infoButtons.popover({html: true});
             this.$companyButtons.tooltip();
         },
 
-        companyButtonClick: function (event) {
+        companyButtonClick: function () {
 
-            var $companyButtons = event.data.that.$companyButtons;
-            var $vksRooms = event.data.that.$vksRooms;
+            var $companyButtons = teleport.participants.$companyButtons,
+                $vksRooms = teleport.participants.$vksRooms,
+                $button = $(this);
 
             $companyButtons.removeClass('active');
-            var $button = $(this);
             $button.addClass('active');
             $vksRooms.hide();
             $vksRooms.filter(function () {
@@ -283,12 +286,15 @@
                     $groups: null
                 },
                 groupIds = [],
-                i, max, selector;
+                i, max, selector,
+                $companyButtons = teleport.participants.$companyButtons;
 
 
             if (prev !== null) {
                 prev.$rooms.removeClass('found-room');
-                prev.$groups.removeClass('found-room');
+                if (prev.$groups !== null) {
+                    prev.$groups.show();
+                }
             }
 
             if (value.length > 1) {
@@ -301,16 +307,26 @@
                     }
                 });
 
-                for (i = 0, max = groupIds.length; i < max; i += 1) {
-                    selector = "button[data-id='" + groupIds[i] + "']";
-                    result.$groups = result.$groups === null ? $(selector) : result.$groups.add(selector);
+                max = groupIds.length;
+                if (max > 0) {
+                    for (i = 0; i < max; i += 1) {
+                        selector = "button[data-id='" + groupIds[i] + "']";
+                        result.$groups = result.$groups === null ? $companyButtons.not(selector) : result.$groups.not(selector);
+                    }
+
+                    result.$groups.hide();
                 }
 
-                result.$groups.addClass('found-room');
                 result.$rooms.addClass('found-room');
                 this.prev = result;
+                $companyButtons.not(result.$groups).first().trigger('click');
             }
+        },
 
+        resetFilter: function () {
+            var $roomFilterInput = teleport.participants.$roomFilterInput;
+            $roomFilterInput.val('');
+            $roomFilterInput.trigger('keyup');
         }
     };
 
