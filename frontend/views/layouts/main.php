@@ -34,10 +34,10 @@ AppAsset::register($this);
         ],
     ]);
 
-    $leftMenuItems[] = ['label' => '<span class="glyphicon glyphicon-calendar"></span> Расписание', 'url' => ['vks-request/index']];
+    $leftMenuItems[] = ['label' => '<span class="glyphicon glyphicon-calendar"></span> Расписание', 'url' => ['/booking/index']];
 
     if (Yii::$app->user->can(SystemPermission::CREATE_REQUEST)) {
-        $leftMenuItems[] = ['label' => '<span class="glyphicon glyphicon-pencil"></span> Подать заявку', 'url' => ['/vks-request/create']];
+        $leftMenuItems[] = ['label' => '<span class="glyphicon glyphicon-pencil"></span> Заявка на бронирование', 'url' => ['/booking/create']];
     }
 
     if (Yii::$app->user->isGuest) {

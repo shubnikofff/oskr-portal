@@ -9,10 +9,10 @@
 namespace frontend\controllers;
 
 use common\components\actions\DeleteAction;
-use common\components\actions\ModelMethodAction;
 use frontend\models\vks\RequestForm;
 use frontend\models\vks\RequestSearch;
 use yii\filters\VerbFilter;
+use yii\helpers\Html;
 use yii\web\Controller;
 use yii\web\HttpException;
 use yii\web\NotFoundHttpException;
@@ -47,12 +47,12 @@ class VksRequestController extends Controller
     public function actions()
     {
         return [
-            'index' => [
+            /*'index' => [
                 'class' => SearchAction::className(),
                 'modelClass' => RequestSearch::className(),
                 'scenario' => RequestSearch::SCENARIO_SEARCH_SCHEDULE,
                 'pjaxView' => '_schedule'
-            ],
+            ],*/
             'create' => [
                 'class' => CreateAction::className(),
                 'modelClass' => RequestForm::className(),
@@ -74,14 +74,14 @@ class VksRequestController extends Controller
                 'class' => ViewAction::className(),
                 'modelClass' => Request::className(),
             ],
-            'approve' => [
+            /*'approve' => [
                 'class' => ModelMethodAction::className(),
                 'modelClass' => Request::className(),
                 'modelMethod' => ['approve'],
                 'scenario' => Request::SCENARIO_APPROVE,
                 'permission' => SystemPermission::APPROVE_REQUEST,
                 'successMessage' => 'Заявка согласована'
-            ],
+            ],*/
             'cancel' => [
                 'class' => UpdateAction::className(),
                 'modelClass' => Request::className(),
@@ -132,5 +132,10 @@ class VksRequestController extends Controller
             return $this->renderPartial('print', ['model' => $model]);
         }
         throw new NotFoundHttpException;
+    }
+
+    public function actionIndex()
+    {
+        echo date('zH-is');
     }
 }

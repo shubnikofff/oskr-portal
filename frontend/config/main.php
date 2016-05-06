@@ -8,11 +8,11 @@ $params = array_merge(
 
 return [
     'id' => 'teleport-frontend',
-    'name' => 'ОСКР',
+    'name' => 'ОСКР Портал',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'controllerNamespace' => 'frontend\controllers',
-    'defaultRoute' => 'vks-request/index',
+    'defaultRoute' => 'booking/index',
     'components' => require(__DIR__.'/components.php'),
     'params' => $params,
 ];

@@ -11,7 +11,7 @@ use common\components\MinuteFormatter;
 use yii\mongodb\validators\MongoDateValidator;
 use common\components\validators\MinuteValidator;
 use yii\helpers\ArrayHelper;
-use common\models\vks\Participant;
+use common\models\Room;
 
 /**
  * @author Shubnikov Alexey <a.shubnikov@niaep.ru>
@@ -116,7 +116,7 @@ class RequestForm extends Request
                     return;
                 }
 
-                $allParticipants = Participant::findAllByRequest($this);
+                $allParticipants = Room::findAllByRequest($this);
                 $allParticipantsId = ArrayHelper::getColumn($allParticipants, '_id');
 
                 foreach ($value as $participant) {
@@ -126,7 +126,7 @@ class RequestForm extends Request
                         return;
                     } elseif ($allParticipants[$key]->isBusy) {
                         $busyParticipant = $allParticipants[$key];
-                        $this->addError($attribute, "Участник '{$busyParticipant->name}' занят с " . MinuteFormatter::asString($busyParticipant->busyFrom) . " до " . MinuteFormatter::asString($busyParticipant->busyTo));
+                        $this->addError($attribute, "Участник '{$busyParticipant->description}' занят с " . MinuteFormatter::asString($busyParticipant->busyFrom) . " до " . MinuteFormatter::asString($busyParticipant->busyTo));
                     }
                 }
             }, 'on' => 'default'],

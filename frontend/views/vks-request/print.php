@@ -103,9 +103,9 @@ $this->title = "Завяка на помещение";
 
             <tr>
                 <td><?= $counter ?></td>
-                <td><?= $participant->name ?></td>
-                <td><?= $participant->company->name ?></td>
-                <td><?= $participant->contact ?></td>
+                <td><?= $participant->description ?></td>
+                <td><?= $participant->group->name ?></td>
+                <td><?= $participant->contactPerson ?></td>
                 <td><?= $participant->phone ?></td>
                 <td><?= $participant->ipAddress ?></td>
             </tr>

@@ -8,19 +8,20 @@
 //use kartik\datecontrol\Module as DateControl;
 
 return [
-   /* 'datecontrol' => [
-        'class' => 'kartik\datecontrol\Module',
+    'rest' => 'common\modules\rest\Module'
+    /*'datecontrol' => [
+        'class' => DateControl::className(),
 
         'displaySettings' => [
-            DateControl::FORMAT_DATE => 'dd.MM.yyyy',
-            DateControl::FORMAT_TIME => 'php:H:i',
-            DateControl::FORMAT_DATETIME => 'dd-MM-yyyy hh:mm:ss a',
+            DateControl::FORMAT_DATE => 'd MMMM y г.',
+            DateControl::FORMAT_TIME => 'HH:mm',
+            DateControl::FORMAT_DATETIME => 'd MMMM HH:mm',
         ],
 
         'saveSettings' => [
             DateControl::FORMAT_DATE => 'php:U',
             DateControl::FORMAT_TIME => 'php:H:i',
-            DateControl::FORMAT_DATETIME => 'php:Y-m-d H:i:s',
+            DateControl::FORMAT_DATETIME => 'php:U',
         ],
 
         'autoWidgetSettings' => [

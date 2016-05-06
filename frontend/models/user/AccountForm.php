@@ -11,7 +11,7 @@ use Yii;
 use yii\base\Model;
 use yii\helpers\ArrayHelper;
 use common\models\User;
-use common\models\Company;
+use common\models\RoomGroup;
 
 /**
  * @author Shubnikov Alexey <a.shubnikov@niaep.ru>

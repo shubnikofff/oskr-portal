@@ -12,23 +12,28 @@ return [
         'enableAutoLogin' => false,
     ],
 
-    'log' => [
-        'traceLevel' => YII_DEBUG ? 3 : 0,
-        'targets' => [
-            [
-                'class' => 'yii\log\FileTarget',
-                'levels' => ['error', 'warning'],
-            ],
-        ],
+    'request' => [
+        'parsers' => [
+            'application/json' => 'yii\web\JsonParser',
+        ]
     ],
+    
     'errorHandler' => [
         'errorAction' => 'site/error',
     ],
+    
     'urlManager' => [
         'enablePrettyUrl' => true,
         'showScriptName' => false,
         'rules' => [
             '<controller:(permission|role|user|vks-room)>s' => '<controller>/index',
+            [
+                'class' => 'yii\rest\UrlRule',
+                'controller' => 'rest/user', 
+                'tokens' => [
+                    '{id}' => '<id:\w+>'
+                ]
+            ],
         ]
     ]
 ];

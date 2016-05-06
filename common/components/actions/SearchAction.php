@@ -9,48 +9,62 @@
 namespace common\components\actions;
 
 use yii\base\InvalidConfigException;
-use common\models\SearchModelInterface;
-use yii\base\Model;
 use yii\helpers\Url;
+use yii\base\Model;
 
-class SearchAction extends CrudAction
+/**
+ * Class SearchAction
+ * @package common\components\actions
+ *
+ * @property Model $_model
+ */
+class SearchAction extends BaseAction
 {
     /**
-     * @inheritdoc
+     * @var string
+     */
+    public $scenario;
+    /**
+     * @var string
      */
     public $view = 'index';
     /**
      * @var string
      */
-    public $pjaxView;
+    public $resultsView;
 
     public function init()
     {
-        if (!is_subclass_of($this->modelClass, 'common\models\SearchModelInterface') && !is_subclass_of($this->modelClass, Model::className())) {
-            throw new InvalidConfigException("Property 'modelClass': given class must implement 'common\\models\\SearchModelInterface' and extend '" . Model::className() . "'");
+        if (!is_subclass_of($this->modelClass, Model::className())) {
+            throw new InvalidConfigException("Provided model class '{$this->modelClass}' must extend Model class");
         }
     }
 
     public function run()
     {
-        parent::run();
+        return parent::run();
+    }
 
-        Url::remember('',self::URL_NAME_INDEX_ACTION);
+    protected function setModel($id)
+    {
+        $this->_model = new $this->modelClass();
 
-        $model = $this->_model;
-        $model->load(\Yii::$app->request->get());
-
-        /** @var SearchModelInterface $model */
-        $dataProvider = $model->search();
-
-        $viewParams = [
-            'model' => $model,
-            'dataProvider' => $dataProvider,
-        ];
-
-        if (\Yii::$app->request->isPjax && $this->pjaxView !== null) {
-            return $this->controller->renderAjax($this->pjaxView, $viewParams);
+        if (isset($this->scenario)) {
+            $this->_model->scenario = $this->scenario;
         }
+    }
+
+    protected function processRequest()
+    {
+        $this->_model->load(\Yii::$app->request->get());
+
+        $viewParams = ['searchModel' => $this->_model];
+
+        if (\Yii::$app->request->isPjax && isset($this->resultsView)) {
+            return $this->controller->renderAjax($this->resultsView, $viewParams);
+        }
+
+        Url::remember();
 
         return $this->controller->render($this->view, $viewParams);
     }

@@ -1,9 +1,6 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: bill
- * Date: 06.10.15
- * Time: 14:30
+ * Copyright (c) 2016. OSKR JSC "NIAEP"
  */
 
 namespace common\components\actions;
@@ -11,10 +8,10 @@ namespace common\components\actions;
  * Class ViewAction
  * @package common\components\actions
  */
-class ViewAction extends CrudAction
+class ViewAction extends BaseAction
 {
     /**
-     * @inheritdoc
+     * @var string
      */
     public $view = 'view';
 
@@ -23,10 +20,18 @@ class ViewAction extends CrudAction
      */
     public function run($id)
     {
-        parent::run($id);
+        return parent::run($id);
+    }
 
-        $viewParam = ['model' => $this->_model];
+    protected function setModel($id)
+    {
+        $this->_model = $this->findModel($id);
+    }
 
-        return \Yii::$app->request->isAjax ? $this->controller->renderAjax($this->view, $viewParam) : $this->controller->render($this->view, $viewParam);
+    protected function processRequest()
+    {
+        $renderMethod = \Yii::$app->request->isAjax ? 'renderAjax' : 'render';
+
+        return call_user_func([$this->controller, $renderMethod], $this->view, ['model' => $this->_model]);
     }
 }

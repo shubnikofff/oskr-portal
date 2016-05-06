@@ -8,7 +8,7 @@
 namespace backend\controllers;
 
 use backend\models\OrderSaver;
-use common\models\Company;
+use common\models\RoomGroup;
 use yii\web\Controller;
 
 
@@ -23,7 +23,7 @@ class OrderController extends Controller
 
     public function actionSave()
     {
-        $model = new OrderSaver(['modelClass' => Company::className()]);
+        $model = new OrderSaver(['modelClass' => RoomGroup::className()]);
         if ($model->load(\Yii::$app->request->post())) {
             if ($model->validate()) {
                 $model->save();

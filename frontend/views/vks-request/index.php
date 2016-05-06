@@ -12,13 +12,12 @@ use kartik\form\ActiveForm;
 use kartik\select2\Select2;
 use yii\widgets\Pjax;
 use yii\bootstrap\Modal;
-use common\models\vks\Participant;
+use common\models\Room;
 use yii\helpers\ArrayHelper;
 
 /**
  * @var $this \yii\web\View
- * @var $model \frontend\models\vks\RequestSearch
- * @var $dataProvider \yii\data\ActiveDataProvider
+ * @var $searchModel \frontend\models\vks\RequestSearch
  */
 
 $this->title = "Расписание";
@@ -49,7 +48,7 @@ $this->title = "Расписание";
             ]
         ]) ?>
 
-        <?= $form->field($model, 'dateInput')->widget(DatePicker::className(), [
+        <?= $form->field($searchModel, 'dateInput')->widget(DatePicker::className(), [
             'type' => DatePicker::TYPE_BUTTON,
             'pluginOptions' => [
                 'autoclose' => true,
@@ -58,9 +57,9 @@ $this->title = "Расписание";
             ],
         ]) ?>
 
-        <?php $query = Participant::find()->select(['_id', 'name', 'companyId'])->with('company');
+        <?php $query = Room::find()->select(['_id', 'name', 'companyId'])->with('company');
         $participants = ArrayHelper::toArray($query->all(), [
-            Participant::className() => [
+            Room::className() => [
                 'id' => function ($item) {
                     return (string)$item->primaryKey;
                 },
@@ -70,7 +69,7 @@ $this->title = "Расписание";
         ]);
         $participantsIdData = ArrayHelper::map($participants, 'id', 'name', 'company'); ?>
 
-        <?= $form->field($model, 'participantsId')->widget(Select2::className(), [
+        <?= $form->field($searchModel, 'participantsId')->widget(Select2::className(), [
             'data' => $participantsIdData,
             'showToggleAll' => false,
             'options' => [
@@ -94,8 +93,8 @@ $this->title = "Расписание";
         ]) ?>
 
         <?= $this->render('_schedule', [
-            'model' => $model,
-            'dataProvider' => $dataProvider,
+            'model' => $searchModel,
+            'dataProvider' => $searchModel->search(),
         ]) ?>
 
         <?php Pjax::end() ?>

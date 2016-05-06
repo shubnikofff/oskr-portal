@@ -8,7 +8,7 @@
 namespace frontend\models\vks;
 
 use common\models\vks\DeployServer;
-use common\models\vks\Participant;
+use common\models\Room;
 use yii\helpers\ArrayHelper;
 use common\components\MinuteFormatter;
 use yii\mongodb\validators\MongoDateValidator;
@@ -31,7 +31,7 @@ use yii\mongodb\validators\MongoIdValidator;
  * @property \MongoId $deployServerId
  * @property DeployServer $deployServer
  * @property \MongoId[] $participantsId
- * @property Participant[] $participants
+ * @property \common\models\Room[] $participants
  * @property array $participantNameList
  * @property array $participantShortNameList
  * @property string $cancellationReason
@@ -47,7 +47,7 @@ class Request extends \common\models\Request
     const SCENARIO_CANCEL = 'cancel';
     const SCENARIO_SET_DEPLOY_SERVER = 'set_deploy_server';
     /**
-     * @var Participant[] the participants of VKS
+     * @var \common\models\Room[] the participants of VKS
      */
     private $_participants;
     /**
@@ -153,12 +153,12 @@ class Request extends \common\models\Request
     }
 
     /**
-     * @return Participant[]
+     * @return \common\models\Room[]
      */
     public function getParticipants()
     {
         if (!$this->_participants) {
-            $this->_participants = is_array($this->participantsId) ? Participant::find()->with('company')->where(['_id' => ['$in' => $this->participantsId]])->all() : [];
+            $this->_participants = is_array($this->participantsId) ? \common\models\Room::find()->with('company')->where(['_id' => ['$in' => $this->participantsId]])->all() : [];
         }
 
         return $this->_participants;
@@ -179,7 +179,7 @@ class Request extends \common\models\Request
     public function getParticipantNameList()
     {
         $names = ArrayHelper::toArray($this->participants, [
-            Participant::className() => ['name']
+            \common\models\Room::className() => ['name']
         ]);
         return ArrayHelper::getColumn($names, 'name');
     }
@@ -191,7 +191,7 @@ class Request extends \common\models\Request
     public function getParticipantShortNameList()
     {
         $names = ArrayHelper::toArray($this->participants, [
-            Participant::className() => ['shortName']
+            \common\models\Room::className() => ['shortName']
         ]);
         return ArrayHelper::getColumn($names, 'shortName');
     }

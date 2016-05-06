@@ -10,20 +10,28 @@ return [
         'identityClass' => 'common\models\User',
         'enableAutoLogin' => true,
     ],
-    'log' => [
-        'traceLevel' => YII_DEBUG ? 3 : 0,
-        'targets' => [
-            [
-                'class' => 'yii\log\FileTarget',
-                'levels' => ['error', 'warning'],
-            ],
-        ],
+
+    'request' => [
+        'parsers' => [
+            'application/json' => 'yii\web\JsonParser',
+        ]
     ],
+
     'errorHandler' => [
         'errorAction' => 'site/error',
     ],
+
     'urlManager' => [
         'enablePrettyUrl' => true,
         'showScriptName' => false,
+        'rules' => [
+            [
+                'class' => 'yii\rest\UrlRule',
+                'controller' => 'rest/user',
+                'tokens' => [
+                    '{id}' => '<id:\w+>'
+                ]
+            ],
+        ],
     ],
 ];

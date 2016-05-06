@@ -1,35 +1,27 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: bill
- * Date: 13.10.15
- * Time: 13:50
+ * Copyright (c) 2016. OSKR JSC "NIAEP"
  */
 
 namespace common\components\behaviors;
 
-use yii\db\Expression;
+
+/**
+ * @author Shubnikov Alexey <a.shubnikov@niaep.ru>
+ *
+ * TimestampBehavior
+ */
 
 class TimestampBehavior extends \yii\behaviors\TimestampBehavior
 {
-    /**
-     * @inheritdoc
-     */
     public $createdAtAttribute = 'createdAt';
-    /**
-     * @inheritdoc
-     */
+
     public $updatedAtAttribute = 'updatedAt';
 
-    /**
-     * @inheritdoc
-     */
-    protected function getValue($event)
+    public function init()
     {
-        if ($this->value instanceof Expression) {
-            return $this->value;
-        } else {
-            return $this->value !== null ? call_user_func($this->value, $event) : new \MongoDate();
-        }
+        parent::init();
+
+        $this->value = new \MongoDate();
     }
 }

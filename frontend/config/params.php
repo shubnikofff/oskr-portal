@@ -1,6 +1,7 @@
 <?php
 return [
-    'vks.minTime' => 8 * 60,
-    'vks.maxTime' => 19 * 60,
-    'vks.schedule.refreshPeriod' => 15000 * 60
+    'email' => 'oskr@niaep.ru',
+    'booking.minHour' => 8,
+    'booking.maxHour' => 19,
+    'booking.schedule.refreshPeriod' => 15000 * 60
 ];

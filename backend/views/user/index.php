@@ -8,8 +8,7 @@
 use kartik\helpers\Html;
 /**
  * @var $this \yii\web\View
- * @var $model \backend\models\UserSearch
- * @var $dataProvider \yii\data\ActiveDataProvider
+ * @var $searchModel \backend\models\UserSearch
  */
 $this->title = "Пользователи";
 ?>
@@ -19,8 +18,8 @@ $this->title = "Пользователи";
     <?= Html::pageHeader($this->title) ?>
 
     <?= \yii\grid\GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $model,
+        'dataProvider' => $searchModel->search(),
+        'filterModel' => $searchModel,
         'columns' => [
             [
                 'class' => '\yii\grid\ActionColumn',
@@ -40,7 +39,7 @@ $this->title = "Пользователи";
             ],
             [
                 'attribute' => 'status',
-                'filter' => [$model::STATUS_ACTIVE => 'Активный', $model::STATUS_BLOCKED => 'Заблокирован',],
+                'filter' => [$searchModel::STATUS_ACTIVE => 'Активный', $searchModel::STATUS_BLOCKED => 'Заблокирован',],
                 'contentOptions' => ['class' => 'text-center'],
                 'content' => function ($model) {
                     $content = '';

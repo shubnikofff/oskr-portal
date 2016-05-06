@@ -1,0 +1,45 @@
+/*
+ * Copyright (c) 2016. OSKR JSC "NIAEP"
+ */
+
+div.option-vks, div.option-equipment {
+    display: none;
+}
+
+#room-group-container {
+    overflow-x: hidden;
+    overflow-y: scroll;
+    max-height: 500px;
+    border-top: 1px solid #d5d5d5;
+    border-bottom: 1px solid #d5d5d5;
+}
+
+button.room-group {
+    white-space: normal;
+    text-align: left;
+}
+
+button.room-group:first-child {
+    border-top: hidden;
+}
+
+button.room-group:last-child {
+    border-bottom: hidden;
+}
+
+div.room-group {
+    display: none;
+}
+
+div.room {
+    display: inline-block;
+    width: 32%;
+}
+
+div.room label:after{
+    content: "";
+}
+
+.found {
+    background-color: yellow;
+}

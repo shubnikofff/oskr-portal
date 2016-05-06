@@ -7,7 +7,10 @@
 
 namespace frontend\assets;
 
+use common\assets\OskrAsset;
+use yii\bootstrap\BootstrapAsset;
 use yii\web\AssetBundle;
+use yii\web\YiiAsset;
 
 /**
  * @author Qiang Xue <qiang.xue@gmail.com>
@@ -20,14 +23,12 @@ class AppAsset extends AssetBundle
     public $css = [
         'css/site.css',
     ];
-    public $js = [
-        'js/app.js'
-    ];
 
     public $depends = [
-        'frontend\assets\Html5ShivAsset',
-        'frontend\assets\RespondAsset',
-        'yii\web\YiiAsset',
-        'yii\bootstrap\BootstrapAsset',
+        YiiAsset::class,
+        BootstrapAsset::class,
+        Html5ShivAsset::class,
+        RespondAsset::class,
+        IE8Asset::class
     ];
 }
