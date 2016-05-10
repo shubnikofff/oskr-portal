@@ -69,7 +69,8 @@ $participants = Participant::findAllByRequest($model)
             <div class="input-group">
                 <input id="room-filter-input" type="text" class="form-control" placeholder="Поиск помещений"/>
                 <span class="input-group-btn">
-                    <button id="room-filter-reset" class="btn btn-default" type="button"><span class="glyphicon glyphicon-remove"></span></button>
+                    <button id="room-filter-reset" class="btn btn-default" type="button"><span
+                            class="glyphicon glyphicon-remove"></span></button>
                 </span>
             </div>
         </div>
@@ -124,6 +125,8 @@ $participants = Participant::findAllByRequest($model)
                                 'data' => ['company-id' => (string)$participant->companyId]
                             ];
 
+                            $label .= $participant->ahuConfirmation ? '&nbsp;<span class="glyphicon glyphicon-star text-warning"></span>' : '';
+
                             $options = array_merge_recursive($defaultOptions, ($participant->isBusy) ? [
                                 'label' => $label . '<p><small>занято с ' . MinuteFormatter::asString($participant->busyFrom) . ' до ' .
                                     MinuteFormatter::asString($participant->busyTo) . '</small></p>',
@@ -140,7 +143,19 @@ $participants = Participant::findAllByRequest($model)
                                 ],
                             ]);
 
-                            return Html::beginTag('div', ['class' => 'col-lg-4 vks-room', 'style' => 'display:none']) . Html::checkbox($name, $checked, $options) . Html::endTag('div');
+                            $tooltip = $participant->ahuConfirmation ? ['data' => [
+                                'toggle' => 'tooltip',
+                                'html' => true,
+                                'placement' => 'top',
+                                'container' => '#vks-participants',
+                                'title' => Html::tag('div', 'Бронь необходимо согласовать с')
+                                    . Html::tag('div', $participant->confirmPerson->fullName)
+                                    . Html::tag('div', $participant->confirmPerson->post)
+                                    . Html::tag('div', 'тел: '. $participant->confirmPerson->phone . ', ' . $participant->confirmPerson->email)
+
+                            ]] : [];
+
+                            return Html::beginTag('div', array_merge(['class' => 'col-lg-4 vks-room', 'style' => 'display:none'], $tooltip)) . Html::checkbox($name, $checked, $options) . Html::endTag('div');
                         }
                     ]) ?>
 

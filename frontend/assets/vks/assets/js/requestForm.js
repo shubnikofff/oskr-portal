@@ -188,6 +188,7 @@
 
             this.$infoButtons.popover({html: true});
             this.$companyButtons.tooltip();
+            this.$vksRooms.tooltip();
         },
 
         companyButtonClick: function () {

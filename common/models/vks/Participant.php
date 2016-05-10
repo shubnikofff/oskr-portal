@@ -3,6 +3,7 @@
 namespace common\models\vks;
 
 use common\models\Company;
+use common\models\User;
 use frontend\models\vks\Request;
 use yii\helpers\ArrayHelper;
 use yii\mongodb\ActiveRecord;
@@ -18,6 +19,8 @@ use yii\mongodb\Collection;
  * @property \MongoId|string $companyId
  * @property Company $company
  * @property boolean $ahuConfirmation
+ * @property \MongoId $confirmPersonId
+ * @property User $confirmPerson
  * @property string $phone
  * @property string $contact
  * @property string $model
@@ -62,6 +65,7 @@ class Participant extends ActiveRecord
             'shortName',
             'companyId',
             'ahuConfirmation',
+            'confirmPersonId',
             'phone',
             'contact',
             'model',
@@ -79,7 +83,6 @@ class Participant extends ActiveRecord
         return [
             [['name', 'shortName'], 'required'],
 
-            ['companyId', MongoIdValidator::className(), 'forceFormat' => 'object'],
             ['companyId', 'exist', 'targetClass' => Company::className(), 'targetAttribute' => '_id'],
 
             ['ahuConfirmation', 'boolean'],
@@ -87,14 +90,18 @@ class Participant extends ActiveRecord
                 return boolval($value);
             }],
 
+            ['confirmPersonId', 'exist', 'targetClass' => User::className(), 'targetAttribute' => '_id'],
+
             ['ipAddress', 'match', 'pattern' => '/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/'],
             [['phone', 'contact', 'model', 'gatekeeperNumber', 'note'], 'safe'],
+
+            [['companyId', 'confirmPersonId'], MongoIdValidator::className(), 'forceFormat' => 'object'],
         ];
     }
 
     public function getCompany()
     {
-        return $this->hasOne(Company::className(), ['_id' => 'companyId']);
+        return $this->hasOne(Company::class, ['_id' => 'companyId']);
     }
 
     public function attributeLabels()
@@ -105,6 +112,7 @@ class Participant extends ActiveRecord
             'status' => 'Статус',
             'companyId' => 'Компания',
             'ahuConfirmation' => 'Необходимость согласования с АХУ',
+            'confirmPersonId' => 'Согласующее лицо',
             'phone' => 'Телефон',
             'contact' => 'Контактное лицо',
             'model' => 'Модель оборудования',
@@ -112,6 +120,11 @@ class Participant extends ActiveRecord
             'gatekeeperNumber' => 'Номер на GateKeeper',
             'note' => 'Примечание',
         ];
+    }
+
+    public function getConfirmPerson()
+    {
+        return $this->hasOne(User::class, ['_id' => 'confirmPersonId']);
     }
 
     /**
@@ -126,13 +139,6 @@ class Participant extends ActiveRecord
         $collection = \Yii::$app->get('mongodb')->getCollection(Request::collectionName());
 
         $busyParticipants = $collection->aggregate([
-            ['$project' => [
-                'date' => 1,
-                'participantsId' => 1,
-                'beginTime' => 1,
-                'endTime' => 1,
-                'status' => 1
-            ]],
             ['$match' => [
                 '_id' => ['$ne' => $request->primaryKey],
                 'date' => $request->date,
@@ -145,7 +151,7 @@ class Participant extends ActiveRecord
         ]);
 
         /** @var Participant[] $participants */
-        $participants = self::find()->with('company')->orderBy('name')->all();
+        $participants = self::find()->with('company', 'confirmPerson')->orderBy('name')->all();
         $busyParticipantsId = ArrayHelper::getColumn($busyParticipants, 'id');
 
         foreach ($participants as $key => $participant) {
@@ -202,5 +208,18 @@ class Participant extends ActiveRecord
     public function setBusyTo($busyTo)
     {
         $this->_busyTo = $busyTo;
+    }
+
+    /**
+     * @return array
+     */
+    static public function confirmPersonList()
+    {
+        $query = User::find()->asArray()->orderBy('lastName');
+        return ArrayHelper::map($query->all(), function ($elem) {
+            return (string)$elem['_id'];
+        }, function ($elem) {
+            return $elem['lastName'] . ' ' . $elem['firstName'] . ' ' . $elem['middleName'] . ' - ' . $elem['post'];
+        });
     }
 }
