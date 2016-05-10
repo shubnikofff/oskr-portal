@@ -7,7 +7,7 @@ use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\SearchModelInterface;
 use common\models\vks\Participant;
-
+use yii\mongodb\validators\MongoIdValidator;
 /**
  * VksParticipantSearch represents the model behind the search form about `common\models\vks\Participant`.
  */
@@ -19,7 +19,8 @@ class VksParticipantSearch extends Participant implements SearchModelInterface
     public function rules()
     {
         return [
-            [['name', 'shortName', 'companyId', 'ipAddress', 'note'], 'safe'],
+            ['companyId', MongoIdValidator::className(), 'forceFormat' => 'object'],
+            [['name', 'shortName', 'ipAddress', 'note'], 'safe'],
         ];
     }
 
