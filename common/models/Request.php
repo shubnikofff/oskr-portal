@@ -7,6 +7,7 @@
 
 namespace common\models;
 
+use common\components\Mailer;
 use yii\mongodb\ActiveRecord;
 
 /**
@@ -24,9 +25,7 @@ use yii\mongodb\ActiveRecord;
  */
 abstract class Request extends ActiveRecord
 {
-    /**
-     * @event Event
-     */
+    const EVENT_CREATED = 'created';
     const EVENT_STATUS_CHANGED = 'status_changed';
 
     const STATUS_CANCEL = 0;
@@ -65,7 +64,9 @@ abstract class Request extends ActiveRecord
     {
         parent::init();
 
-        $this->on(self::EVENT_STATUS_CHANGED, [$this, 'onStatusChanged']);
+        $mailer = new Mailer();
+        $this->on(self::EVENT_CREATED, [$mailer, 'send']);
+        $this->on(self::EVENT_STATUS_CHANGED, [$mailer, 'send']);
     }
 
     /**
@@ -113,23 +114,5 @@ abstract class Request extends ActiveRecord
     public function getOwner()
     {
         return $this->hasOne(User::className(), ['_id' => 'createdBy']);
-    }
-
-    public function onStatusChanged($event)
-    {
-        /** @var Request $request */
-        $request = $event->sender;
-        $viewHtml = '';
-        $viewText = '';
-        if ($request instanceof \frontend\models\vks\Request) {
-            $viewHtml = 'vksRequestStatusChanged-html';
-            $viewText = 'vksRequestStatusChanged-text';
-        }
-
-        \Yii::$app->mailer->compose(['html' => $viewHtml, 'text' => $viewText], ['model' => $request])
-            ->setFrom([\Yii::$app->params['email.admin'] => 'Служба технической поддрежки' . \Yii::$app->name])
-            ->setTo($request->owner->email)
-            ->setSubject(\Yii::$app->name . ': изменение статуса заявки')
-            ->send();
     }
 }

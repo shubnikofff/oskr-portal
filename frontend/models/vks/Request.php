@@ -7,6 +7,8 @@
  */
 namespace frontend\models\vks;
 
+use common\components\events\ChangeRequestStatusEvent;
+use common\components\events\MailerEvent;
 use common\models\vks\DeployServer;
 use common\models\vks\Participant;
 use yii\helpers\ArrayHelper;
@@ -222,7 +224,7 @@ class Request extends \common\models\Request
             $this->cancellationReason = null;
         }
         if ($this->save()) {
-            $this->trigger(self::EVENT_STATUS_CHANGED);
+            $this->trigger(self::EVENT_STATUS_CHANGED, new ChangeRequestStatusEvent(['request' => $this]));
             return true;
         }
         return false;
@@ -235,7 +237,7 @@ class Request extends \common\models\Request
     {
         $this->status = self::STATUS_CANCEL;
         if ($this->save()) {
-            $this->trigger(self::EVENT_STATUS_CHANGED);
+            $this->trigger(self::EVENT_STATUS_CHANGED, new ChangeRequestStatusEvent(['request' => $this]));
             return true;
         }
         return false;

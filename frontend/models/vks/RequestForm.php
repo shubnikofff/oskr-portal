@@ -7,6 +7,8 @@
 
 namespace frontend\models\vks;
 
+use common\components\events\ChangeRequestStatusEvent;
+use common\components\events\MailerEvent;
 use common\components\MinuteFormatter;
 use yii\mongodb\validators\MongoDateValidator;
 use common\components\validators\MinuteValidator;
@@ -159,7 +161,7 @@ class RequestForm extends Request
         parent::afterSave($insert, $changedAttributes);
 
         if ($insert || array_key_exists('status', $changedAttributes)) {
-            $this->trigger(self::EVENT_STATUS_CHANGED);
+            $this->trigger(self::EVENT_STATUS_CHANGED, new ChangeRequestStatusEvent(['request' => $this]));
         }
     }
 
