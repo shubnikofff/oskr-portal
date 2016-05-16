@@ -1,19 +1,21 @@
 <?php
 /**
- * Copyright (c) 2016. OSKR JSC "NIAEP" 
+ * oskr.local
+ * Created: 16.05.16 10:27
+ * @copyright Copyright (c) 2016 OSKR NIAEP
  */
 
-namespace common\components\events;
-use yii\base\Event;
+namespace common\components\helpers\mail;
+use yii\base\Object;
 
 
 /**
  * @author Shubnikov Alexey <a.shubnikov@niaep.ru>
  *
- * MailerEvent
+ * Mail
  */
 
-class MailerEvent extends Event
+class Mail extends Object
 {
     public $from;
 
@@ -22,14 +24,13 @@ class MailerEvent extends Event
     public $subject;
 
     public $view;
-    
+
     public $viewParams;
 
     public function __construct($config = [])
     {
         $this->from = [\Yii::$app->params['email.admin'] => 'Служба технической поддержки ' . \Yii::$app->name];
-        
+
         parent::__construct($config);
     }
-    
 }

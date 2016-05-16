@@ -109,11 +109,11 @@ class RequestForm extends Request
 
                 $value = $this->{$attribute};
 
-                if($this->mode === self::MODE_WITH_VKS && count($value) < 2) {
+                if ($this->mode === self::MODE_WITH_VKS && count($value) < 2) {
                     $this->addError($attribute, 'Количество участников должно быть не менее двух');
                     return;
                 }
-                if($this->mode === self::MODE_WITHOUT_VKS && count($value) !== 1) {
+                if ($this->mode === self::MODE_WITHOUT_VKS && count($value) !== 1) {
                     $this->addError($attribute, 'Помещение для совещания должно быть только одно');
                     return;
                 }
@@ -146,7 +146,27 @@ class RequestForm extends Request
 
             if ($insert || $this->createdBy == \Yii::$app->user->identity['primaryKey']) {
                 $this->status = self::STATUS_CONSIDERATION;
+                $this->trigger(self::EVENT_STATUS_CHANGED, new ChangeRequestStatusEvent(['request' => $this]));
             }
+
+            $roomsOnConsidiration = is_array($this->roomsOnConsidiration) ? $this->roomsOnConsidiration : [];
+            $aggrRoomsId = ArrayHelper::getColumn($roomsOnConsidiration, 'id');
+            foreach ($this->participants as $participant) {
+
+                if ($participant->ahuConfirmation && !in_array($participant->_id, $aggrRoomsId)) {
+                    array_push($roomsOnConsidiration, [
+                        'id' => $participant->_id,
+                        'status' => self::STATUS_ROOM_CONSIDIRATION,
+                        'confirmPerson' => $participant->confirmPerson->fullName,
+                        'confirmEmail' => $participant->confirmPerson->email,
+                        'confirmPhone' => $participant->confirmPerson->phone,
+
+                    ]);
+                }
+
+            }
+            $this->roomsOnConsidiration = $roomsOnConsidiration;
+
             return true;
         } else {
             return false;
@@ -156,14 +176,14 @@ class RequestForm extends Request
     /**
      * @inheritDoc
      */
-    public function afterSave($insert, $changedAttributes)
+    /*public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
 
         if ($insert || array_key_exists('status', $changedAttributes)) {
             $this->trigger(self::EVENT_STATUS_CHANGED, new ChangeRequestStatusEvent(['request' => $this]));
         }
-    }
+    }*/
 
 
 }

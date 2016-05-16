@@ -6,6 +6,7 @@
  */
 
 use yii\helpers\Html;
+use frontend\models\vks\Request;
 
 /**
  * @var $this \yii\web\View
@@ -162,16 +163,19 @@ $maxMinute = Yii::$app->params['vks.maxTime'];
     <div id="vks-schedule-legend">
         <div>
             <div class="status-color-box status-considiration"></div>
-            - на рассмотрении
+            - <?= Request::statusName(Request::STATUS_CONSIDERATION) ?>
         </div>
         <div>
             <div class="status-color-box status-approve"></div>
-            - согласованные
+            - <?= Request::statusName(Request::STATUS_APPROVE) ?>
         </div>
-        <!--<div><div class="status-color-box status-ahu-approve"></div> - согласованные АХУ</div>-->
+        <div>
+            <div class="status-color-box status-ahu-approve"></div>
+            - <?= Request::statusName(Request::STATUS_ROOMS_CONSIDIRATION) ?>
+        </div>
         <div>
             <div class="status-color-box status-cancel"></div>
-            - отмененные
+            - <?= Request::statusName(Request::STATUS_CANCEL) ?>
         </div>
     </div>
 

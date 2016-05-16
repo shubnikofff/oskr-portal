@@ -4,7 +4,10 @@
  */
 
 namespace common\components\events;
+use common\components\helpers\mail\Mail;
+use common\components\helpers\mail\MailProvider;
 use frontend\models\vks\Request;
+use yii\base\Event;
 
 
 /**
@@ -13,18 +16,18 @@ use frontend\models\vks\Request;
  * ChangeRequestStatusEvent
  */
 
-class ChangeRequestStatusEvent extends MailerEvent
+class ChangeRequestStatusEvent extends Event implements MailProvider
 {
     /** @var  Request */
     public $request;
 
-    public function init()
+    public function getMail()
     {
-        $this->to = $this->request->owner->email;
-        $this->subject = 'Изменение статуса заявки';
-        $this->view = 'vksRequestStatusChanged-html';
-        $this->viewParams = ['model' => $this->request];
-        
-        parent::init();
+        return new Mail([
+            'to' => $this->request->owner->email,
+            'subject' => 'Изменение статуса заявки',
+            'view' => 'vksRequestStatusChanged-html',
+            'viewParams' => ['model' => $this->request]
+        ]);
     }
 }

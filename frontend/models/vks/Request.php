@@ -8,7 +8,6 @@
 namespace frontend\models\vks;
 
 use common\components\events\ChangeRequestStatusEvent;
-use common\components\events\MailerEvent;
 use common\models\vks\DeployServer;
 use common\models\vks\Participant;
 use yii\helpers\ArrayHelper;
@@ -33,6 +32,7 @@ use yii\mongodb\validators\MongoIdValidator;
  * @property \MongoId $deployServerId
  * @property DeployServer $deployServer
  * @property \MongoId[] $participantsId
+ * @property array $roomsOnConsidiration
  * @property Participant[] $participants
  * @property array $participantNameList
  * @property array $participantShortNameList
@@ -42,6 +42,12 @@ use yii\mongodb\validators\MongoIdValidator;
  */
 class Request extends \common\models\Request
 {
+    const STATUS_ROOMS_CONSIDIRATION = 4;
+
+    const STATUS_ROOM_APPROVE = 'room_approve';
+    const STATUS_ROOM_CANCEL = 'room_cancel';
+    const STATUS_ROOM_CONSIDIRATION = 'room_considiration';
+
     const MODE_WITH_VKS = 0;
     const MODE_WITHOUT_VKS = 1;
 
@@ -74,6 +80,7 @@ class Request extends \common\models\Request
             'audioRecord',
             'deployServerId',
             'participantsId',
+            'roomsOnConsidiration',
             'cancellationReason',
             'buildServerId',
             'note',
@@ -164,6 +171,41 @@ class Request extends \common\models\Request
         }
 
         return $this->_participants;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getStatusName()
+    {
+        return self::statusName($this->status);
+    }
+
+    /**
+     * @param $status
+     * @return null|string
+     */
+    public static function statusName($status)
+    {
+        $name = null;
+        switch ($status) {
+            case self::STATUS_CANCEL:
+                $name = 'Отменено';
+                break;
+            case self::STATUS_APPROVE:
+                $name = 'Согласовано';
+                break;
+            case self::STATUS_COMPLETE:
+                $name = 'Выполнено';
+                break;
+            case self::STATUS_CONSIDERATION:
+                $name = 'На рассмотрении ОСКР';
+                break;
+            case self::STATUS_ROOMS_CONSIDIRATION:
+                $name = 'Комнаты на рассмотрении';
+                break;
+        };
+        return $name;
     }
 
     /**

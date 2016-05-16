@@ -7,7 +7,7 @@
 
 namespace common\models;
 
-use common\components\Mailer;
+use common\components\helpers\mail\Mailer;
 use yii\mongodb\ActiveRecord;
 
 /**
@@ -25,7 +25,6 @@ use yii\mongodb\ActiveRecord;
  */
 abstract class Request extends ActiveRecord
 {
-    const EVENT_CREATED = 'created';
     const EVENT_STATUS_CHANGED = 'status_changed';
 
     const STATUS_CANCEL = 0;
@@ -65,7 +64,6 @@ abstract class Request extends ActiveRecord
         parent::init();
 
         $mailer = new Mailer();
-        $this->on(self::EVENT_CREATED, [$mailer, 'send']);
         $this->on(self::EVENT_STATUS_CHANGED, [$mailer, 'send']);
     }
 
@@ -77,38 +75,6 @@ abstract class Request extends ActiveRecord
         return [
             ['status', 'in', 'range' => [self::STATUS_CANCEL, self::STATUS_APPROVE, self::STATUS_CONSIDERATION, self::STATUS_COMPLETE]]
         ];
-    }
-
-    /**
-     * @return null|string
-     */
-    public function getStatusName()
-    {
-        return self::statusName($this->status);
-    }
-
-    /**
-     * @param $status
-     * @return null|string
-     */
-    public static function statusName($status)
-    {
-        $name = null;
-        switch ($status) {
-            case self::STATUS_CANCEL:
-                $name = 'Отменено';
-                break;
-            case self::STATUS_APPROVE:
-                $name = 'Согласовано';
-                break;
-            case self::STATUS_COMPLETE:
-                $name = 'Выполнено';
-                break;
-            case self::STATUS_CONSIDERATION:
-                $name = 'На рассмотрении';
-                break;
-        };
-        return $name;
     }
 
     public function getOwner()

@@ -16,7 +16,7 @@ tr.half-hour {
 }
 
 #current-time {
-    border: 1px solid red;
+    border: 1px dashed red;
     position: relative;
     display: none;
     z-index: 100;

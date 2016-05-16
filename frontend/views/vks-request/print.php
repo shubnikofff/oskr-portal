@@ -10,7 +10,7 @@ use yii\helpers\Html;
  * @var $this \yii\web\View
  * @var $model \frontend\models\vks\Request
  */
-$this->title = "Завяка на помещение";
+$this->title = "Заявка на помещение";
 \frontend\assets\AppAsset::register($this);
 ?>
 <?php $this->beginPage() ?>
