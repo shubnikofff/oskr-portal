@@ -2,6 +2,9 @@
 
 namespace common\models\vks;
 
+use common\components\events\RequestStatusChangedEvent;
+use common\components\events\RoomStatusChangedEvent;
+use common\components\helpers\mail\Mailer;
 use common\models\Company;
 use common\models\User;
 use frontend\models\vks\Request;
@@ -30,9 +33,16 @@ use yii\mongodb\Collection;
  * @property bool|null $isBusy
  * @property int|null $busyFrom
  * @property int|null $busyTo
+ * @property array $log
  */
 class Participant extends ActiveRecord
 {
+    const EVENT_STATUS_CHANGED = 'room_status_changed';
+
+    const STATUS_APPROVE = 'approve';
+    const STATUS_CANCEL = 'cancel';
+    const STATUS_CONSIDIRATION = 'considiration';
+
     /**
      * @var bool is busy this participant in minute range
      */
@@ -72,7 +82,30 @@ class Participant extends ActiveRecord
             'ipAddress',
             'gatekeeperNumber',
             'note',
+            'log'
         ];
+    }
+
+    public function init()
+    {
+        parent::init();
+
+        $this->on(self::EVENT_STATUS_CHANGED, function (RoomStatusChangedEvent $event) {
+
+            if ($event->roomStatus === self::STATUS_CONSIDIRATION) {
+                (new Mailer())->send($event);
+
+            } else {
+                $request = $event->request;
+                $count = Request::find()->where(['log.requestId' => $request->_id, 'log.status' => self::STATUS_CONSIDIRATION])->count();
+
+                if ($count === 0) {
+                    $request->status = Request::STATUS_OSKR_CONSIDERATION;
+                    $request->save(false);
+                    $request->trigger(Request::EVENT_STATUS_CHANGED, new RequestStatusChangedEvent(['request' => $request]));
+                }
+            }
+        });
     }
 
     /**
@@ -221,5 +254,34 @@ class Participant extends ActiveRecord
         }, function ($elem) {
             return $elem['lastName'] . ' ' . $elem['firstName'] . ' ' . $elem['middleName'] . ' - ' . $elem['post'];
         });
+    }
+
+    /**
+     * @param Request $request
+     * @param $status
+     * @param bool $newRecord
+     */
+    public function writeLog(Request $request, $status, $newRecord = false)
+    {
+        /** @var Collection $collection */
+        $collection = \Yii::$app->get('mongodb')->getCollection(self::collectionName());
+        $requestId = $request->_id;
+
+        if ($newRecord) {
+
+            $collection->update(['_id' => $this->_id], [
+                '$addToSet' => [
+                    'log' => [
+                        'requestId' => $requestId,
+                        'status' => $status
+                    ]
+                ]
+            ]);
+        } else {
+            $collection->update([
+                '_id' => $this->_id,
+                'log.requestId' => $requestId
+            ], ['log.$.status' => $status]);
+        }
     }
 }

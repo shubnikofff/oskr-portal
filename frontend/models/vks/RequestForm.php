@@ -7,8 +7,8 @@
 
 namespace frontend\models\vks;
 
-use common\components\events\ChangeRequestStatusEvent;
-use common\components\events\MailerEvent;
+use common\components\events\RequestStatusChangedEvent;
+use common\components\events\RoomStatusChangedEvent;
 use common\components\MinuteFormatter;
 use yii\mongodb\validators\MongoDateValidator;
 use common\components\validators\MinuteValidator;
@@ -144,30 +144,17 @@ class RequestForm extends Request
     {
         if (parent::beforeSave($insert)) {
 
-            if ($insert || $this->createdBy == \Yii::$app->user->identity['primaryKey']) {
-                $this->status = self::STATUS_CONSIDERATION;
-                $this->trigger(self::EVENT_STATUS_CHANGED, new ChangeRequestStatusEvent(['request' => $this]));
-            }
+            if ($insert) {
 
-            $roomsOnConsidiration = is_array($this->roomsOnConsidiration) ? $this->roomsOnConsidiration : [];
-            $aggrRoomsId = ArrayHelper::getColumn($roomsOnConsidiration, 'id');
-            foreach ($this->participants as $participant) {
-
-                if ($participant->ahuConfirmation && !in_array($participant->_id, $aggrRoomsId)) {
-                    array_push($roomsOnConsidiration, [
-                        'id' => $participant->_id,
-                        'status' => self::STATUS_ROOM_CONSIDIRATION,
-                        'confirmPerson' => $participant->confirmPerson->fullName,
-                        'confirmEmail' => $participant->confirmPerson->email,
-                        'confirmPhone' => $participant->confirmPerson->phone,
-
-                    ]);
+                $this->status = self::STATUS_OSKR_CONSIDERATION;
+                foreach ($this->participants as $participant) {
+                    if ($participant->ahuConfirmation) {
+                        $this->status = self::STATUS_ROOMS_CONSIDIRATION;
+                    }
                 }
-
             }
-            $this->roomsOnConsidiration = $roomsOnConsidiration;
-
             return true;
+
         } else {
             return false;
         }
@@ -176,14 +163,25 @@ class RequestForm extends Request
     /**
      * @inheritDoc
      */
-    /*public function afterSave($insert, $changedAttributes)
+    public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
 
-        if ($insert || array_key_exists('status', $changedAttributes)) {
-            $this->trigger(self::EVENT_STATUS_CHANGED, new ChangeRequestStatusEvent(['request' => $this]));
+        if ($insert) {
+            $this->trigger(self::EVENT_STATUS_CHANGED, new RequestStatusChangedEvent(['request' => $this]));
+
+            foreach ($this->participants as $participant) {
+
+                if ($participant->ahuConfirmation) {
+                    $roomStatus = Participant::STATUS_CONSIDIRATION;
+                    $participant->trigger(Participant::EVENT_STATUS_CHANGED, new RoomStatusChangedEvent(['request' => $this, 'roomStatus' => $roomStatus]));
+                } else {
+                    $roomStatus = Participant::STATUS_APPROVE;
+                }
+                $participant->writeLog($this, $roomStatus, true);
+            }
         }
-    }*/
+    }
 
 
 }

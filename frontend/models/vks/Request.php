@@ -7,7 +7,7 @@
  */
 namespace frontend\models\vks;
 
-use common\components\events\ChangeRequestStatusEvent;
+use common\components\events\RequestStatusChangedEvent;
 use common\models\vks\DeployServer;
 use common\models\vks\Participant;
 use yii\helpers\ArrayHelper;
@@ -43,11 +43,7 @@ use yii\mongodb\validators\MongoIdValidator;
 class Request extends \common\models\Request
 {
     const STATUS_ROOMS_CONSIDIRATION = 4;
-
-    const STATUS_ROOM_APPROVE = 'room_approve';
-    const STATUS_ROOM_CANCEL = 'room_cancel';
-    const STATUS_ROOM_CONSIDIRATION = 'room_considiration';
-
+    
     const MODE_WITH_VKS = 0;
     const MODE_WITHOUT_VKS = 1;
 
@@ -198,7 +194,7 @@ class Request extends \common\models\Request
             case self::STATUS_COMPLETE:
                 $name = 'Выполнено';
                 break;
-            case self::STATUS_CONSIDERATION:
+            case self::STATUS_OSKR_CONSIDERATION:
                 $name = 'На рассмотрении ОСКР';
                 break;
             case self::STATUS_ROOMS_CONSIDIRATION:
@@ -266,7 +262,7 @@ class Request extends \common\models\Request
             $this->cancellationReason = null;
         }
         if ($this->save()) {
-            $this->trigger(self::EVENT_STATUS_CHANGED, new ChangeRequestStatusEvent(['request' => $this]));
+            $this->trigger(self::EVENT_STATUS_CHANGED, new RequestStatusChangedEvent(['request' => $this]));
             return true;
         }
         return false;
@@ -279,7 +275,7 @@ class Request extends \common\models\Request
     {
         $this->status = self::STATUS_CANCEL;
         if ($this->save()) {
-            $this->trigger(self::EVENT_STATUS_CHANGED, new ChangeRequestStatusEvent(['request' => $this]));
+            $this->trigger(self::EVENT_STATUS_CHANGED, new RequestStatusChangedEvent(['request' => $this]));
             return true;
         }
         return false;

@@ -77,8 +77,11 @@ $maxMinute = Yii::$app->params['vks.maxTime'];
                                 case $request::STATUS_APPROVE:
                                     $statusClass = 'status-approve';
                                     break;
-                                case $request::STATUS_CONSIDERATION:
+                                case $request::STATUS_OSKR_CONSIDERATION:
                                     $statusClass = 'status-considiration';
+                                    break;
+                                case $request::STATUS_ROOMS_CONSIDIRATION:
+                                    $statusClass = 'status-ahu-approve';
                                     break;
                             } ?>
 
@@ -163,7 +166,7 @@ $maxMinute = Yii::$app->params['vks.maxTime'];
     <div id="vks-schedule-legend">
         <div>
             <div class="status-color-box status-considiration"></div>
-            - <?= Request::statusName(Request::STATUS_CONSIDERATION) ?>
+            - <?= Request::statusName(Request::STATUS_OSKR_CONSIDERATION) ?>
         </div>
         <div>
             <div class="status-color-box status-approve"></div>

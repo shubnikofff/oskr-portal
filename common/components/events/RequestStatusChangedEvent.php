@@ -13,10 +13,10 @@ use yii\base\Event;
 /**
  * @author Shubnikov Alexey <a.shubnikov@niaep.ru>
  *
- * ChangeRequestStatusEvent
+ * RequestStatusChangedEvent
  */
 
-class ChangeRequestStatusEvent extends Event implements MailProvider
+class RequestStatusChangedEvent extends Event implements MailProvider
 {
     /** @var  Request */
     public $request;

@@ -133,4 +133,9 @@ class VksRequestController extends Controller
         }
         throw new NotFoundHttpException;
     }
+
+    public function actionApproveRoom($id, $requestId)
+    {
+        echo "id: {$id}<br>request-id: {$requestId}";
+    }
 }

@@ -85,7 +85,8 @@ div.status-color-box {
 }
 
 .status-ahu-approve {
-    background-color: blanchedalmond;
+    background-color: #fff1be;
+    border: 1px solid #ffd13d;
 }
 
 .status-considiration {

@@ -7,6 +7,8 @@
 
 namespace common\models;
 
+use common\components\behaviors\BlameableBehavior;
+use common\components\behaviors\TimestampBehavior;
 use common\components\helpers\mail\Mailer;
 use yii\mongodb\ActiveRecord;
 
@@ -15,6 +17,7 @@ use yii\mongodb\ActiveRecord;
  *
  * Request
  *
+ * @property \MongoId $_id
  * @property int $status
  * @property string $statusName
  * @property User $owner
@@ -25,18 +28,18 @@ use yii\mongodb\ActiveRecord;
  */
 abstract class Request extends ActiveRecord
 {
-    const EVENT_STATUS_CHANGED = 'status_changed';
+    const EVENT_STATUS_CHANGED = 'request_status_changed';
 
     const STATUS_CANCEL = 0;
     const STATUS_APPROVE = 1;
-    const STATUS_CONSIDERATION = 2;
+    const STATUS_OSKR_CONSIDERATION = 2;
     const STATUS_COMPLETE = 3;
 
     public function behaviors()
     {
         return [
-            'common\components\behaviors\TimestampBehavior',
-            'common\components\behaviors\BlameableBehavior',
+            TimestampBehavior::class,
+            BlameableBehavior::class
         ];
     }
 
@@ -54,8 +57,7 @@ abstract class Request extends ActiveRecord
             'updatedAt'
         ];
     }
-
-
+    
     /**
      * @inheritDoc
      */
@@ -63,20 +65,9 @@ abstract class Request extends ActiveRecord
     {
         parent::init();
 
-        $mailer = new Mailer();
-        $this->on(self::EVENT_STATUS_CHANGED, [$mailer, 'send']);
+        $this->on(self::EVENT_STATUS_CHANGED, [new Mailer(), 'send']);
     }
-
-    /**
-     * @inheritDoc
-     */
-    public function rules()
-    {
-        return [
-            ['status', 'in', 'range' => [self::STATUS_CANCEL, self::STATUS_APPROVE, self::STATUS_CONSIDERATION, self::STATUS_COMPLETE]]
-        ];
-    }
-
+    
     public function getOwner()
     {
         return $this->hasOne(User::className(), ['_id' => 'createdBy']);

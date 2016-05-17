@@ -5,7 +5,7 @@
  * @copyright Copyright (c) 2015 OSKR NIAEP
  */
 use kartik\helpers\Html;
-use common\models\Request;
+use frontend\models\vks\Request;
 use yii\grid\GridView;
 use common\rbac\SystemPermission;
 
