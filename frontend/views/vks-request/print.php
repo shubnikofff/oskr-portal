@@ -5,6 +5,7 @@
  * @copyright Copyright (c) 2016 OSKR NIAEP
  */
 use yii\helpers\Html;
+use common\models\vks\Participant;
 
 /**
  * @var $this \yii\web\View
@@ -19,7 +20,7 @@ $this->title = "Заявка на помещение";
 <head>
     <meta charset="<?= Yii::$app->charset ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta http-equiv="X-UA-Compatible" content="IE=100" >
+    <meta http-equiv="X-UA-Compatible" content="IE=100">
     <?= Html::csrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
@@ -67,7 +68,7 @@ $this->title = "Заявка на помещение";
         <dd><?= $model->owner->phone ?></dd>
     </dl>
 
-    <p>Совещание в режиме ВКС: <b><?= Yii::$app->formatter->asBoolean($model->mode === $model::MODE_WITH_VKS)?></b></p>
+    <p>Совещание в режиме ВКС: <b><?= Yii::$app->formatter->asBoolean($model->mode === $model::MODE_WITH_VKS) ?></b></p>
 
     <?php if ($model->mode === $model::MODE_WITH_VKS): ?>
 
@@ -92,7 +93,7 @@ $this->title = "Заявка на помещение";
             <th>Организация</th>
             <th>Контактное лицо</th>
             <th>Контактный телефон</th>
-            <th>IP адрес</th>
+            <th>Статус</th>
 
         </tr>
         <?php $counter = 1 ?>
@@ -101,13 +102,25 @@ $this->title = "Заявка на помещение";
 
         <?php foreach ($model->participants as $participant): ?>
 
+            <?php switch ($model->getRoomStatus($participant->_id)) {
+                case Participant::STATUS_CONSIDIRATION:
+                    $roomStatus = "На рассмотрении";
+                    break;
+                case Participant::STATUS_CANCEL:
+                    $roomStatus = "Отменено";
+                    break;
+                default:
+                    $roomStatus = "Согласовано";
+                    break;
+            } ?>
+
             <tr>
                 <td><?= $counter ?></td>
                 <td><?= $participant->name ?></td>
                 <td><?= $participant->company->name ?></td>
                 <td><?= $participant->contact ?></td>
                 <td><?= $participant->phone ?></td>
-                <td><?= $participant->ipAddress ?></td>
+                <td><?= $roomStatus ?></td>
             </tr>
             <?php $counter++ ?>
         <?php endforeach; ?>
@@ -126,7 +139,7 @@ $this->title = "Заявка на помещение";
 
 </div>
 
-<?php $this->registerJs('window.print()')?>
+<?php $this->registerJs('window.print()') ?>
 
 <?php $this->endBody() ?>
 </body>

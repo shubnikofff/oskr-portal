@@ -12,6 +12,7 @@ use common\models\vks\DeployServer;
 use common\models\vks\Participant;
 use yii\helpers\ArrayHelper;
 use common\components\MinuteFormatter;
+use yii\mongodb\Collection;
 use yii\mongodb\validators\MongoDateValidator;
 use yii\mongodb\validators\MongoIdValidator;
 
@@ -54,6 +55,10 @@ class Request extends \common\models\Request
      * @var Participant[] the participants of VKS
      */
     private $_participants;
+    /**
+     * @var array
+     */
+    private $_roomsStatus;
     /**
      * @var string Date representation in form
      */
@@ -279,5 +284,29 @@ class Request extends \common\models\Request
             return true;
         }
         return false;
+    }
+
+    /**
+     * @param \MongoId $roomId
+     * @return string
+     * @throws \yii\base\InvalidConfigException
+     * @throws \yii\mongodb\Exception
+     */
+    public function getRoomStatus(\MongoId $roomId)
+    {
+        if ($this->_roomsStatus === null) {
+            /** @var Collection $collection */
+            $collection = \Yii::$app->get('mongodb')->getCollection(Participant::collectionName());
+            $pipeline = [
+                ['$unwind' => '$log'],
+                ['$match' => ['log.requestId' => $this->_id]],
+                ['$project' => ['status' => '$log.status']]
+            ];
+
+            $this->_roomsStatus = ArrayHelper::map($collection->aggregate($pipeline), function($item) {
+                return (string)$item['_id'];
+            }, 'status');
+        }
+        return $this->_roomsStatus[(string)$roomId];
     }
 }

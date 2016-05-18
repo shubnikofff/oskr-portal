@@ -6,6 +6,7 @@
  */
 use yii\bootstrap\Html;
 use common\rbac\SystemPermission;
+use common\models\vks\Participant;
 
 /**
  * @var $this \yii\web\View
@@ -14,6 +15,7 @@ use common\rbac\SystemPermission;
 $this->title = "Заявка на ВКС";
 $this->params['breadcrumbs'][] = ['label' => 'Заявки', 'url' => \yii\helpers\Url::to(['user/requests'])];
 $this->params['breadcrumbs'][] = $this->title;
+$isOSKRUser = Yii::$app->user->can(SystemPermission::APPROVE_REQUEST);
 ?>
 <div style="font-size: 13px">
 
@@ -83,7 +85,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <?php endif; ?>
 
-        <?php if (Yii::$app->user->can(SystemPermission::APPROVE_REQUEST)): ?>
+        <?php if ($isOSKRUser): ?>
 
             <?= $this->render('_deployServerForm', ['model' => $model]) ?>
 
@@ -107,7 +109,10 @@ $this->params['breadcrumbs'][] = $this->title;
             <th>Организация</th>
             <th>Контактное лицо</th>
             <th>Контактный телефон</th>
-            <th>IP адрес</th>
+            <?php if ($isOSKRUser): ?>
+                <th>IP адрес</th>
+            <?php endif; ?>
+            <th>Статус</th>
 
         </tr>
         <?php $counter = 1 ?>
@@ -116,13 +121,28 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <?php foreach ($model->participants as $participant): ?>
 
+            <?php switch ($model->getRoomStatus($participant->_id)) {
+                case Participant::STATUS_CONSIDIRATION:
+                    $roomStatus = "<span title='На рассмотрении' class='text-warning glyphicon glyphicon-question-sign'></span>";
+                    break;
+                case Participant::STATUS_CANCEL:
+                    $roomStatus = "<span title='Отменено' class='text-danger glyphicon glyphicon-remove'></span>";
+                    break;
+                default:
+                    $roomStatus = "<span title='Согласовано' class='text-success glyphicon glyphicon-ok'></span>";
+                    break;
+            } ?>
+
             <tr>
                 <td><?= $counter ?></td>
                 <td><?= $participant->name ?></td>
                 <td><?= $participant->company->name ?></td>
                 <td><?= $participant->contact ?></td>
                 <td><?= $participant->phone ?></td>
-                <td><?= $participant->ipAddress ?></td>
+                <?php if ($isOSKRUser): ?>
+                    <td><?= $participant->ipAddress ?></td>
+                <?php endif; ?>
+                <td style="text-align: center"><?= $roomStatus ?></td>
             </tr>
             <?php $counter++ ?>
         <?php endforeach; ?>
@@ -133,7 +153,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php if ($model->note): ?>
 
-        <p><b style="font-size: 14px">Примечание</b><p><?= $model->note ?></p></p>
+        <p><b style="font-size: 14px">Примечание</b><p><?= $model->note ?></p>
 
     <?php endif; ?>
 
@@ -145,7 +165,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <?php endif; ?>
 
-        <?php if ($model->status !== $model::STATUS_APPROVE && Yii::$app->user->can(SystemPermission::APPROVE_REQUEST)): ?>
+        <?php if ($model->status !== $model::STATUS_APPROVE && $isOSKRUser): ?>
 
             <?= Html::a("<span class='glyphicon glyphicon-ok'></span> Согласовать", ['vks-request/approve', 'id' => (string)$model->primaryKey], [
                 'class' => 'btn btn-success',
