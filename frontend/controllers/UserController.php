@@ -93,4 +93,9 @@ class UserController extends Controller
         }
         return $this->render('updateEmail', ['model' => $model]);
     }
+
+    public function actionBookingApproveList()
+    {
+        return $this->render('room-approve-list', ['list' => \Yii::$app->user->identity->getRoomApproveList()]);
+    }
 }

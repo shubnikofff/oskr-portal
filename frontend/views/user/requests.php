@@ -21,6 +21,12 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <div>
 
+    <?php if(Yii::$app->user->identity->isRoomApprovePerson()): ?>
+
+        <?= Html::a('Согласовать бронирования помещений','/user/booking-approve-list',['class' => 'btn btn-primary', 'style' => 'margin-bottom: 20px']) ?>
+
+    <?php endif; ?>
+
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'tableOptions' => [

@@ -173,7 +173,7 @@ class VksRequestController extends Controller
             } elseif ($status === Participant::STATUS_CANCEL) {
                 $model->cancelRoom($roomId);
             }
-            return $this->redirect(['user/requests']);
+            return $this->redirect(['user/booking-approve-list']);
         }
 
         return $this->render('approve-room', ['model' => $model]);

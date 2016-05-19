@@ -97,7 +97,7 @@ class Participant extends ActiveRecord
 
             } else {
                 $request = $event->request;
-                $count = Request::find()->where(['log.requestId' => $request->_id, 'log.status' => self::STATUS_CONSIDIRATION])->count();
+                $count = Participant::find()->where(['log' => ['$elemMatch' => ['requestId' => $request->_id, 'status' => self::STATUS_CONSIDIRATION]]])->count();
 
                 if ($count === 0) {
                     $request->status = Request::STATUS_OSKR_CONSIDERATION;
