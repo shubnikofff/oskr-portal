@@ -10,6 +10,8 @@ namespace frontend\controllers;
 
 use common\components\actions\DeleteAction;
 use common\components\actions\ModelMethodAction;
+use common\models\vks\Participant;
+use frontend\models\vks\ApproveRoomForm;
 use frontend\models\vks\RequestForm;
 use frontend\models\vks\RequestSearch;
 use yii\filters\VerbFilter;
@@ -23,6 +25,7 @@ use common\components\actions\UpdateAction;
 use common\components\actions\ViewAction;
 use frontend\models\vks\Request;
 use yii\web\Response;
+use yii\filters\AccessControl;
 
 class VksRequestController extends Controller
 {
@@ -40,6 +43,21 @@ class VksRequestController extends Controller
                     'approve' => ['post'],
                     'cancel' => ['get', 'post'],
                 ]
+            ],
+            'access' => [
+                'class' => AccessControl::className(),
+                'only' => ['approve-booking'],
+                'rules' => [
+                    [
+                        'actions' => ['approve-booking'],
+                        'allow' => true,
+                        'matchCallback' => function () {
+                            /** @var Participant $room */
+                            $room = Participant::findOne(['_id' => \Yii::$app->request->get('roomId')]);
+                            return \Yii::$app->user->identity['_id'] == $room->confirmPersonId;
+                        }
+                    ],
+                ],
             ],
         ];
     }
@@ -134,8 +152,30 @@ class VksRequestController extends Controller
         throw new NotFoundHttpException;
     }
 
-    public function actionApproveRoom($id, $requestId)
+    public function actionApproveBooking($roomId, $requestId, $status = Participant::STATUS_APPROVE)
     {
-        echo "id: {$id}<br>request-id: {$requestId}";
+        $request = Request::findOne(['_id' => $requestId]);
+        if (!$request instanceof Request) {
+                throw new NotFoundHttpException("Заявка на бронирование не найдена.");
+        }
+        $model = new ApproveRoomForm([
+            'approvedRoomId' => $roomId,
+            'request' => $request
+        ]);
+
+        if ($status === Participant::STATUS_CANCEL) {
+            $model->scenario = ApproveRoomForm::SCENARIO_CANCEL_ROOM;
+        }
+
+        if ($model->load(\Yii::$app->request->post()) && $model->validate()) {
+            if($status === Participant::STATUS_APPROVE) {
+                $model->approveRoom($roomId);
+            } elseif ($status === Participant::STATUS_CANCEL) {
+                $model->cancelRoom($roomId);
+            }
+            return $this->redirect(['user/requests']);
+        }
+
+        return $this->render('approve-room', ['model' => $model]);
     }
 }

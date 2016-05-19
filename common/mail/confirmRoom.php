@@ -10,7 +10,7 @@
 use yii\helpers\Html;
 use common\components\MinuteFormatter;
 
-$link = Yii::$app->urlManager->createAbsoluteUrl(['vks-request/approve-room', 'id' => (string)$room->_id, 'requestId' => (string)$request->_id]);
+$link = Yii::$app->urlManager->createAbsoluteUrl(['vks-request/approve-booking', 'roomId' => (string)$room->_id, 'requestId' => (string)$request->_id]);
 ?>
 <p>Здравствуйте!</p>
 
