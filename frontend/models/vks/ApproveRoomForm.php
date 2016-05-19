@@ -7,6 +7,7 @@
 
 namespace frontend\models\vks;
 
+use common\components\events\RoomStatusChangedEvent;
 use common\components\MinuteFormatter;
 use common\models\vks\Participant;
 use yii\base\Model;
@@ -54,7 +55,7 @@ class ApproveRoomForm extends Model
                 ]);
 
                 if ($request !== null) {
-                    $this->addError($attribute, "Данное помещение забронировано для " . Html::a("другого совкещания", ['vks-request/view', 'id' => (string)$request['_id']]) .
+                    $this->addError($attribute, "Данное помещение забронировано для " . Html::a("другого совещания", ['vks-request/view', 'id' => (string)$request['_id']]) .
                         " c " . MinuteFormatter::asString($request['beginTime']) . " по " . MinuteFormatter::asString($request['endTime']));
                 }
             }, 'except' => self::SCENARIO_CANCEL_ROOM]
@@ -67,17 +68,25 @@ class ApproveRoomForm extends Model
         $collection = \Yii::$app->get('mongodb')->getCollection(Participant::collectionName());
 
         if ($newRecord) {
-            $collection->update(['_id' => $roomId], ['$addToSet' => ['log' => [
+            $count = $collection->update(['_id' => $roomId], ['$addToSet' => ['log' => [
                 'requestId' => $roomId,
                 'status' => $status
             ]]]);
         } else {
-            $collection->update([
+            $count = $collection->update([
                 '_id' => $roomId,
                 'log' => ['$elemMatch' => ['requestId' => $this->request->_id]]
             ], [
                 '$set' => ['log.$.status' => $status]
             ]);
+        }
+
+        if ($count !== false && $count > 0) {
+            /** Это ваще жесть !!! Так делать никогда больше нельзя! */
+            Participant::findOne(['_id' => $roomId])->trigger(Participant::EVENT_STATUS_CHANGED, new RoomStatusChangedEvent([
+                'request' => $this->request,
+                'roomStatus' => $status
+            ]));
         }
     }
 
@@ -94,12 +103,24 @@ class ApproveRoomForm extends Model
 
         if ($this->approvedRoomId !== $roomId) {
             $key = array_search($roomMongoId, $request->participantsId);
+            /** Если меняется комната в заявке */
             if ($key !== false) {
                 $requestCollection->update([
                     '_id' => $request->_id,
                     'participantsId' => $roomMongoId
                 ], ['$set' => ['participantsId.$' => $approvedRoomMongoId]]);
                 $participantCollection->update(['_id' => $roomMongoId], ['$pull' => ['log' => ['requestId' => $request->_id]]]);
+
+                \Yii::$app->mailer->compose(['html' => 'changeRoom'], [
+                        'request' => $request,
+                        'oldRoom' => Participant::findOne(['_id' => $roomMongoId]),
+                        'newRoom' => Participant::findOne(['_id' => $approvedRoomMongoId])
+                    ])
+                ->setFrom([\Yii::$app->params['email.admin'] => 'Служба технической поддержки ' . \Yii::$app->name])
+                ->setTo($request->owner->email)
+                ->setSubject("Изменение помещения в заявке")
+                ->send();
+
                 $newLogRecord = true;
             }
         }

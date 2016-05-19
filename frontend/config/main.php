@@ -8,7 +8,7 @@ $params = array_merge(
 
 return [
     'id' => 'teleport-frontend',
-    'name' => 'ОСКР',
+    'name' => 'ОСКР Портал',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'controllerNamespace' => 'frontend\controllers',
