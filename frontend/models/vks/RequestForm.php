@@ -10,6 +10,7 @@ namespace frontend\models\vks;
 use common\components\events\RequestStatusChangedEvent;
 use common\components\events\RoomStatusChangedEvent;
 use common\components\MinuteFormatter;
+use common\rbac\SystemPermission;
 use yii\mongodb\validators\MongoDateValidator;
 use common\components\validators\MinuteValidator;
 use yii\helpers\ArrayHelper;
@@ -152,6 +153,9 @@ class RequestForm extends Request
                         $this->status = self::STATUS_ROOMS_CONSIDIRATION;
                     }
                 }
+            } elseif (!\Yii::$app->user->can(SystemPermission::APPROVE_REQUEST) && $this->status !== self::STATUS_ROOMS_CONSIDIRATION) {
+                $this->status = self::STATUS_OSKR_CONSIDERATION;
+                $this->trigger(self::EVENT_STATUS_CHANGED, new RequestStatusChangedEvent(['request' => $this]));
             }
             return true;
 
