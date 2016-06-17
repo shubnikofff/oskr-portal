@@ -11,11 +11,14 @@ namespace frontend\controllers;
 use common\components\actions\DeleteAction;
 use common\components\actions\ModelMethodAction;
 use common\models\vks\Participant;
+use Faker\Provider\DateTime;
 use frontend\models\vks\ApproveRoomForm;
 use frontend\models\vks\RequestForm;
 use frontend\models\vks\RequestSearch;
+use yii\base\Exception;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
+use yii\web\ForbiddenHttpException;
 use yii\web\HttpException;
 use yii\web\NotFoundHttpException;
 use common\rbac\SystemPermission;
@@ -46,7 +49,7 @@ class VksRequestController extends Controller
             ],
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['approve-booking'],
+                'only' => ['approve-booking', 'update'],
                 'rules' => [
                     [
                         'actions' => ['approve-booking'],
@@ -56,6 +59,24 @@ class VksRequestController extends Controller
                             $room = Participant::findOne(['_id' => \Yii::$app->request->get('roomId')]);
                             return \Yii::$app->user->identity['_id'] == $room->confirmPersonId;
                         }
+                    ],
+                    [
+                        'actions' => ['update'],
+                        'allow' => true,
+                        'matchCallback' => function () {
+                            if (\Yii::$app->user->can(SystemPermission::APPROVE_REQUEST)) {
+                                return true;
+                            }
+                            $request = Request::findOne(['_id' => \Yii::$app->request->get('id')]);
+                            $allowTime = $request->date->sec + ($request->beginTime - \Yii::$app->params['vks.allowRequestUpdateMinute']) * 60;
+                            $now = time() + 3 * 60 * 60; //Минус разница формата TimeZone
+
+                            if ($now > $allowTime) {
+                                throw new ForbiddenHttpException("Заявку нельзя редактировать менее чем за " . \Yii::$app->params['vks.allowRequestUpdateMinute'] . " минут до начала мероприятия");
+                            } else {
+                                return true;
+                            }
+                        },
                     ],
                 ],
             ],
@@ -156,7 +177,7 @@ class VksRequestController extends Controller
     {
         $request = Request::findOne(['_id' => $requestId]);
         if (!$request instanceof Request) {
-                throw new NotFoundHttpException("Заявка на бронирование не найдена.");
+            throw new NotFoundHttpException("Заявка на бронирование не найдена.");
         }
         $model = new ApproveRoomForm([
             'approvedRoomId' => $roomId,
@@ -168,7 +189,7 @@ class VksRequestController extends Controller
         }
 
         if ($model->load(\Yii::$app->request->post()) && $model->validate()) {
-            if($status === Participant::STATUS_APPROVE) {
+            if ($status === Participant::STATUS_APPROVE) {
                 $model->approveRoom($roomId);
             } elseif ($status === Participant::STATUS_CANCEL) {
                 $model->cancelRoom($roomId);
