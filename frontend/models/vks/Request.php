@@ -40,6 +40,7 @@ use yii\mongodb\validators\MongoIdValidator;
  * @property string $cancellationReason
  * @property \MongoId $buildServerId
  * @property string $note
+ * @property array $log
  */
 class Request extends \common\models\Request
 {
@@ -85,6 +86,7 @@ class Request extends \common\models\Request
             'cancellationReason',
             'buildServerId',
             'note',
+            'log'
         ]);
     }
 

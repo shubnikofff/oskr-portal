@@ -49,6 +49,16 @@ class RequestForm extends Request
     }
 
     /**
+     * @return array
+     */
+    public function behaviors()
+    {
+        return array_merge(parent::behaviors(),[
+            RequestLogBehavior::class
+        ]);
+    }
+
+    /**
      * @inheritDoc
      */
     public function scenarios()
