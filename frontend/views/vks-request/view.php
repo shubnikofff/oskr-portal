@@ -157,9 +157,12 @@ $isOSKRUser = Yii::$app->user->can(SystemPermission::APPROVE_REQUEST);
 
     <?php endif; ?>
 
-    
-    <?= $this->render('_requestLog', ['model' => $model]) ?>
-    
+    <?php if (is_array($model->log)): ?>
+
+        <?= $this->render('_requestLog', ['model' => $model]) ?>
+
+    <?php endif; ?>
+
     <div style="margin-bottom: 12px">
 
         <?php if (Yii::$app->user->can(SystemPermission::UPDATE_REQUEST, ['object' => $model])): ?>
