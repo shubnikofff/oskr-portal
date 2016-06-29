@@ -98,6 +98,14 @@ class RequestForm extends Request
                 'minuteAttribute' => 'beginTime'
             ],
             ['beginTimeInput', 'compare', 'compareAttribute' => 'endTimeInput', 'operator' => '!=='],
+            ['beginTimeInput', function($attribute) {
+                $allowTimeStamp = $this->date->sec + ($this->beginTime - \Yii::$app->params['vks.allowRequestUpdateMinute']) * 60;
+                $now = time() + 3 * 60 * 60;
+
+                if($now > $allowTimeStamp) {
+                    $this->addError($attribute, "Должно быть не меньше 20 минут от текущего времени");
+                }
+            }],
 
             ['endTimeInput', MinuteValidator::className(),
                 'min' => $this->beginTimeInput,

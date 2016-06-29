@@ -79,7 +79,7 @@ class RequestLogBehavior extends Behavior
                 $row['action'] = "Изменилось время начала с " . MinuteFormatter::asString($oldValue) . " на " . MinuteFormatter::asString($newValue);
                 return $row;
             case 'endTime':
-                $row['action'] = "Изменилось время конца с " . MinuteFormatter::asString($oldValue) . " на " . MinuteFormatter::asString($newValue);
+                $row['action'] = "Изменилось время окончания с " . MinuteFormatter::asString($oldValue) . " на " . MinuteFormatter::asString($newValue);
                 return $row;
             case 'participantsId':
 
