@@ -99,6 +99,9 @@ class RequestForm extends Request
             ],
             ['beginTimeInput', 'compare', 'compareAttribute' => 'endTimeInput', 'operator' => '!=='],
             ['beginTimeInput', function($attribute) {
+                if (\Yii::$app->user->can(SystemPermission::APPROVE_REQUEST)) {
+                    return;
+                }
                 $allowTimeStamp = $this->date->sec + ($this->beginTime - \Yii::$app->params['vks.allowRequestUpdateMinute']) * 60;
                 $now = time() + 3 * 60 * 60;
 
