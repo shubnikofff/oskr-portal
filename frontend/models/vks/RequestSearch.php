@@ -19,6 +19,8 @@ class RequestSearch extends Request implements SearchModelInterface
     const SCENARIO_SEARCH_SCHEDULE = 'search_schedule';
     const SCENARIO_SEARCH_PERSONAL = 'search_personal';
 
+    public $searchKey;
+
     public function init()
     {
         $this->dateInput = \Yii::$app->formatter->asDate(mktime(0, 0, 0), 'dd.MM.yyyy');
@@ -32,7 +34,7 @@ class RequestSearch extends Request implements SearchModelInterface
     {
         return [
             $this::SCENARIO_SEARCH_SCHEDULE => ['dateInput', 'participantsId'],
-            $this::SCENARIO_SEARCH_PERSONAL => ['createdBy']
+            $this::SCENARIO_SEARCH_PERSONAL => ['createdBy', 'searchKey']
         ];
     }
 
@@ -42,7 +44,8 @@ class RequestSearch extends Request implements SearchModelInterface
     public function rules()
     {
         return array_merge(parent::rules(), [
-            ['createdBy', 'default', 'value' => \Yii::$app->user->can(SystemPermission::APPROVE_REQUEST) ? null : \Yii::$app->user->identity['primaryKey']]
+            ['createdBy', 'default', 'value' => \Yii::$app->user->can(SystemPermission::APPROVE_REQUEST) ? null : \Yii::$app->user->identity['primaryKey']],
+            ['searchKey', 'safe']
         ]);
     }
 
@@ -93,6 +96,13 @@ class RequestSearch extends Request implements SearchModelInterface
 
         if (is_array($this->participantsId)) {
             $query->andWhere(['participantsId' => ['$in' => $this->participantsId]]);
+        }
+
+        if ($this->searchKey !== null) {
+            $query->andWhere(['$or' => [
+                ['topic' => ['$regex' => $this->searchKey, '$options' => 'i']],
+                ['note' => ['$regex' => $this->searchKey, '$options' => 'i']]
+            ]]);
         }
 
         $query->andFilterWhere(['createdBy' => $this->createdBy]);
