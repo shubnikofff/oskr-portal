@@ -5,7 +5,6 @@
 
 namespace common\components\helpers\mail;
 
-use common\components\events\MailerEvent;
 use yii\base\Component;
 
 

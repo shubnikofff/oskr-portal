@@ -15,7 +15,7 @@ use yii\mongodb\validators\MongoDateValidator;
 use common\components\validators\MinuteValidator;
 use yii\helpers\ArrayHelper;
 use common\models\vks\Participant;
-
+use frontend\components\Notifier;
 /**
  * @author Shubnikov Alexey <a.shubnikov@niaep.ru>
  *

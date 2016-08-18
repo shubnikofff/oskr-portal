@@ -8,10 +8,22 @@ $params = array_merge(
 
 return [
     'id' => 'teleport-backend',
-    'name' => 'Телепорт',
+    'name' => 'ОСКР Портал',
     'basePath' => dirname(__DIR__),
     'controllerNamespace' => 'backend\controllers',
-    'bootstrap' => ['log'],
-    'components' => require(__DIR__.'/components.php'),
     'params' => $params,
+    'components' => [
+        'user' => [
+            'identityClass' => 'common\models\User',
+            'enableAutoLogin' => false,
+        ],
+        'errorHandler' => [
+            'errorAction' => 'site/error',
+        ],
+        'urlManager' => [
+            'rules' => [
+                '<controller:(permission|role|user|vks-room)>s' => '<controller>/index',
+            ]
+        ]
+    ]
 ];

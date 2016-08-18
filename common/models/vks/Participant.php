@@ -12,6 +12,7 @@ use yii\helpers\ArrayHelper;
 use yii\mongodb\ActiveRecord;
 use yii\mongodb\validators\MongoIdValidator;
 use yii\mongodb\Collection;
+use yii\validators\EachValidator;
 
 /**
  * This is the model class for collection "vks.participant".
@@ -23,6 +24,7 @@ use yii\mongodb\Collection;
  * @property Company $company
  * @property boolean $ahuConfirmation
  * @property \MongoId $confirmPersonId
+ * @property array $supportEmails
  * @property User $confirmPerson
  * @property string $phone
  * @property string $contact
@@ -55,6 +57,10 @@ class Participant extends ActiveRecord
      * @var int end minute of busy range
      */
     private $_busyTo;
+    /**
+     * @var string
+     */
+    public $supportEmailsInput;
 
     /**
      * @return string
@@ -76,6 +82,7 @@ class Participant extends ActiveRecord
             'companyId',
             'ahuConfirmation',
             'confirmPersonId',
+            'supportEmails',
             'phone',
             'contact',
             'model',
@@ -125,7 +132,18 @@ class Participant extends ActiveRecord
 
             ['confirmPersonId', 'exist', 'targetClass' => User::className(), 'targetAttribute' => '_id'],
 
+            ['supportEmailsInput', function ($attribute) {
+                $value = explode(';', trim($this->{$attribute}, ';'));
+                $validator = new EachValidator(['rule' => ['email']]);
+                if ($validator->validate($value)) {
+                    $this->supportEmails = $value;
+                } else {
+                    $this->addError($attribute, "Неверный формат");
+                }
+            }],
+
             ['ipAddress', 'match', 'pattern' => '/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/'],
+
             [['phone', 'contact', 'model', 'gatekeeperNumber', 'note'], 'safe'],
 
             [['companyId', 'confirmPersonId'], MongoIdValidator::className(), 'forceFormat' => 'object'],
@@ -146,6 +164,7 @@ class Participant extends ActiveRecord
             'companyId' => 'Компания',
             'ahuConfirmation' => 'Необходимость согласования с АХУ',
             'confirmPersonId' => 'Согласующее лицо',
+            'supportEmailsInput' => 'Email(ы) техподдержки',
             'phone' => 'Телефон',
             'contact' => 'Контактное лицо',
             'model' => 'Модель оборудования',
@@ -154,6 +173,15 @@ class Participant extends ActiveRecord
             'note' => 'Примечание',
         ];
     }
+
+    public function afterFind()
+    {
+        parent::afterFind();
+        if (is_array($this->supportEmails)) {
+            $this->supportEmailsInput = implode(';', $this->supportEmails);
+        }
+    }
+
 
     public function getConfirmPerson()
     {

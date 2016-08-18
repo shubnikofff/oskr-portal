@@ -33,6 +33,8 @@ use kartik\select2\Select2;
         ],
     ]); ?>
 
+    <?= $form->field($model, 'supportEmailsInput') ?>
+
     <?= $form->field($model, 'contact')->textarea() ?>
 
     <?= $form->field($model, 'phone') ?>

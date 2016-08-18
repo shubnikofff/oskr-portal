@@ -15,7 +15,7 @@ use common\components\MinuteFormatter;
 use yii\mongodb\Collection;
 use yii\mongodb\validators\MongoDateValidator;
 use yii\mongodb\validators\MongoIdValidator;
-
+use frontend\components\Notifier;
 /**
  * Class Request представляет модель заявки на ВКС
  *
@@ -88,6 +88,15 @@ class Request extends \common\models\Request
             'note',
             'log'
         ]);
+    }
+
+    public function init()
+    {
+        parent::init();
+
+        $this->on(self::EVENT_AFTER_INSERT, [Notifier::class, 'onRequestAfterInsert']);
+        $this->on(self::EVENT_BEFORE_UPDATE, [Notifier::class, 'onRequestBeforeUpdate']);
+        $this->on(self::EVENT_AFTER_DELETE, [Notifier::class, 'onRequestAfterDelete']);
     }
 
     /**
@@ -211,9 +220,7 @@ class Request extends \common\models\Request
         return $name;
     }
 
-    /**
-     * @return DeployServer
-     */
+
     public function getDeployServer()
     {
         return $this->hasOne(DeployServer::className(), ['_id' => 'deployServerId']);

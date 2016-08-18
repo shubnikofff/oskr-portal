@@ -1,20 +1,42 @@
 <?php
-return [
+$config = [
     'components' => [
+        'mongodb' => [
+            'dsn' => 'mongodb://mongo:27017/' . getenv('MONGO_DBNAME')
+        ],
         'db' => [
-            'class' => 'yii\db\Connection',
-            'dsn' => 'mysql:host=localhost;dbname=yii2advanced',
-            'username' => 'root',
-            'password' => '',
-            'charset' => 'utf8',
+            'dsn' => 'mysql:host=mysql;dbname=' . getenv('MYSQL_DBNAME'),
+            'username' => getenv('MYSQL_USERNAME'),
+            'password' => getenv('MYSQL_PASSWORD'),
         ],
         'mailer' => [
-            'class' => 'yii\swiftmailer\Mailer',
-            'viewPath' => '@common/mail',
-            // send all mails to a file by default. You have to set
-            // 'useFileTransport' to false and configure a transport
-            // for the mailer to send real emails.
-            'useFileTransport' => true,
+            'transport' => [
+                'host' => getenv('MAILER_HOST'),
+                'username' => getenv('MAILER_USERNAME'),
+                'password' => getenv('MAILER_PASSWORD'),
+                'port' => getenv('MAILER_PORT'),
+            ],
         ],
     ],
 ];
+
+if (!YII_ENV_TEST) {
+    $config['bootstrap'][] = 'debug';
+    $config['modules']['debug'] = [
+        'class' => 'yii\debug\Module',
+        'allowedIPs' => ['127.0.0.1', '::1', '192.168.99.*'],
+        'panels' => [
+            'mongodb' => [
+                'class' => 'yii\\mongodb\\debug\\MongoDbPanel',
+            ],
+        ],
+    ];
+
+    $config['bootstrap'][] = 'gii';
+    $config['modules']['gii'] = [
+        'class' => 'yii\gii\Module',
+        'allowedIPs' => ['127.0.0.1', '::1', '192.168.99.*']
+    ];
+}
+
+return $config;

@@ -62,7 +62,7 @@ class RequestLogBehavior extends Behavior
      * @param $attribute
      * @param \MongoDate|string|int $oldValue
      * @param \MongoDate|string|int $newValue
-     * @return array
+     * @return array|bool
      */
     private function getLogRow($attribute, $oldValue, $newValue)
     {

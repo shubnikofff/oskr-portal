@@ -1,16 +1,21 @@
 <?php
 return [
     'components' => [
+        'mongodb' => [
+            'dsn' => 'mongodb://mongo:27017/' . getenv('MONGO_DBNAME')
+        ],
         'db' => [
-            'class' => 'yii\db\Connection',
-            'dsn' => 'mysql:host=localhost;dbname=yii2advanced',
-            'username' => 'root',
-            'password' => '',
-            'charset' => 'utf8',
+            'dsn' => 'mysql:host=mysql;dbname=' . getenv('MYSQL_DBNAME'),
+            'username' => getenv('MYSQL_USERNAME'),
+            'password' => getenv('MYSQL_PASSWORD'),
         ],
         'mailer' => [
-            'class' => 'yii\swiftmailer\Mailer',
-            'viewPath' => '@common/mail',
+            'transport' => [
+                'host' => getenv('MAILER_HOST'),
+                'username' => getenv('MAILER_USERNAME'),
+                'password' => getenv('MAILER_PASSWORD'),
+                'port' => getenv('MAILER_PORT'),
+            ],
         ],
     ],
 ];

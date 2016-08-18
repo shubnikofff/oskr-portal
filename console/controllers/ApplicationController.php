@@ -223,4 +223,15 @@ class ApplicationController extends Controller
         $this->addChildren($employeeRole, [$createRequestPermission, $updateOwnRequestPermission, $cancelOwnRequestPermission]);
         $this->addChildren($oskrRole, [$updateRequestPermission, $approveRequestPermission, $cancelRequestPermission, $deleteRequestPermission]);
     }
+
+    public function actionTestMail($text)
+    {
+
+        return Yii::$app->mailer->compose()
+            ->setTo('shubnikov.av@gmail.com')
+            ->setFrom(['oskr@niaep.ru' => 'ОСКР портал'])
+            ->setSubject('Тест отправки почты')
+            ->setTextBody($text)
+            ->send();
+    }
 }

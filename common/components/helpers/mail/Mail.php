@@ -33,4 +33,13 @@ class Mail extends Object
 
         parent::__construct($config);
     }
+
+    public function send()
+    {
+        \Yii::$app->mailer->compose(['html' => $this->view], $this->viewParams)
+            ->setFrom($this->from)
+            ->setTo($this->to)
+            ->setSubject($this->subject)
+            ->send();
+    }
 }
