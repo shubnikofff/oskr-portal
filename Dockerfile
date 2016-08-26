@@ -40,6 +40,8 @@ RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-di
 
 COPY ./php.ini /usr/local/etc/php/conf.d/php.ini
 
+COPY ./sites-enabled/ /etc/apache2/sites-enabled/
+
 COPY . /var/www/html/
 
 RUN php init --env=Production --overwrite=All

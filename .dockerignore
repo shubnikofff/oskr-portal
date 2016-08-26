@@ -1,5 +1,1 @@
-backend/runtime/*
-backend/web/assets/*
-frontend/runtime/*
-frontend/web/assets/*
 tests
