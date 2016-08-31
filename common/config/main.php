@@ -31,11 +31,15 @@ return [
             'defaultTimeZone' => 'Europe/Moscow',
         ],
         'db' => [
+            'dsn' => 'mysql:host=mysql;dbname=' . getenv('MYSQL_DBNAME'),
+            'username' => getenv('MYSQL_USERNAME'),
+            'password' => getenv('MYSQL_PASSWORD'),
             'class' => 'yii\db\Connection',
             'charset' => 'utf8'
         ],
         'mongodb' => [
             'class' => '\yii\mongodb\Connection',
+            'dsn' => 'mongodb://mongo:27017/' . getenv('MONGO_DBNAME')
         ],
         'mailer' => [
             'class' => 'yii\swiftmailer\Mailer',
@@ -43,6 +47,10 @@ return [
             'useFileTransport' => false,
             'transport' => [
                 'class' => 'Swift_SmtpTransport',
+                'host' => getenv('MAILER_HOST'),
+                'username' => getenv('MAILER_USERNAME'),
+                'password' => getenv('MAILER_PASSWORD'),
+                'port' => getenv('MAILER_PORT'),
                 'encryption' => 'tls',
                 'streamOptions' => [
                     'ssl' => [
