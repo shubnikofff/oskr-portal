@@ -28,6 +28,7 @@ use frontend\components\Notifier;
  * @property int $endTime
  * @property string endTimeString
  * @property int $mode
+ * @property string $modeString
  * @property array $equipment
  * @property bool $audioRecord
  * @property \MongoId $deployServerId
@@ -317,5 +318,17 @@ class Request extends \common\models\Request
             }, 'status');
         }
         return $this->_roomsStatus[(string)$roomId];
+    }
+
+    /**
+     * @return string
+     */
+    public function getModeString()
+    {
+        switch ($this->mode) {
+            case self::MODE_WITH_VKS: return 'В режиме ВКС';
+            case self::MODE_WITHOUT_VKS: return 'Без ВКС';
+            default: return '';
+        }
     }
 }

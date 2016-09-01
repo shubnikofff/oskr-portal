@@ -6,14 +6,14 @@
  * @var $request \frontend\models\vks\RequestForm
  * @var $participant \common\models\vks\Participant
  */
-use yii\helpers\Html;
+?>
 
-$organizer = $request->owner; ?>
-<p>Здравствуйте!</p>
+<div>
 
-<p>Уведомляем Вас, что помещение <b><?= $participant->name ?> <?= $participant->company->name ?></b> забронировано на
-    <b><?= Yii::$app->formatter->asDate($request->date->sec, 'long') ?></b> c <b><?= $request->beginTimeString ?></b> до
-    <b><?= $request->endTimeString ?></b> для проведения совещания на тему "<?= $request->topic ?>"
-</p>
-<p>Организатор совещания <b><?= $organizer->fullName ?></b> <?= $organizer->post ?><br>
-    Email: <?= Html::a($organizer->email, 'mailto:' . $organizer->email) ?>, Телефон: <?= $organizer->phone ?></p>
+    <p>Здравствуйте!</p>
+
+    <p>Уведомляем Вас o новом бронировании помещения.</p>
+
+    <?= $this->render('booking-detail-view', ['request' => $request, 'participant' => $participant]) ?>
+
+</div>
