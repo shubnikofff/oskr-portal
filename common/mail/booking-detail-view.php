@@ -55,7 +55,7 @@ use yii\helpers\Html;
     </tr>
     <tr>
         <th>Необходимое оборудование</th>
-        <td class="values"><?= implode(', ', $request->equipment) ?></td>
+        <td class="values"><?= is_array($request->equipment) ? implode(', ', $request->equipment) : '' ?></td>
     </tr>
     <tr>
         <th>Организатор совещания</th>
