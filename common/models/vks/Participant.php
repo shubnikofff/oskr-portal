@@ -133,6 +133,10 @@ class Participant extends ActiveRecord
             ['confirmPersonId', 'exist', 'targetClass' => User::className(), 'targetAttribute' => '_id'],
 
             ['supportEmailsInput', function ($attribute) {
+                if ($this->{$attribute} === "") {
+                    $this->supportEmails = [];
+                    return;
+                }
                 $value = explode(';', trim($this->{$attribute}, ';'));
                 $validator = new EachValidator(['rule' => ['email']]);
                 if ($validator->validate($value)) {
