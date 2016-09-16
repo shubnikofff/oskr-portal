@@ -10,6 +10,7 @@ namespace frontend\models\vks;
 use common\components\events\RequestStatusChangedEvent;
 use common\models\vks\DeployServer;
 use common\models\vks\Participant;
+use frontend\models\rso\NotificationStrategy;
 use yii\helpers\ArrayHelper;
 use common\components\MinuteFormatter;
 use yii\mongodb\Collection;
@@ -42,6 +43,7 @@ use frontend\components\Notifier;
  * @property \MongoId $buildServerId
  * @property string $note
  * @property array $log
+ * @property string $rsoAgreement
  */
 class Request extends \common\models\Request
 {
@@ -53,6 +55,12 @@ class Request extends \common\models\Request
     const SCENARIO_APPROVE = 'approve';
     const SCENARIO_CANCEL = 'cancel';
     const SCENARIO_SET_DEPLOY_SERVER = 'set_deploy_server';
+
+    const RSO_AGREEMENT_NO_NEED = "Нет необходимости";
+    const RSO_AGREEMENT_IN_PROCESS = "В процессе";
+    const RSO_AGREEMENT_APPROVED = "Одобрено";
+    const RSO_AGREEMENT_REFUSED = "Отказано";
+
     /**
      * @var Participant[] the participants of VKS
      */
@@ -65,6 +73,10 @@ class Request extends \common\models\Request
      * @var string Date representation in form
      */
     public $dateInput;
+    /**
+     * @var NotificationStrategy
+     */
+    public $rsoNotificationStrategy;
 
     public static function collectionName()
     {
@@ -329,6 +341,14 @@ class Request extends \common\models\Request
             case self::MODE_WITH_VKS: return 'В режиме ВКС';
             case self::MODE_WITHOUT_VKS: return 'Без ВКС';
             default: return '';
+        }
+    }
+
+    public function setRsoAgreement($value)
+    {
+        if ($this->rsoAgreement !== $value) {
+            $this->setAttribute('rsoAgreement', $value);
+            $this->rsoNotificationStrategy->notify($this);
         }
     }
 }

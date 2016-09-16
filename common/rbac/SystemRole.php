@@ -19,4 +19,5 @@ class SystemRole
     const ADMINISTRATOR = 'administrator';
     const EMPLOYEE = 'employee';
     const OSKR = 'oskr';
+    const RSO = 'rso';
 }

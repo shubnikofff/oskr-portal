@@ -24,4 +24,6 @@ class SystemPermission
     const CANCEL_OWN_REQUEST = 'cancel_own_request';
     const APPROVE_REQUEST = 'approve_request';
     const DELETE_REQUEST = 'delete_request';
+    const RSO_AGREE = 'rso_agree';
+    const RSO_REFUSE = 'rso_refuse';
 }
