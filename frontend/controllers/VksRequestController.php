@@ -8,27 +8,29 @@
 
 namespace frontend\controllers;
 
+use common\components\actions\CrudAction;
 use common\components\actions\DeleteAction;
 use common\components\actions\ModelMethodAction;
 use common\models\vks\Participant;
-use Faker\Provider\DateTime;
+use frontend\models\rso\RsoNotificationStrategy;
 use frontend\models\vks\ApproveRoomForm;
 use frontend\models\vks\RequestForm;
 use frontend\models\vks\RequestSearch;
-use yii\base\Exception;
 use yii\filters\VerbFilter;
+use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\ForbiddenHttpException;
 use yii\web\HttpException;
 use yii\web\NotFoundHttpException;
 use common\rbac\SystemPermission;
-use common\components\actions\CreateAction;
 use common\components\actions\SearchAction;
 use common\components\actions\UpdateAction;
 use common\components\actions\ViewAction;
 use frontend\models\vks\Request;
 use yii\web\Response;
 use yii\filters\AccessControl;
+use yii\web\UploadedFile;
+use yii\widgets\ActiveForm;
 
 class VksRequestController extends Controller
 {
@@ -49,8 +51,13 @@ class VksRequestController extends Controller
             ],
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['approve-booking', 'update'],
+                'only' => ['approve-booking', 'update', 'create'],
                 'rules' => [
+                    [
+                        'actions' => ['create'],
+                        'allow' => true,
+                        'roles' => ['@']
+                    ],
                     [
                         'actions' => ['approve-booking'],
                         'allow' => true,
@@ -67,7 +74,13 @@ class VksRequestController extends Controller
                             if (\Yii::$app->user->can(SystemPermission::APPROVE_REQUEST)) {
                                 return true;
                             }
+
                             $request = Request::findOne(['_id' => \Yii::$app->request->get('id')]);
+
+                            if (!\Yii::$app->user->can(SystemPermission::UPDATE_REQUEST, ['object' => $request])) {
+                                return false;
+                            }
+
                             $allowTime = $request->date->sec + ($request->beginTime - \Yii::$app->params['vks.allowRequestUpdateMinute']) * 60;
                             $now = time() + 3 * 60 * 60; //Минус разница формата TimeZone
 
@@ -91,17 +104,6 @@ class VksRequestController extends Controller
                 'modelClass' => RequestSearch::className(),
                 'scenario' => RequestSearch::SCENARIO_SEARCH_SCHEDULE,
                 'pjaxView' => '_schedule'
-            ],
-            'create' => [
-                'class' => CreateAction::className(),
-                'modelClass' => RequestForm::className(),
-                'permission' => SystemPermission::CREATE_REQUEST,
-                'successMessage' => 'Заявка создана'
-            ],
-            'update' => [
-                'class' => UpdateAction::className(),
-                'modelClass' => RequestForm::className(),
-                'permission' => SystemPermission::UPDATE_REQUEST,
             ],
             'delete' => [
                 'class' => DeleteAction::className(),
@@ -131,6 +133,51 @@ class VksRequestController extends Controller
                 'successMessage' => 'Заявка отменена'
             ]
         ];
+    }
+
+    public function actionCreate()
+    {
+        $model = new RequestForm();
+        $model->rsoNotificationStrategy = new RsoNotificationStrategy();
+
+        if ($model->load(\Yii::$app->request->post())) {
+            $model->rsoUploadedFiles = UploadedFile::getInstances($model, 'rsoUploadedFiles');
+
+            if (\Yii::$app->request->isAjax) {
+                \Yii::$app->response->format = Response::FORMAT_JSON;
+                return ActiveForm::validate($model);
+            }
+
+            if ($model->save()) {
+                \Yii::$app->session->setFlash('success', "Заявка создана");
+                return $this->redirect(Url::previous(CrudAction::URL_NAME_INDEX_ACTION));
+            }
+        }
+
+        return $this->render('create', ['model' => $model]);
+    }
+
+    public function actionUpdate($id)
+    {
+        /** @var RequestForm $model */
+        $model = $this->findModel(RequestForm::class, $id);
+        $model->rsoNotificationStrategy = new RsoNotificationStrategy();
+
+        if ($model->load(\Yii::$app->request->post())) {
+            $model->rsoUploadedFiles = UploadedFile::getInstances($model, 'rsoUploadedFiles');
+
+            if (\Yii::$app->request->isAjax) {
+                \Yii::$app->response->format = Response::FORMAT_JSON;
+                return ActiveForm::validate($model);
+            }
+
+            if ($model->save()) {
+                \Yii::$app->session->setFlash('success', "Заявка сохранена");
+                return $this->redirect(Url::previous(CrudAction::URL_NAME_INDEX_ACTION));
+            }
+        }
+
+        return $this->render('update', ['model' => $model]);
     }
 
     public function actionRefreshParticipants($requestId = null)
@@ -198,5 +245,16 @@ class VksRequestController extends Controller
         }
 
         return $this->render('approve-room', ['model' => $model]);
+    }
+
+    private function findModel($modelClass, $id)
+    {
+        $model = call_user_func([$modelClass, 'findOne'], $id);
+
+        if ($model === null) {
+            throw new NotFoundHttpException("Старница не найдена.");
+        }
+
+        return $model;
     }
 }

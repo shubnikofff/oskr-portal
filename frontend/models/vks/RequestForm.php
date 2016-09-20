@@ -11,11 +11,13 @@ use common\components\events\RequestStatusChangedEvent;
 use common\components\events\RoomStatusChangedEvent;
 use common\components\MinuteFormatter;
 use common\rbac\SystemPermission;
+use frontend\models\rso\File;
 use yii\mongodb\validators\MongoDateValidator;
 use common\components\validators\MinuteValidator;
 use yii\helpers\ArrayHelper;
 use common\models\vks\Participant;
-use frontend\components\Notifier;
+use yii\web\UploadedFile;
+
 /**
  * @author Shubnikov Alexey <a.shubnikov@niaep.ru>
  *
@@ -32,6 +34,14 @@ class RequestForm extends Request
      * @var string End time representation in form
      */
     public $endTimeInput;
+    /**
+     * @var boolean
+     */
+    public $foreignOrganizations;
+    /**
+     * @var UploadedFile[]
+     */
+    public $rsoUploadedFiles;
 
     /**
      * @inheritDoc
@@ -53,7 +63,7 @@ class RequestForm extends Request
      */
     public function behaviors()
     {
-        return array_merge(parent::behaviors(),[
+        return array_merge(parent::behaviors(), [
             RequestLogBehavior::class
         ]);
     }
@@ -64,7 +74,7 @@ class RequestForm extends Request
     public function scenarios()
     {
         return [
-            'default' => ['status', 'topic', 'dateInput', 'beginTimeInput', 'endTimeInput', 'mode', 'equipment', 'audioRecord', 'participantsId', 'note'],
+            'default' => ['status', 'topic', 'dateInput', 'beginTimeInput', 'endTimeInput', 'foreignOrganizations', 'rsoUploadedFiles', 'mode', 'equipment', 'audioRecord', 'participantsId', 'note'],
             self::SCENARIO_REFRESH_PARTICIPANTS => ['dateInput', 'beginTimeInput', 'endTimeInput', 'participantsId'],
         ];
     }
@@ -79,13 +89,14 @@ class RequestForm extends Request
         $this->dateInput = \Yii::$app->formatter->asDate($this->date->sec, 'dd.MM.yyyy');
         $this->beginTimeInput = $this->beginTimeString;
         $this->endTimeInput = $this->endTimeString;
+        $this->foreignOrganizations = $this->rsoAgreement === self::RSO_AGREEMENT_NO_NEED ? 0 : 1;
     }
 
 
     public function rules()
     {
         return array_merge(parent::rules(), [
-            [['topic', 'dateInput', 'beginTimeInput', 'endTimeInput', 'mode'], 'required'],
+            [['topic', 'dateInput', 'beginTimeInput', 'endTimeInput', 'mode', 'foreignOrganizations'], 'required'],
 
             ['dateInput', MongoDateValidator::className(), 'format' => 'dd.MM.yyyy',
                 'min' => \Yii::$app->formatter->asDate(mktime(0, 0, 0), 'dd.MM.yyyy'),
@@ -98,14 +109,14 @@ class RequestForm extends Request
                 'minuteAttribute' => 'beginTime'
             ],
             ['beginTimeInput', 'compare', 'compareAttribute' => 'endTimeInput', 'operator' => '!=='],
-            ['beginTimeInput', function($attribute) {
+            ['beginTimeInput', function ($attribute) {
                 if (\Yii::$app->user->can(SystemPermission::APPROVE_REQUEST)) {
                     return;
                 }
                 $allowTimeStamp = $this->date->sec + ($this->beginTime - \Yii::$app->params['vks.allowRequestUpdateMinute']) * 60;
                 $now = time() + 3 * 60 * 60;
 
-                if($now > $allowTimeStamp) {
+                if ($now > $allowTimeStamp) {
                     $this->addError($attribute, "Должно быть не меньше 20 минут от текущего времени");
                 }
             }],
@@ -155,6 +166,16 @@ class RequestForm extends Request
                 }
             }, 'on' => 'default'],
 
+            ['foreignOrganizations', 'boolean'],
+
+            ['rsoUploadedFiles', 'file', 'skipOnEmpty' => false,
+                'mimeTypes' => ['image/*', 'application/pdf'],
+                'maxSize' => 3 * 1024 * 1024,
+                'maxFiles' => 3,
+                'when' => function ($model) {
+                    return (bool)$model->foreignOrganizations && count($model->rsoFiles) == 0;
+                }],
+
             [['note', 'equipment'], 'safe'],
         ]);
     }
@@ -165,6 +186,25 @@ class RequestForm extends Request
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
+
+            $this->setRsoAgreement($this->foreignOrganizations ? self::RSO_AGREEMENT_IN_PROCESS : self::RSO_AGREEMENT_NO_NEED);
+
+            $rsoFiles = $this->rsoFiles;
+            foreach ($this->rsoUploadedFiles as $rsoUploadedFile) {
+                $file = new File([
+                    'filename' => $rsoUploadedFile->name,
+                    'mimeType' => $rsoUploadedFile->type,
+                    'file' => $rsoUploadedFile
+                ]);
+
+                if ($file->save()) {
+                    $rsoFiles[] = [
+                        'id' => $file->primaryKey,
+                        'name' => $file->filename,
+                    ];
+                }
+            }
+            $this->rsoFiles = $rsoFiles;
 
             if ($insert) {
 

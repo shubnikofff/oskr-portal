@@ -36,16 +36,13 @@ AppAsset::register($this);
 
     $leftMenuItems[] = ['label' => '<span class="glyphicon glyphicon-calendar"></span> Расписание', 'url' => ['vks-request/index']];
 
-    if (Yii::$app->user->can(SystemPermission::CREATE_REQUEST)) {
-        $leftMenuItems[] = ['label' => '<span class="glyphicon glyphicon-pencil"></span> Подать заявку', 'url' => ['/vks-request/create']];
-    }
-
     if (Yii::$app->user->isGuest) {
         $userMenu[] = ['label' => '<span class="glyphicon glyphicon-log-in"></span> Вход', 'url' => ['/site/login']];
         $userMenu[] = ['label' => 'Регистрация', 'url' => ['/site/signup']];
     } else {
         /** @var \common\models\User $identity */
         $identity = Yii::$app->user->identity;
+        $leftMenuItems[] = ['label' => '<span class="glyphicon glyphicon-pencil"></span> Подать заявку', 'url' => ['/vks-request/create']];
         $userMenu[] = ['label' => '<span class="glyphicon glyphicon-user"></span> ' . $identity->shortName, 'items' => [
             ['label' => '<span class="glyphicon glyphicon-cog"></span> Профиль', 'url' => ['/user/profile']],
             ['label' => '<span class="glyphicon glyphicon-list-alt"></span> Заявки', 'url' => ['/user/requests']],

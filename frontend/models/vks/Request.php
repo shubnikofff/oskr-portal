@@ -44,6 +44,7 @@ use frontend\components\Notifier;
  * @property string $note
  * @property array $log
  * @property string $rsoAgreement
+ * @property array $rsoFiles
  */
 class Request extends \common\models\Request
 {
@@ -90,6 +91,8 @@ class Request extends \common\models\Request
             'date',
             'beginTime',
             'endTime',
+            'rsoAgreement',
+            'rsoFiles',
             'mode',
             'equipment',
             'audioRecord',
@@ -110,6 +113,7 @@ class Request extends \common\models\Request
         $this->on(self::EVENT_AFTER_INSERT, [Notifier::class, 'onRequestAfterInsert']);
         $this->on(self::EVENT_BEFORE_UPDATE, [Notifier::class, 'onRequestBeforeUpdate']);
         $this->on(self::EVENT_AFTER_DELETE, [Notifier::class, 'onRequestAfterDelete']);
+        $this->rsoFiles = [];
     }
 
     /**
@@ -347,7 +351,7 @@ class Request extends \common\models\Request
     public function setRsoAgreement($value)
     {
         if ($this->rsoAgreement !== $value) {
-            $this->setAttribute('rsoAgreement', $value);
+            $this->rsoAgreement = $value;
             $this->rsoNotificationStrategy->notify($this);
         }
     }

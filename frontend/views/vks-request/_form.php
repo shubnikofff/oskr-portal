@@ -25,9 +25,11 @@ use common\components\MinuteFormatter;
 
     <?php $form = ActiveForm::begin([
         'id' => 'vks-request-form',
-        'enableClientValidation' => true,
         'successCssClass' => '',
-        'options' => ['class' => 'col-lg-10']
+        'options' => [
+            'enctype' => 'multipart/form-data',
+            'class' => 'col-lg-10'
+        ]
     ]) ?>
 
     <?= $form->field($model, 'topic')->textarea() ?>
@@ -72,6 +74,13 @@ use common\components\MinuteFormatter;
         Время должно быть в интервале c <?= MinuteFormatter::asString(Yii::$app->params['vks.minTime']) ?>
         до <?= MinuteFormatter::asString(Yii::$app->params['vks.maxTime']) ?>.
     </small>
+
+    <?= $form->field($model, 'foreignOrganizations')->inline()->radioList([
+        1 => 'С участием',
+        0 => 'Без участия'
+    ])->label('Участие иностранных организаций') ?>
+
+    <?= $form->field($model, 'rsoUploadedFiles[]', ['enableClientValidation' => false])->fileInput(['multiple' => true])->label("Документы для РСО") ?>
 
     <?= $form->field($model, 'mode')->inline()->radioList([
         $model::MODE_WITH_VKS => 'С использованием ВКС',
