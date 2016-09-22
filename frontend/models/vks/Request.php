@@ -11,12 +11,14 @@ use common\components\events\RequestStatusChangedEvent;
 use common\models\vks\DeployServer;
 use common\models\vks\Participant;
 use frontend\models\rso\NotificationStrategy;
+use frontend\models\rso\UserNotificationStrategy;
 use yii\helpers\ArrayHelper;
 use common\components\MinuteFormatter;
 use yii\mongodb\Collection;
 use yii\mongodb\validators\MongoDateValidator;
 use yii\mongodb\validators\MongoIdValidator;
 use frontend\components\Notifier;
+
 /**
  * Class Request представляет модель заявки на ВКС
  *
@@ -49,7 +51,7 @@ use frontend\components\Notifier;
 class Request extends \common\models\Request
 {
     const STATUS_ROOMS_CONSIDIRATION = 4;
-    
+
     const MODE_WITH_VKS = 0;
     const MODE_WITHOUT_VKS = 1;
 
@@ -74,10 +76,6 @@ class Request extends \common\models\Request
      * @var string Date representation in form
      */
     public $dateInput;
-    /**
-     * @var NotificationStrategy
-     */
-    public $rsoNotificationStrategy;
 
     public static function collectionName()
     {
@@ -187,6 +185,7 @@ class Request extends \common\models\Request
             'status' => 'Статус',
             'cancellationReason' => 'Причина отмены',
             'note' => 'Примечание',
+            'rsoAgreement' => 'Согласование с РСО'
         ];
     }
 
@@ -329,7 +328,7 @@ class Request extends \common\models\Request
                 ['$project' => ['status' => '$log.status']]
             ];
 
-            $this->_roomsStatus = ArrayHelper::map($collection->aggregate($pipeline), function($item) {
+            $this->_roomsStatus = ArrayHelper::map($collection->aggregate($pipeline), function ($item) {
                 return (string)$item['_id'];
             }, 'status');
         }
@@ -342,17 +341,38 @@ class Request extends \common\models\Request
     public function getModeString()
     {
         switch ($this->mode) {
-            case self::MODE_WITH_VKS: return 'В режиме ВКС';
-            case self::MODE_WITHOUT_VKS: return 'Без ВКС';
-            default: return '';
+            case self::MODE_WITH_VKS:
+                return 'В режиме ВКС';
+            case self::MODE_WITHOUT_VKS:
+                return 'Без ВКС';
+            default:
+                return '';
         }
     }
 
-    public function setRsoAgreement($value)
+    public function setRsoAgreement($value, NotificationStrategy $notifyStrategy)
     {
         if ($this->rsoAgreement !== $value) {
             $this->rsoAgreement = $value;
-            $this->rsoNotificationStrategy->notify($this);
+            $notifyStrategy->notify($this);
         }
+    }
+
+    /**
+     * @return bool
+     */
+    public function rsoApprove()
+    {
+        $this->setRsoAgreement(self::RSO_AGREEMENT_APPROVED, new UserNotificationStrategy());
+        return $this->save(false);
+    }
+
+    /**
+     * @return bool
+     */
+    public function rsoRefuse()
+    {
+        $this->setRsoAgreement(self::RSO_AGREEMENT_REFUSED, new UserNotificationStrategy());
+        return $this->save(false);
     }
 }

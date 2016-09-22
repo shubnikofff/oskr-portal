@@ -12,6 +12,7 @@ use common\components\events\RoomStatusChangedEvent;
 use common\components\MinuteFormatter;
 use common\rbac\SystemPermission;
 use frontend\models\rso\File;
+use frontend\models\rso\RsoNotificationStrategy;
 use yii\mongodb\validators\MongoDateValidator;
 use common\components\validators\MinuteValidator;
 use yii\helpers\ArrayHelper;
@@ -187,7 +188,7 @@ class RequestForm extends Request
     {
         if (parent::beforeSave($insert)) {
 
-            $this->setRsoAgreement($this->foreignOrganizations ? self::RSO_AGREEMENT_IN_PROCESS : self::RSO_AGREEMENT_NO_NEED);
+            $this->setRsoAgreement($this->foreignOrganizations ? self::RSO_AGREEMENT_IN_PROCESS : self::RSO_AGREEMENT_NO_NEED, new RsoNotificationStrategy());
 
             $rsoFiles = $this->rsoFiles;
             foreach ($this->rsoUploadedFiles as $rsoUploadedFile) {

@@ -138,7 +138,6 @@ class VksRequestController extends Controller
     public function actionCreate()
     {
         $model = new RequestForm();
-        $model->rsoNotificationStrategy = new RsoNotificationStrategy();
 
         if ($model->load(\Yii::$app->request->post())) {
             $model->rsoUploadedFiles = UploadedFile::getInstances($model, 'rsoUploadedFiles');
@@ -161,7 +160,6 @@ class VksRequestController extends Controller
     {
         /** @var RequestForm $model */
         $model = $this->findModel(RequestForm::class, $id);
-        $model->rsoNotificationStrategy = new RsoNotificationStrategy();
 
         if ($model->load(\Yii::$app->request->post())) {
             $model->rsoUploadedFiles = UploadedFile::getInstances($model, 'rsoUploadedFiles');
