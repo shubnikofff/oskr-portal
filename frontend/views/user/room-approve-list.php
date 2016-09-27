@@ -15,8 +15,6 @@ $this->title = "Помещения на согласование";
 ?>
 <div>
 
-    <div class="page-header"><?= Html::tag('h3', $this->title) ?></div>
-
     <ul>
 
         <?php foreach ($list as $item): ?>

@@ -8,8 +8,6 @@
 
 namespace frontend\controllers;
 
-use common\components\actions\SearchAction;
-use common\rbac\SystemPermission;
 use frontend\models\vks\RequestSearch;
 use yii\web\Controller;
 use yii\filters\AccessControl;
@@ -37,22 +35,18 @@ class UserController extends Controller
         ];
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function actions()
+    public function actionRequests()
     {
-        return [
-            'requests' => [
-                'class' => SearchAction::className(),
-                'modelClass' => RequestSearch::className(),
-                'view' => 'requests',
-                'scenario' => RequestSearch::SCENARIO_SEARCH_PERSONAL,
-                'permission' => SystemPermission::CREATE_REQUEST
-            ]
-        ];
+        $model = new RequestSearch();
+        $model->scenario = RequestSearch::SCENARIO_SEARCH_PERSONAL;
+        $model->load(\Yii::$app->request->get());
+        $dataProvider = $model->search();
+        $this->layout = 'request-list-menu';
+        return $this->render('requests', [
+            'dataProvider' => $dataProvider,
+            'model' => $model
+        ]);
     }
-
 
     public function actionProfile()
     {
@@ -96,6 +90,7 @@ class UserController extends Controller
 
     public function actionBookingApproveList()
     {
+        $this->layout = 'request-list-menu';
         return $this->render('room-approve-list', ['list' => \Yii::$app->user->identity->getRoomApproveList()]);
     }
 }

@@ -11,14 +11,13 @@ use yii\widgets\ActiveForm;
 use kartik\helpers\Html;
 use common\components\MinuteFormatter;
 use common\models\vks\Participant;
-
 $this->title = "Согласование брони";
+$this->params['breadcrumbs'][] = ['label' => 'Заявки', 'url' => \yii\helpers\Url::to(['user/requests'])];
+$this->params['breadcrumbs'][] = $this->title;
 $request = $model->request;
 $requestIdStr = (string)$request->_id;
 ?>
 <div>
-
-    <div class="page-header"><?= Html::tag('h3', $this->title) ?></div>
 
     <p>Тема совещания
         <b>&laquo;<?= $model->request->topic ?>&raquo;</b> <?= Html::a('Подробнее >', ['vks-request/view', 'id' => $requestIdStr]) ?>

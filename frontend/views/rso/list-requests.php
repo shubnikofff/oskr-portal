@@ -17,7 +17,7 @@ echo \yii\grid\GridView::widget([
         [
             'attribute' => 'topic',
             'content' => function ($model) {
-                return Html::a($model->topic, ['rso/view-request', 'id' => (string)$model->primaryKey]);
+                return Html::a($model->topic, ['/vks-request/view', 'id' => (string)$model->primaryKey]);
             },
         ],
         [

@@ -16,7 +16,11 @@ $this->title = "Заявка на ВКС";
 $this->params['breadcrumbs'][] = ['label' => 'Заявки', 'url' => \yii\helpers\Url::to(['user/requests'])];
 $this->params['breadcrumbs'][] = $this->title;
 $isOSKRUser = Yii::$app->user->can(SystemPermission::APPROVE_REQUEST);
+$isUserCanUpdateRequest = Yii::$app->user->can(SystemPermission::UPDATE_REQUEST, ['object' => $model]);
+$isUserCanRsoAgree = Yii::$app->user->can(SystemPermission::RSO_AGREE);
+$isUserCanRsoRefuse = Yii::$app->user->can(SystemPermission::RSO_REFUSE);
 ?>
+
 <div style="font-size: 13px">
 
     <p style="font-size: 20px;"><?= $model->topic ?></p>
@@ -61,6 +65,8 @@ $isOSKRUser = Yii::$app->user->can(SystemPermission::APPROVE_REQUEST);
         <p class="text-danger" style="font-size: large"><?= $model->cancellationReason ?></p>
 
     <?php endif; ?>
+
+    <p>Согласование с РСО: <b><?= $model->rsoAgreement ?></b></p>
 
     <p class="lead">Организатор</p>
 
@@ -157,6 +163,26 @@ $isOSKRUser = Yii::$app->user->can(SystemPermission::APPROVE_REQUEST);
 
     <?php endif; ?>
 
+    <?php if ($isUserCanUpdateRequest || $isUserCanRsoAgree): ?>
+
+        <div class="panel panel-default">
+
+            <div class="panel-heading"><b>Прикрепленные файлы для РСО</b></div>
+
+            <ul class="list-group">
+
+                <?php foreach ($model->rsoFiles as $rsoFile) : ?>
+
+                    <li class="list-group-item"><?= Html::a($rsoFile['name'], ['vks-request/render-file', 'id' => (string)$rsoFile['id']], ['target' => '_blank']) ?></li>
+
+                <?php endforeach; ?>
+
+            </ul>
+
+        </div>
+
+    <?php endif; ?>
+
     <?php if (is_array($model->log)): ?>
 
         <?= $this->render('_requestLog', ['model' => $model]) ?>
@@ -165,7 +191,7 @@ $isOSKRUser = Yii::$app->user->can(SystemPermission::APPROVE_REQUEST);
 
     <div style="margin-bottom: 12px">
 
-        <?php if (Yii::$app->user->can(SystemPermission::UPDATE_REQUEST, ['object' => $model])): ?>
+        <?php if ($isUserCanUpdateRequest): ?>
 
             <?= Html::a("<span class='glyphicon glyphicon-pencil'></span> Редактировать", ['vks-request/update', 'id' => (string)$model->primaryKey], ['class' => 'btn btn-primary']) ?>
 
@@ -192,6 +218,22 @@ $isOSKRUser = Yii::$app->user->can(SystemPermission::APPROVE_REQUEST);
                 'class' => 'btn btn-danger',
                 'data' => ['method' => 'post', 'confirm' => 'Удалить данную заявку ?']
             ]) ?>
+
+        <?php endif; ?>
+
+    </div>
+
+    <div style="margin-bottom: 12px">
+
+        <?php if ($isUserCanRsoAgree): ?>
+
+            <?= Html::a('Одобрить', ['rso/approve-request', 'id' => (string)$model->_id], ['class' => 'btn btn-success', 'style' => 'display:inline-block']) ?>
+
+        <?php endif; ?>
+
+        <?php if ($isUserCanRsoRefuse): ?>
+
+            <?= Html::a('Отказать', ['rso/refuse-request', 'id' => (string)$model->_id], ['class' => 'btn btn-danger', 'style' => 'display:inline-block']) ?>
 
         <?php endif; ?>
 

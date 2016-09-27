@@ -12,7 +12,6 @@ use common\components\actions\CrudAction;
 use common\components\actions\DeleteAction;
 use common\components\actions\ModelMethodAction;
 use common\models\vks\Participant;
-use frontend\models\rso\RsoNotificationStrategy;
 use frontend\models\vks\ApproveRoomForm;
 use frontend\models\vks\RequestForm;
 use frontend\models\vks\RequestSearch;
@@ -31,6 +30,7 @@ use yii\web\Response;
 use yii\filters\AccessControl;
 use yii\web\UploadedFile;
 use yii\widgets\ActiveForm;
+use frontend\models\rso\File;
 
 class VksRequestController extends Controller
 {
@@ -243,6 +243,18 @@ class VksRequestController extends Controller
         }
 
         return $this->render('approve-room', ['model' => $model]);
+    }
+
+    public function actionRenderFile($id)
+    {
+        /** @var File $model */
+        $model = $this->findModel(File::class, $id);
+        $response = \Yii::$app->response;
+        $response->headers->set('Content-type', $model->mimeType);
+        $response->statusCode = 200;
+        $response->format = Response::FORMAT_RAW;
+        $response->data = $model->getFileContent();
+        return $response;
     }
 
     private function findModel($modelClass, $id)

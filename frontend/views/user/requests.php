@@ -16,18 +16,9 @@ use yii\widgets\ActiveForm;
  * @var $model \frontend\models\vks\RequestSearch
  */
 $this->title = "Заявки";
-$this->params['breadcrumbs'][] = $this->title;
 ?>
 
-<?= Html::pageHeader($this->title) ?>
-
 <div>
-
-    <?php if (Yii::$app->user->identity->isRoomApprovePerson()): ?>
-
-        <?= Html::a('Согласовать бронирования помещений', '/user/booking-approve-list', ['class' => 'btn btn-success', 'style' => 'margin-bottom: 20px']) ?>
-
-    <?php endif; ?>
 
     <?php $form = ActiveForm::begin([
         'method' => 'get',
