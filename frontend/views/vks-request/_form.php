@@ -75,12 +75,23 @@ use common\components\MinuteFormatter;
         до <?= MinuteFormatter::asString(Yii::$app->params['vks.maxTime']) ?>.
     </small>
 
-    <?= $form->field($model, 'foreignOrganizations')->inline()->radioList([
+    <?= $form->field($model, 'foreignOrganizations', ['inputOptions' => ['id' => 'foreign-organizations']])->inline()->radioList([
         1 => 'С участием',
         0 => 'Без участия'
-    ])->label('Участие иностранных организаций') ?>
+    ]) ?>
 
-    <?= $form->field($model, 'rsoUploadedFiles[]', ['enableClientValidation' => false])->fileInput(['multiple' => true])->label("Документы для РСО") ?>
+    <div id="rso-files-container" hidden>
+
+        <?= $form->field($model, 'rsoUploadedFiles[]', ['enableClientValidation' => false])->fileInput(['multiple' => true])->label("Документы для режимно-секретного отдела") ?>
+
+        <small class="help-block"><span class="glyphicon glyphicon-info-sign"></span> В соответствии с п.2 приказа
+            АО &laquo;НИАЭП&raquo; от 19.08.2016 №40/1195-П-дсп &laquo;Об организации проведения видеоконференций,
+            аудиоконференций, телемостов с представителями иностранных (международных) организаций&raquo;, Вам
+            необходимо прикрепить файл с техническим заданием на ВКС, утвержденным уполномоченным лицом. Если у Вас
+            возникли вопросы, необхолдимо обратиться в режимно-секретный отдел (РСО).
+        </small>
+
+    </div>
 
     <?= $form->field($model, 'mode')->inline()->radioList([
         $model::MODE_WITH_VKS => 'С использованием ВКС',

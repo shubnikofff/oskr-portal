@@ -221,10 +221,6 @@ $isUserCanRsoRefuse = Yii::$app->user->can(SystemPermission::RSO_REFUSE);
 
         <?php endif; ?>
 
-    </div>
-
-    <div style="margin-bottom: 12px">
-
         <?php if ($isUserCanRsoAgree): ?>
 
             <?= Html::a('Одобрить', ['rso/approve-request', 'id' => (string)$model->_id], ['class' => 'btn btn-success', 'style' => 'display:inline-block']) ?>

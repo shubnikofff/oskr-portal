@@ -93,6 +93,13 @@ class RequestForm extends Request
         $this->foreignOrganizations = $this->rsoAgreement === self::RSO_AGREEMENT_NO_NEED ? 0 : 1;
     }
 
+    public function attributeLabels()
+    {
+        return array_merge(parent::attributeLabels(),[
+            'foreignOrganizations' => 'Участие иностранных организаций'
+        ]);
+    }
+
 
     public function rules()
     {

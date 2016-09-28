@@ -59,6 +59,7 @@
                 $equipment: $(settings.equipmentSelector, $form),
                 settings: settings
             }, this.modeChange);
+            $('input[name="RequestForm[foreignOrganizations]"]').on('change', {container: $('div#rso-files-container')}, this.foreignOrganizationsChange);
 
             this.requestId = settings.requestId;
             this.date = this.$date.val();
@@ -130,6 +131,16 @@
                 $audioRecord.css('display', 'none');
                 $('input', $audioRecord).prop("disabled", true);
                 $('input', $equipment).prop("disabled", false);
+            }
+        },
+
+        foreignOrganizationsChange: function (event) {
+            var value = event.target.value,
+                container = event.data.container;
+            if (value == 0) {
+                container.hide();
+            } else if (value == 1) {
+                container.show();
             }
         }
     };
