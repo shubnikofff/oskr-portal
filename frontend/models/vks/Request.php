@@ -10,6 +10,7 @@ namespace frontend\models\vks;
 use common\components\events\RequestStatusChangedEvent;
 use common\models\vks\DeployServer;
 use common\models\vks\Participant;
+use frontend\models\rso\File;
 use frontend\models\rso\NotificationStrategy;
 use frontend\models\rso\UserNotificationStrategy;
 use yii\helpers\ArrayHelper;
@@ -375,4 +376,17 @@ class Request extends \common\models\Request
         $this->setRsoAgreement(self::RSO_AGREEMENT_REFUSED, new UserNotificationStrategy());
         return $this->save(false);
     }
+
+    public function beforeDelete()
+    {
+        if (parent::beforeDelete()) {
+            $fileIds = ArrayHelper::getColumn($this->rsoFiles, 'id');
+            File::deleteAll(['_id' => ['$in' => $fileIds]]);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
 }
