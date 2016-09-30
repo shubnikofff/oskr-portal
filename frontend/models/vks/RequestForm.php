@@ -177,7 +177,7 @@ class RequestForm extends Request
             ['foreignOrganizations', 'boolean'],
 
             ['rsoUploadedFiles', 'file', 'skipOnEmpty' => false,
-                'mimeTypes' => ['image/*', 'application/pdf'],
+                'mimeTypes' => ['image/*', 'application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
                 'maxSize' => 3 * 1024 * 1024,
                 'maxFiles' => 3,
                 'when' => function ($model) {

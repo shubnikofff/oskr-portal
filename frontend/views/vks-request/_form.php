@@ -80,7 +80,7 @@ use common\components\MinuteFormatter;
         0 => 'Без участия'
     ]) ?>
 
-    <div id="rso-files-container" hidden>
+    <div id="rso-files-container" <?= $model->foreignOrganizations == 1 ? '' : 'hidden' ?>>
 
         <?= $form->field($model, 'rsoUploadedFiles[]', ['enableClientValidation' => false])->fileInput(['multiple' => true])->label("Документы для режимно-секретного отдела") ?>
 

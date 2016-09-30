@@ -251,6 +251,7 @@ class VksRequestController extends Controller
         $model = $this->findModel(File::class, $id);
         $response = \Yii::$app->response;
         $response->headers->set('Content-type', $model->mimeType);
+        $response->headers->set('Content-Disposition', 'inline; filename="'.$model->filename.'"');
         $response->statusCode = 200;
         $response->format = Response::FORMAT_RAW;
         $response->data = $model->getFileContent();
