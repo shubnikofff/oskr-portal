@@ -7,7 +7,7 @@
  * @var $request \frontend\models\vks\Request
  */
 use yii\helpers\Html;
-
+$link = Yii::$app->urlManager->createAbsoluteUrl(['vks-request/view', 'id' => (string)$request->_id]);
 ?>
 
 <div>
@@ -19,6 +19,6 @@ use yii\helpers\Html;
 
     <p>Статус согласования РСО: <b><?= $request->rsoAgreement ?></b>.</p>
 
-    <p><?= Html::a('Подробнее о заявке', ['/vks-request/view', 'id' => (string)$request->_id]) ?></p>
+    <p><?= Html::a('Подробнее о заявке', $link) ?></p>
 
 </div>
