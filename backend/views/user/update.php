@@ -45,7 +45,7 @@ $this->title = "Пользователь $user->username"
 
             <?= $form->field($model, 'post') ?>
 
-            <?= $form->field($model, 'phone')->widget(MaskedInput::className(), ['mask' => '99-99']) ?>
+            <?= $form->field($model, 'phone') ?>
 
             <?= $form->field($model, 'mobile')->widget(MaskedInput::className(), ['mask' => '(999) 999-99-99']) ?>
 

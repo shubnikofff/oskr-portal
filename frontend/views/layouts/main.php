@@ -33,8 +33,6 @@ AppAsset::register($this);
         ],
     ]);
 
-    $leftMenuItems[] = ['label' => '<span class="glyphicon glyphicon-calendar"></span> Расписание', 'url' => ['vks-request/index']];
-
     if (Yii::$app->user->isGuest) {
         $userMenu[] = ['label' => '<span class="glyphicon glyphicon-log-in"></span> Вход', 'url' => ['/site/login']];
         $userMenu[] = ['label' => 'Регистрация', 'url' => ['/site/signup']];
@@ -59,7 +57,8 @@ AppAsset::register($this);
     ]); ?>
 
     <?php $rightMenuItems = $userMenu;
-    $rightMenuItems[] = ['label' => '<span class="glyphicon glyphicon-question-sign"></span> Справка', 'url' => ['/site/about']] ?>
+    $rightMenuItems[] = ['label' => '<span class="glyphicon glyphicon-question-sign"></span> Справка', 'url' => ['/site/about']];
+    $rightMenuItems[] = ['label' => '<span class="glyphicon glyphicon-envelope"></span> Написать в УСКР', 'url' => 'mailto:oskr@niaep.ru'] ?>
 
     <?= Nav::widget([
         'encodeLabels' => false,
@@ -80,9 +79,9 @@ AppAsset::register($this);
 
 <footer class="footer">
     <div class="container">
-        <p class="pull-left">&copy;&nbsp;<?= date('Y') ?> Отдел Системных Корпоративных Ресурсов АО"НИАЭП"</p>
+        <p class="pull-left">&copy;&nbsp;<?= date('Y') ?> Управление системных корпоративных ресурсов АО"НИАЭП"</p>
 
-        <p class="pull-right">Техническая поддержка: 00-00, <?= Html::a('oskr@niaep.ru', 'mailto:oskr@niaep.ru') ?></p>
+        <p class="pull-right">Техническая поддержка: 0-0-0, <?= Html::a('oskr@niaep.ru', 'mailto:oskr@niaep.ru') ?></p>
     </div>
 </footer>
 
