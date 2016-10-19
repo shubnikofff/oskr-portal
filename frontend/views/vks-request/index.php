@@ -19,10 +19,10 @@ use yii\helpers\ArrayHelper;
  * @var $this \yii\web\View
  * @var $model \frontend\models\vks\RequestSearch
  * @var $dataProvider \yii\data\ActiveDataProvider
+ * @var $participantsCountPerHour array
  */
 
-$this->title = "Расписание";
-?>
+$this->title = "Расписание" ?>
 
     <div class="vks-request-index">
 
@@ -96,6 +96,7 @@ $this->title = "Расписание";
         <?= $this->render('_schedule', [
             'model' => $model,
             'dataProvider' => $dataProvider,
+            'participantsCountPerHour' => $participantsCountPerHour
         ]) ?>
 
         <?php Pjax::end() ?>

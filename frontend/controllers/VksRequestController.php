@@ -15,6 +15,7 @@ use common\models\vks\Participant;
 use frontend\models\vks\ApproveRoomForm;
 use frontend\models\vks\RequestForm;
 use frontend\models\vks\RequestSearch;
+use frontend\models\vks\Schedule;
 use yii\filters\VerbFilter;
 use yii\helpers\Url;
 use yii\web\Controller;
@@ -22,7 +23,6 @@ use yii\web\ForbiddenHttpException;
 use yii\web\HttpException;
 use yii\web\NotFoundHttpException;
 use common\rbac\SystemPermission;
-use common\components\actions\SearchAction;
 use common\components\actions\UpdateAction;
 use common\components\actions\ViewAction;
 use frontend\models\vks\Request;
@@ -99,12 +99,6 @@ class VksRequestController extends Controller
     public function actions()
     {
         return [
-            'index' => [
-                'class' => SearchAction::className(),
-                'modelClass' => RequestSearch::className(),
-                'scenario' => RequestSearch::SCENARIO_SEARCH_SCHEDULE,
-                'pjaxView' => '_schedule'
-            ],
             'delete' => [
                 'class' => DeleteAction::className(),
                 'modelClass' => Request::className(),
@@ -133,6 +127,25 @@ class VksRequestController extends Controller
                 'successMessage' => 'Заявка отменена'
             ]
         ];
+    }
+
+    public function actionIndex()
+    {
+        Url::remember('', CrudAction::URL_NAME_INDEX_ACTION);
+        $model = new RequestSearch();
+        $model->scenario = RequestSearch::SCENARIO_SEARCH_SCHEDULE;
+        $request = \Yii::$app->request;
+        $model->load($request->get());
+        $viewParams = [
+            'model' => $model,
+            'dataProvider' => $model->search(),
+            'participantsCountPerHour' => \Yii::$app->user->can(SystemPermission::APPROVE_REQUEST) ? Schedule::participantsCountPerHour($model->date) : [],
+        ];
+        if ($request->isPjax) {
+            return $this->render('_participants', $viewParams);
+        }
+
+        return $this->render('index', $viewParams);
     }
 
     public function actionCreate()

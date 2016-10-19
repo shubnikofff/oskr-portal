@@ -12,6 +12,7 @@ use frontend\models\vks\Request;
  * @var $this \yii\web\View
  * @var $dataProvider \yii\data\ActiveDataProvider
  * @var $model \frontend\models\vks\RequestSearch
+ * @var $participantsCountPerHour array
  */
 $minMinute = Yii::$app->params['vks.minTime'];
 $maxMinute = Yii::$app->params['vks.maxTime'];
@@ -152,7 +153,7 @@ $maxMinute = Yii::$app->params['vks.maxTime'];
             <?php else: ?>
 
                 <tr class="vks-time-grid half-hour">
-                    <td></td>
+                    <td><b><?= $participantsCountPerHour[$i - 30] ?></b></td>
                 </tr>
 
             <?php endif; ?>
