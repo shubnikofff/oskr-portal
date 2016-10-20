@@ -142,23 +142,23 @@ $maxMinute = Yii::$app->params['vks.maxTime'];
 
         <?= Html::beginTag('table', ['class' => 'vks-time-grid']) ?>
 
-        <?php for ($i = $minMinute; $i < $maxMinute; $i += 30): ?>
+        <?php for ($i = $minMinute; $i < $maxMinute; $i += 30) {
 
-            <?php if ($i % 60 == 0): ?>
+            $isFullHour = !(bool)($i % 60);
+            $participantsCount = $participantsCountPerHour[$i];
+            $participantsCountColorClass = 'participants-count-success';
+            if ($participantsCount >= 25) {
+                $participantsCountColorClass = 'participants-count-warning';
+            }
+            if ($participantsCount >= 30) {
+                $participantsCountColorClass = 'participants-count-danger';
+            }
 
-                <tr class="vks-time-grid full-hour">
-                    <td><?= (string)($i / 60) ?><sup>00</sup></td>
-                </tr>
-
-            <?php else: ?>
-
-                <tr class="vks-time-grid half-hour">
-                    <td><b><?= $participantsCountPerHour[$i - 30] ?></b></td>
-                </tr>
-
-            <?php endif; ?>
-
-        <?php endfor; ?>
+            echo Html::beginTag('tr', ['class' => 'vks-time-grid ' . ($isFullHour ? 'full-hour' : 'half-hour')]);
+            echo Html::tag('td', $isFullHour ? (string)($i / 60) . Html::tag('sup', '00') : '', ['width' => 1]);
+            echo Html::tag('td', Html::tag('b', $participantsCount), ['class' => 'participants-count small ' . $participantsCountColorClass]);
+            echo Html::endTag('tr');
+        } ?>
 
         <?= Html::endTag('table') ?>
 
@@ -184,7 +184,7 @@ $maxMinute = Yii::$app->params['vks.maxTime'];
     </div>
 
 <?php $options = \yii\helpers\Json::encode([
-    'timeColumnWidth' => 40,
+    'timeColumnWidth' => 45,
     'timeGridSelector' => 'table.vks-time-grid',
     'currentTimeSelector' => '#current-time',
     'requestsGridSelector' => '#vks-schedule-grid',

@@ -114,7 +114,7 @@ use common\components\MinuteFormatter;
 
     </div>
 
-    <p class="lead">Участники</p>
+    <p class="lead">Абоненты / Переговорные комнаты</p>
 
     <?php if ($model->hasErrors('participantsId')): ?>
 

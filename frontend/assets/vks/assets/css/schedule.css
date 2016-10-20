@@ -15,6 +15,23 @@ tr.half-hour {
     border-bottom: solid 1px;
 }
 
+td.participants-count {
+    vertical-align: bottom;
+    padding-left: 1px;
+}
+
+td.participants-count-success {
+    color: forestgreen;
+}
+
+td.participants-count-warning {
+    color: #c6a031;
+}
+
+td.participants-count-danger {
+    color: #ec0000;
+}
+
 #current-time {
     border: 1px dashed red;
     position: relative;

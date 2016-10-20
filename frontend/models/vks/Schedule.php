@@ -27,8 +27,8 @@ class Schedule
         $collection = \Yii::$app->get('mongodb')->getCollection(Request::collectionName());
 
         $map = new \MongoCode("function() {
-            for (var i = 8 * 60; i < 19 * 60; i = i + 60) {
-                if (this.beginTime < i + 60 && this.endTime > i) {
+            for (var i = 8 * 60; i < 19 * 60; i = i + 30) {
+                if (this.beginTime < i + 30 && this.endTime > i) {
                     emit(i, this.participantsId.length);
                 }
             }
