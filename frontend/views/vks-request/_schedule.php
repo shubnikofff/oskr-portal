@@ -150,7 +150,7 @@ $maxMinute = Yii::$app->params['vks.maxTime'];
             if ($participantsCount >= 25) {
                 $participantsCountColorClass = 'participants-count-warning';
             }
-            if ($participantsCount >= 30) {
+            if ($participantsCount >= 33) {
                 $participantsCountColorClass = 'participants-count-danger';
             }
 
