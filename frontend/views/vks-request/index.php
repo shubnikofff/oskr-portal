@@ -70,11 +70,12 @@ $this->title = "Расписание" ?>
         ]);
         $participantsIdData = ArrayHelper::map($participants, 'id', 'name', 'company'); ?>
 
+        <!--[if lt IE 9]><label style="padding-left: 5px">Фильтр по помещениям:</label><![endif]-->
         <?= $form->field($model, 'participantsId')->widget(Select2::className(), [
             'data' => $participantsIdData,
             'showToggleAll' => false,
             'options' => [
-                'placeholder' => 'Фильтр по участникам',
+                'placeholder' => 'Фильтр по помещениям',
                 'multiple' => true,
             ],
             'pluginOptions' => [
