@@ -5,7 +5,7 @@
  * @copyright Copyright (c) 2016 OSKR NIAEP
  */
 
-namespace frontend\components;
+namespace frontend\components\services;
 
 use common\models\vks\Participant;
 use frontend\models\vks\Request;

@@ -16,7 +16,7 @@ $organizer = $request->owner;
 
 Место проеведения: <?= $participant->company->name . ' - ' . $participant->name ?>
 
-Тема совещания: "<?= $request->topic ?>"
+Тема совещания: <?= $request->topic ?>
 
 Необходимое оборудование: <?= is_array($request->equipment) ? implode(', ', $request->equipment) : '' ?>
 
@@ -27,4 +27,4 @@ $organizer = $request->owner;
 
 
 
-Управление Системных Корпоративных Ресурсов
+Управление Системных Корпоративных Ресурсов, АО НИАЭП

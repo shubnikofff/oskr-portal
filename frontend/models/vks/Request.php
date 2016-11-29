@@ -10,6 +10,8 @@ namespace frontend\models\vks;
 use common\components\events\RequestStatusChangedEvent;
 use common\models\vks\DeployServer;
 use common\models\vks\Participant;
+use frontend\components\services\CancelMeetingGreenAtomNotifier;
+use frontend\components\services\FutureMeetingGreenAtomNotifier;
 use frontend\models\rso\File;
 use frontend\models\rso\NotificationStrategy;
 use frontend\models\rso\UserNotificationStrategy;
@@ -18,7 +20,6 @@ use common\components\MinuteFormatter;
 use yii\mongodb\Collection;
 use yii\mongodb\validators\MongoDateValidator;
 use yii\mongodb\validators\MongoIdValidator;
-use frontend\components\Notifier;
 
 /**
  * Class Request представляет модель заявки на ВКС
@@ -109,9 +110,6 @@ class Request extends \common\models\Request
     {
         parent::init();
 
-        $this->on(self::EVENT_AFTER_INSERT, [Notifier::class, 'onRequestAfterInsert']);
-        $this->on(self::EVENT_BEFORE_UPDATE, [Notifier::class, 'onRequestBeforeUpdate']);
-        $this->on(self::EVENT_AFTER_DELETE, [Notifier::class, 'onRequestAfterDelete']);
         $this->rsoFiles = [];
     }
 
@@ -283,20 +281,23 @@ class Request extends \common\models\Request
         return $this->endTime ? MinuteFormatter::asString($this->endTime) : '';
     }
 
-    /**
-     * @return bool
-     */
     public function approve()
     {
-        $this->status = self::STATUS_APPROVE;
-        if ($this->cancellationReason) {
-            $this->cancellationReason = null;
-        }
-        if ($this->save()) {
-            $this->trigger(self::EVENT_STATUS_CHANGED, new RequestStatusChangedEvent(['request' => $this]));
+        if ($this->status === self::STATUS_APPROVE) {
             return true;
         }
-        return false;
+
+        $this->status = self::STATUS_APPROVE;
+        $this->cancellationReason = null;
+
+        if ($this->save(false)) {
+            $startTime = $this->date->sec + $this->beginTime;
+            if($startTime - gmmktime() <= 60) {
+                FutureMeetingGreenAtomNotifier::sendMail($this);
+            }
+            $this->trigger(self::EVENT_STATUS_CHANGED, new RequestStatusChangedEvent(['request' => $this]));
+        }
+        return true;
     }
 
     /**
@@ -306,6 +307,7 @@ class Request extends \common\models\Request
     {
         $this->status = self::STATUS_CANCEL;
         if ($this->save()) {
+            CancelMeetingGreenAtomNotifier::sendMail($this);
             $this->trigger(self::EVENT_STATUS_CHANGED, new RequestStatusChangedEvent(['request' => $this]));
             return true;
         }
@@ -387,6 +389,5 @@ class Request extends \common\models\Request
             return false;
         }
     }
-
 
 }

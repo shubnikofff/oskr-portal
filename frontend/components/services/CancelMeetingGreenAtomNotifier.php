@@ -5,7 +5,7 @@
  * @copyright Copyright (c) 2016 OSKR NIAEP
  */
 
-namespace frontend\components;
+namespace frontend\components\services;
 
 use common\models\vks\Participant;
 use frontend\models\vks\Request;
@@ -20,7 +20,7 @@ class CancelMeetingGreenAtomNotifier extends GreenAtomNotifier
 {
     static protected function doComposeMessage(Request $request, Participant $participant)
     {
-        return \Yii::$app->mailer->compose(['text' => 'futureMeetingGreenAtomNotification-text'], ['request' => $request, 'participant' => $participant])
+        return \Yii::$app->mailer->compose(['text' => 'cancelMeetingGreenAtomNotification-text'], ['request' => $request, 'participant' => $participant])
             ->setFrom([\Yii::$app->params['email'] => \Yii::$app->name])
             ->setTo($participant->supportEmails)
             ->setSubject('Уведомление об отмене совещании');

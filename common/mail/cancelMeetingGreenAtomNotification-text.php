@@ -12,8 +12,9 @@
 
 
 Уведомляем Вас об отмене совещания, которое должно было проходить <?= Yii::$app->formatter->asDate($request->date->sec, 'long') ?> c <?= $request->beginTimeString ?> по <?= $request->endTimeString ?> в <?= $participant->company->name . ' - ' . $participant->name ?>.
+Причина отмены: <?= $request->cancellationReason ?>.
 
 
 
 
-Управление Системных Корпоративных Ресурсов
+Управление Системных Корпоративных Ресурсов, АО НИАЭП

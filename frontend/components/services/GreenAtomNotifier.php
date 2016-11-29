@@ -5,7 +5,7 @@
  * @copyright Copyright (c) 2016 OSKR NIAEP
  */
 
-namespace frontend\components;
+namespace frontend\components\services;
 use common\components\services\MailSender;
 use common\models\vks\Participant;
 use frontend\models\vks\Request;
@@ -22,7 +22,7 @@ abstract class GreenAtomNotifier
     {
         foreach ($request->participants as $participant) {
             if (!empty($participant->supportEmails)) {
-               MailSender::send(self::doComposeMessage($request, $participant));
+               MailSender::send(static::doComposeMessage($request, $participant));
             }
         }
     }
