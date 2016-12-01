@@ -8,7 +8,6 @@ $params = array_merge(
 
 return [
     'id' => 'teleport-frontend',
-    'name' => 'ОСКР Портал',
     'basePath' => dirname(__DIR__),
     'controllerNamespace' => 'frontend\controllers',
     'defaultRoute' => 'vks-request/index',

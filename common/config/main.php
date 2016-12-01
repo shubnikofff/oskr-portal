@@ -1,5 +1,7 @@
 <?php
 return [
+    'name' => 'ОСКР Портал',
+
     'language' => 'ru-RU',
 
     'vendorPath' => dirname(dirname(__DIR__)) . '/vendor',

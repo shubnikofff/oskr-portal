@@ -291,8 +291,8 @@ class Request extends \common\models\Request
         $this->cancellationReason = null;
 
         if ($this->save(false)) {
-            $startTime = $this->date->sec + $this->beginTime;
-            if($startTime - gmmktime() <= 60) {
+            $notifyTime = $this->date->sec + ($this->beginTime - 60) * 60;
+            if ((time() + 3 * 60 * 60) > $notifyTime) {
                 FutureMeetingGreenAtomNotifier::sendMail($this);
             }
             $this->trigger(self::EVENT_STATUS_CHANGED, new RequestStatusChangedEvent(['request' => $this]));
