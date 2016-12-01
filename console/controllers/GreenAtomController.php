@@ -18,9 +18,9 @@ use yii\console\Controller;
  */
 class GreenAtomController extends Controller
 {
-    public function actionPeriodicNotification($interval)
+    public function actionPeriodicNotification($interval, $inTime = 60)
     {
-        $beginTime = intval(date('G')) * 60 + intval(date('i'));
+        $beginTime = intval(date('G')) * 60 + intval(date('i')) + intval($inTime);
         $set = Request::find()->where([
             'date' => new \MongoDate(gmmktime(0, 0, 0)),
             'beginTime' => [
@@ -36,9 +36,8 @@ class GreenAtomController extends Controller
     public function actionEveningNotification()
     {
         $beginTime = 8 * 60;
-        $tomorrowDate = new \MongoDate(strtotime("+1 day", gmmktime(0, 0, 0)));
-        $set = Request::find()->where([
-            'date' => $tomorrowDate,
+        $tomorrowBookingSet = Request::find()->where([
+            'date' => new \MongoDate(strtotime("+1 day", gmmktime(0, 0, 0))),
             'beginTime' => [
                 '$gte' => $beginTime,
                 '$lt' => $beginTime + 60,
@@ -46,7 +45,14 @@ class GreenAtomController extends Controller
             'status' => Request::STATUS_APPROVE
         ])->all();
 
-        self::notify($set);
+        $eveningBookingSet = Request::find()->where([
+            'date' => new \MongoDate(gmmktime(0, 0, 0)),
+            'beginTime' => [
+                '$gte' => 18 * 60
+            ]
+        ])->all();
+
+        self::notify(array_merge($tomorrowBookingSet, $eveningBookingSet));
     }
 
     /**
