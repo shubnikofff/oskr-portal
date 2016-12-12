@@ -75,7 +75,7 @@ AppAsset::register($this);
 
 <footer class="footer">
     <div class="container">
-        <p class="text-center">&copy;&nbsp;<?= date('Y') ?> ОСКР АО"НИАЭП"</p>
+        <p class="text-center">&copy;&nbsp;<?= date('Y') ?> Управление системных корпоративных ресурсов АО ИК "АСЭ"</p>
     </div>
 </footer>
 

@@ -79,7 +79,7 @@ AppAsset::register($this);
 
 <footer class="footer">
     <div class="container">
-        <p class="pull-left">&copy;&nbsp;<?= date('Y') ?> Управление системных корпоративных ресурсов АО"НИАЭП"</p>
+        <p class="pull-left">&copy;&nbsp;<?= date('Y') ?> Управление системных корпоративных ресурсов АО ИК "АСЭ"</p>
 
         <p class="pull-right">Техническая поддержка: 0-0-0, <?= Html::a('oskr@niaep.ru', 'mailto:oskr@niaep.ru') ?></p>
     </div>
