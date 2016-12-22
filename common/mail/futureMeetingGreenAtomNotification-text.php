@@ -9,10 +9,9 @@
  */
 $organizer = $request->owner;
 ?>
-Доброго времени суток!
+Уведомляем Вас,
 
-
-Уведомляем Вас, что <?= Yii::$app->formatter->asDate($request->date->sec, 'long') ?> c <?= $request->beginTimeString ?> по <?= $request->endTimeString ?> пройдет совещание <?= $request->mode === $request::MODE_WITH_VKS ? 'в режиме ВКС' : '' ?>
+что <?= Yii::$app->formatter->asDate($request->date->sec, 'long') ?> c <?= $request->beginTimeString ?> по <?= $request->endTimeString ?> пройдет совещание <?= $request->mode === $request::MODE_WITH_VKS ? 'в режиме ВКС' : '' ?>
 
 Место проеведения: <?= $participant->company->name . ' - ' . $participant->name ?>
 
@@ -20,7 +19,11 @@ $organizer = $request->owner;
 
 Необходимое оборудование: <?= is_array($request->equipment) ? implode(', ', $request->equipment) : '' ?>
 
-Организатор: <?= $organizer->fullName ?> - <?= $organizer->post ?>, e-mail: <?= $organizer->email ?>, телефон: <?= $organizer->phone ?>
+Организатор: <?= $organizer->fullName ?> - <?= $organizer->post ?>
+
+E-mail: <?= $organizer->email ?>
+
+Телефон: <?= $organizer->phone ?>
 
 Примечание: <?= $request->note ?>
 
