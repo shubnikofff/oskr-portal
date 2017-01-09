@@ -108,7 +108,7 @@ class RequestForm extends Request
 
             ['dateInput', MongoDateValidator::className(), 'format' => 'dd.MM.yyyy',
                 'min' => \Yii::$app->formatter->asDate(mktime(0, 0, 0), 'dd.MM.yyyy'),
-                'max' => \Yii::$app->formatter->asDate(strtotime("+3 week"), 'dd.MM.yyyy'),
+                'max' => \Yii::$app->formatter->asDate(strtotime("+1 week"), 'dd.MM.yyyy'),
             ],
 
             ['beginTimeInput', MinuteValidator::className(),
