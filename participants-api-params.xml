@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<methodCall>
+    <methodName>participant.add</methodName>
+    <params>
+        <param>
+            <value>
+                <struct>
+                    <member>
+                        <name>conferenceName</name>
+                        <value>
+                            <string>test-native-API</string>
+                        </value>
+                    </member>
+
+                    <member>
+                        <name>participantName</name>
+                        <value>
+                            <string>NN-626</string>
+                        </value>
+                    </member>
+
+                    <member>
+                        <name>address</name>
+                        <value>
+                            <string>10.0.252.66</string>
+                        </value>
+                    </member>
+
+                    <member>
+                        <name>authenticationPassword</name>
+                        <value>
+                            <string>F6ugCJjTrZFBPTUukPkRwKaoajH3fjM</string>
+                        </value>
+                    </member>
+
+                    <member>
+                        <name>authenticationUser</name>
+                        <value>
+                            <string>shubnikov</string>
+                        </value>
+                    </member>
+                </struct>
+            </value>
+        </param>
+    </params>
+</methodCall>

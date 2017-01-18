@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<methodCall>
+    <methodName>conference.modify</methodName>
+    <params>
+        <param>
+            <value>
+                <struct>
+
+                    <member>
+                        <name>conferenceName</name>
+                        <value>
+                            <string>test-native-API</string>
+                        </value>
+                    </member>
+
+                    <member>
+                        <name>numericId</name>
+                        <value>
+                            <string>1111</string>
+                        </value>
+                    </member>
+
+                    <member>
+                        <name>pin</name>
+                        <value>
+                            <string>111</string>
+                        </value>
+                    </member>
+
+                    <member>
+                        <name>startTime</name>
+                        <value>
+                            <dateTime.iso8601>20170117T17:15:00</dateTime.iso8601>
+                        </value>
+                    </member>
+
+                    <member>
+                        <name>durationSeconds</name>
+                        <value>
+                            <int>600</int>
+                        </value>
+                    </member>
+
+                    <member>
+                        <name>description</name>
+                        <value>
+                            <string>Cisco API methods testing</string>
+                        </value>
+                    </member>
+
+                    <member>
+                        <name>authenticationPassword</name>
+                        <value>
+                            <string>F6ugCJjTrZFBPTUukPkRwKaoajH3fjM</string>
+                        </value>
+                    </member>
+
+                    <member>
+                        <name>authenticationUser</name>
+                        <value>
+                            <string>shubnikov</string>
+                        </value>
+                    </member>
+                </struct>
+            </value>
+        </param>
+    </params>
+</methodCall>

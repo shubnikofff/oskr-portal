@@ -6,13 +6,16 @@ $params = array_merge(
     require(__DIR__ . '/params-local.php')
 );
 
+Yii::setAlias('tests', dirname(__DIR__) . '/tests');
+
 return [
     'id' => 'app-console',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'controllerNamespace' => 'console\controllers',
     'controllerMap' => [
-        'mongodb-migrate' => 'yii\mongodb\console\controllers\MigrateController'
+        'mongodb-migrate' => \yii\mongodb\console\controllers\MigrateController::class,
+        'fixture' => \yii\faker\FixtureController::class
     ],
     'components' => [
         'log' => [
