@@ -26,6 +26,7 @@ use yii\mongodb\validators\MongoIdValidator;
  *
  * @package common\models
  *
+ * @property int $number
  * @property string $topic
  * @property \MongoDate $date
  * @property int $beginTime
@@ -87,6 +88,7 @@ class Request extends \common\models\Request
     public function attributes()
     {
         return array_merge(parent::attributes(), [
+            'number',
             'topic',
             'date',
             'beginTime',
@@ -388,6 +390,12 @@ class Request extends \common\models\Request
         } else {
             return false;
         }
+    }
+
+    public static function generateNumber(\MongoDate $date)
+    {
+        $max = self::getCollection()->find(['date' => $date], ['number' => 1])->sort(['number' => -1])->limit(1)->getNext();
+        return isset($max['number']) ? $max['number'] + 1 : 100;
     }
 
 }
