@@ -1,11 +1,10 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\ActiveForm;
+use yii\bootstrap\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\vks\DeployServer */
-/* @var $form yii\widgets\ActiveForm */
 ?>
 
 <div class="deploy-server-form">
@@ -13,6 +12,11 @@ use yii\widgets\ActiveForm;
     <?php $form = ActiveForm::begin(); ?>
 
     <?= $form->field($model, 'name') ?>
+    <?= $form->field($model, 'ip') ?>
+    <?= $form->field($model, 'brand')->inline()->radioList([
+        $model::BRAND_CISCO => 'Cisco',
+        $model::BRAND_POLYCOM => 'Polycom'
+    ]) ?>
 
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? 'Добавить' : 'Сохранить', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>

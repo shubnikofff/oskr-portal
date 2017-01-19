@@ -27,6 +27,8 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
 
             'name',
+            'ip',
+            'brand',
 
             [
                 'class' => ActionColumn::className(),
