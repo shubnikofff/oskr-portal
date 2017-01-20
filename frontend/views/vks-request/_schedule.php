@@ -99,31 +99,32 @@ $maxMinute = Yii::$app->params['vks.maxTime'];
                                 ]
                             ]) ?>
 
-                            <?= Html::beginTag('div', ['class' => 'vks-request-theme']) ?>
+                            <div class="vks-request-header">
 
-                            <?= Html::beginTag('div', ['class' => 'vks-request-options']) ?>
+                                <div class="vks-request-number"><strong>№<?= $request->number ?></strong></div>
 
-                            <?php if ($request->mode === $request::MODE_WITH_VKS): ?>
+                                <div class="vks-request-options">
 
-                                <span class="glyphicon glyphicon-facetime-video"></span>
+                                    <?php if ($request->mode === $request::MODE_WITH_VKS): ?>
 
-                            <?php endif; ?>
+                                        <span class="glyphicon glyphicon-facetime-video"></span>
 
-                            <?php if ($request->audioRecord): ?>
+                                    <?php endif; ?>
 
-                                <span class="glyphicon glyphicon-headphones"></span>
+                                    <?php if ($request->audioRecord): ?>
 
-                            <?php endif; ?>
+                                        <span class="glyphicon glyphicon-headphones"></span>
 
-                            <?= Html::endTag('div') ?>
+                                    <?php endif; ?>
 
-                            <?= $request->topic ?>
+                                </div>
 
-                            <?= Html::endTag('div') ?>
+                            </div>
 
-                            <?= Html::tag('div', "<b>№ {$request->number}</b>", ['class' => 'vks-request-participants']) ?>
 
-                            <?= Html::tag('div', $request->deployServer ? $request->deployServer->name : "", ['class' => 'vks-request-service-data']) ?>
+                            <?= Html::tag('div', $request->topic, ['class' => 'vks-request-theme']) ?>
+
+                            <div class="vks-request-service-data"><strong><?= $request->deployServer->name ?></strong></div>
 
                             <?= Html::endTag('button') ?>
 
