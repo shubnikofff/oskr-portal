@@ -88,7 +88,6 @@ $maxMinute = Yii::$app->params['vks.maxTime'];
 
                             <?php $participantList = implode(' - ', $request->participantShortNameList) ?>
 
-
                             <?= Html::beginTag('button', [
                                 'class' => $statusClass . ' vks-request',
                                 'title' => "{$request->beginTimeString} - {$request->endTimeString} ({$participantList})",
@@ -101,7 +100,7 @@ $maxMinute = Yii::$app->params['vks.maxTime'];
 
                             <div class="vks-request-header">
 
-                                <div class="vks-request-number"><strong>№<?= $request->number ?></strong></div>
+                                <div class="vks-request-number"><strong>№ <?= $request->number ?></strong></div>
 
                                 <div class="vks-request-options">
 
@@ -120,7 +119,6 @@ $maxMinute = Yii::$app->params['vks.maxTime'];
                                 </div>
 
                             </div>
-
 
                             <?= Html::tag('div', $request->topic, ['class' => 'vks-request-theme']) ?>
 

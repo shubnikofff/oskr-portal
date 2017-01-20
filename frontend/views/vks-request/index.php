@@ -60,8 +60,8 @@ $this->title = "Расписание" ?>
                         ]) ?>
 
                     </div>
-                    <div class="col-lg-2">
 
+                    <div class="col-lg-2">
 
                         <?= $form->field($model, 'number')->textInput([
                             'size' => 3,
@@ -71,8 +71,7 @@ $this->title = "Расписание" ?>
 
                     </div>
 
-                    <div class="col-lg-8">
-
+                    <div class="col-lg-7">
 
                         <?php $query = Participant::find()->select(['_id', 'name', 'companyId'])->with('company');
                         $participants = ArrayHelper::toArray($query->all(), [
@@ -96,9 +95,12 @@ $this->title = "Расписание" ?>
 
                     </div>
 
-                    <div class="col-lg-1" style="padding-top: 25px">
+                    <div class="col-lg-2" style="padding-top: 25px">
 
-                        <?= Html::submitButton("<span class='glyphicon glyphicon-search'></span>", ['class' => 'btn btn-primary']) ?>
+                        <div class="btn-group" role="group" aria-label="...">
+                            <button type="submit" class="btn btn-primary"><span class='glyphicon glyphicon-search'></span></button>
+                            <?= Html::a("<span class='glyphicon glyphicon-remove'></span>", ['/vks-request/index'], ['class' => 'btn btn-default'])?>
+                        </div>
 
                     </div>
 
