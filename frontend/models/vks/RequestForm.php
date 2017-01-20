@@ -214,6 +214,10 @@ class RequestForm extends Request
             }
             $this->rsoFiles = $rsoFiles;
 
+            if ($this->getOldAttribute('date') != $this->date) {
+                $this->number = self::generateNumber($this->date);
+            }
+
             if ($insert) {
 
                 $this->status = self::STATUS_OSKR_CONSIDERATION;

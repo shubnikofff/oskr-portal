@@ -2,17 +2,21 @@
 
 namespace common\models\vks;
 
-use Yii;
 use yii\mongodb\ActiveRecord;
 
 /**
  * This is the model class for collection "vks.deployServer".
  *
  * @property \MongoId|string $_id
- * @property mixed $name
+ * @property string $name
+ * @property string $ip
+ * @property string $brand
  */
 class DeployServer extends ActiveRecord
 {
+    const BRAND_CISCO = 'cisco';
+    const BRAND_POLYCOM = 'polycom';
+
     /**
      * @inheritdoc
      */
@@ -29,6 +33,8 @@ class DeployServer extends ActiveRecord
         return [
             '_id',
             'name',
+            'ip',
+            'brand'
         ];
     }
 
@@ -38,7 +44,9 @@ class DeployServer extends ActiveRecord
     public function rules()
     {
         return [
-            [['name'], 'required']
+            [['name', 'ip', 'brand'], 'required'],
+            ['ip', 'ip', 'ipv6' => false],
+            ['brand', 'in', 'range' => [self::BRAND_CISCO, self::BRAND_POLYCOM]]
         ];
     }
 
@@ -49,6 +57,8 @@ class DeployServer extends ActiveRecord
     {
         return [
             'name' => 'Наименование',
+            'ip' => 'IP адрес',
+            'brand' => 'Брэнд'
         ];
     }
 }

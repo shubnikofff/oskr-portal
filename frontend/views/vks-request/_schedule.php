@@ -121,7 +121,7 @@ $maxMinute = Yii::$app->params['vks.maxTime'];
 
                             <?= Html::endTag('div') ?>
 
-                            <?= Html::tag('div', "<b>{$participantList}</b>", ['class' => 'vks-request-participants']) ?>
+                            <?= Html::tag('div', "<b>№ {$request->number}</b>", ['class' => 'vks-request-participants']) ?>
 
                             <?= Html::tag('div', $request->deployServer ? $request->deployServer->name : "", ['class' => 'vks-request-service-data']) ?>
 

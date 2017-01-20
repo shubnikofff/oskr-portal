@@ -23,16 +23,9 @@ $isUserCanRsoRefuse = Yii::$app->user->can(SystemPermission::RSO_REFUSE);
 
 <div style="font-size: 13px">
 
-    <p style="font-size: 20px;"><?= $model->topic ?></p>
-
-    <hr>
-
     <div>
 
-        <div style="font-size: 15px; display: inline-block">
-            Время проведения <?= Yii::$app->formatter->asDate($model->date->sec, 'long') ?>
-            c <?= $model->beginTimeString ?> до <?= $model->endTimeString ?>
-        </div>
+        <h3 style="display: inline-block">Заявка №<?= $model->number?></h3>
 
         <div class="pull-right" style="display: inline-block">
 
@@ -49,6 +42,11 @@ $isUserCanRsoRefuse = Yii::$app->user->can(SystemPermission::RSO_REFUSE);
 
     </div>
 
+    <p style="font-size: 12pt">Время проведения: <?= Yii::$app->formatter->asDate($model->date->sec, 'long') ?>
+        c <?= $model->beginTimeString ?> до <?= $model->endTimeString ?></p>
+
+    <p><strong>Тема совещания:</strong> <?= $model->topic ?></p>
+
     <?php switch ($model->status) {
         case $model::STATUS_APPROVE:
             $statusCssClass = 'text-success';
@@ -58,7 +56,7 @@ $isUserCanRsoRefuse = Yii::$app->user->can(SystemPermission::RSO_REFUSE);
             break;
     } ?>
 
-    <p>Статус заявки: <b class="<?= $statusCssClass ?>"><?= $model->statusName ?></b></p>
+    <p><strong>Статус заявки:</strong> <span class="<?= $statusCssClass ?>"><?= $model->statusName ?></span></p>
 
     <?php if ($model->status === $model::STATUS_CANCEL): ?>
 
@@ -66,7 +64,7 @@ $isUserCanRsoRefuse = Yii::$app->user->can(SystemPermission::RSO_REFUSE);
 
     <?php endif; ?>
 
-    <p>Согласование с РСО: <b><?= $model->rsoAgreement ?></b></p>
+    <p><strong>Согласование с РСО:</strong> <?= $model->rsoAgreement ?></p>
 
     <p class="lead">Организатор</p>
 
@@ -81,7 +79,7 @@ $isUserCanRsoRefuse = Yii::$app->user->can(SystemPermission::RSO_REFUSE);
         <dd><?= $model->owner->phone ?></dd>
     </dl>
 
-    <p>Совещание в режиме ВКС: <b><?= Yii::$app->formatter->asBoolean($model->mode === $model::MODE_WITH_VKS) ?></b></p>
+    <p><strong>Совещание в режиме ВКС:</strong> <?= Yii::$app->formatter->asBoolean($model->mode === $model::MODE_WITH_VKS) ?></p>
 
     <?php if ($model->mode === $model::MODE_WITH_VKS): ?>
 
@@ -234,8 +232,6 @@ $isUserCanRsoRefuse = Yii::$app->user->can(SystemPermission::RSO_REFUSE);
         <?php endif; ?>
 
     </div>
-
-    <p>Заявка подана <?= Yii::$app->formatter->asDatetime($model->createdAt->sec, 'd MMMM y г. HH:mm') ?></p>
 
 </div>
 

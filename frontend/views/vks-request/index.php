@@ -7,8 +7,8 @@
  */
 
 use kartik\date\DatePicker;
-use kartik\helpers\Html;
-use kartik\form\ActiveForm;
+use yii\bootstrap\ActiveForm;
+use yii\helpers\Html;
 use kartik\select2\Select2;
 use yii\widgets\Pjax;
 use yii\bootstrap\Modal;
@@ -28,7 +28,7 @@ $this->title = "Расписание" ?>
 
         <?php Modal::begin([
             'id' => 'vks-view-modal-widget',
-            'header' => "<h5>Информация по ВКС</h5>"
+            'header' => "<h5>Подробная информация</h5>"
         ]) ?>
 
         <div id="vks-view-container"></div>
@@ -39,51 +39,74 @@ $this->title = "Расписание" ?>
             'id' => 'vks-search-form',
             'action' => ['vks-request/index'],
             'method' => 'get',
-            'options' => [
-                'class' => 'form-inline'
-            ],
-
             'enableClientValidation' => false,
-            'formConfig' => [
-                'showLabels' => false
-            ]
         ]) ?>
 
-        <?= $form->field($model, 'dateInput')->widget(DatePicker::className(), [
-            'type' => DatePicker::TYPE_BUTTON,
-            'pluginOptions' => [
-                'autoclose' => true,
-                'todayHighlight' => true,
-                'format' => 'dd.mm.yyyy'
-            ],
-        ]) ?>
+        <div class="row">
 
-        <?php $query = Participant::find()->select(['_id', 'name', 'companyId'])->with('company');
-        $participants = ArrayHelper::toArray($query->all(), [
-            Participant::className() => [
-                'id' => function ($item) {
-                    return (string)$item->primaryKey;
-                },
-                'name',
-                'company' => 'company.name'
-            ]
-        ]);
-        $participantsIdData = ArrayHelper::map($participants, 'id', 'name', 'company'); ?>
+            <div class="col-lg-9">
 
-        <!--[if lt IE 9]><label style="padding-left: 5px">Фильтр по помещениям:</label><![endif]-->
-        <?= $form->field($model, 'participantsId')->widget(Select2::className(), [
-            'data' => $participantsIdData,
-            'showToggleAll' => false,
-            'options' => [
-                'placeholder' => 'Фильтр по помещениям',
-                'multiple' => true,
-            ],
-            'pluginOptions' => [
-                'width' => '600px'
-            ]
-        ]) ?>
+                <div class="row">
 
-        <?= Html::resetButton('Сброс', ['class' => 'btn btn-primary']) ?>
+                    <div class="col-lg-1">
+
+                        <?= $form->field($model, 'dateInput')->widget(DatePicker::className(), [
+                            'type' => DatePicker::TYPE_BUTTON,
+                            'pluginOptions' => [
+                                'autoclose' => true,
+                                'todayHighlight' => true,
+                                'format' => 'dd.mm.yyyy'
+                            ],
+                        ]) ?>
+
+                    </div>
+                    <div class="col-lg-2">
+
+
+                        <?= $form->field($model, 'number')->textInput([
+                            'size' => 3,
+                            'maxlength' => 3
+                        ]) ?>
+
+
+                    </div>
+
+                    <div class="col-lg-8">
+
+
+                        <?php $query = Participant::find()->select(['_id', 'name', 'companyId'])->with('company');
+                        $participants = ArrayHelper::toArray($query->all(), [
+                            Participant::className() => [
+                                'id' => function ($item) {
+                                    return (string)$item->primaryKey;
+                                },
+                                'name',
+                                'company' => 'company.name'
+                            ]
+                        ]);
+                        $participantsIdData = ArrayHelper::map($participants, 'id', 'name', 'company'); ?>
+
+                        <?= $form->field($model, 'participantsId')->widget(Select2::className(), [
+                            'data' => $participantsIdData,
+                            'showToggleAll' => false,
+                            'options' => [
+                                'multiple' => true,
+                            ],
+                        ]) ?>
+
+                    </div>
+
+                    <div class="col-lg-1" style="padding-top: 25px">
+
+                        <?= Html::submitButton("<span class='glyphicon glyphicon-search'></span>", ['class' => 'btn btn-primary']) ?>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
 
         <?php ActiveForm::end() ?>
 

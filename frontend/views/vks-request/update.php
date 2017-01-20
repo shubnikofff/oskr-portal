@@ -17,9 +17,7 @@ $this->title = "Бронирование помещений"
 
 <div class="vks-request-create">
 
-    <?= Html::pageHeader($this->title, 'обновлена ' . Yii::$app->formatter->asDate($model->updatedAt->sec)) ?>
-
-    <p class="lead">Создана <?= Yii::$app->formatter->asDate($model->createdAt->sec) ?></p>
+    <?= Html::pageHeader($this->title, 'заявка №' . $model->number) ?>
 
     <?= $this->render('_form', [
         'model' => $model,

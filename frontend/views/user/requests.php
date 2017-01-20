@@ -37,34 +37,37 @@ $this->title = "Заявки";
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
+        'formatter' => ['class' => \yii\i18n\Formatter::class, 'nullDisplay' => ''],
         'tableOptions' => [
             'class' => 'table'
         ],
         'columns' => [
             [
-                'class' => 'yii\grid\SerialColumn',
+                'attribute' => 'number',
+                'contentOptions' => ['class' => 'text-center']
             ],
+
+            [
+                'attribute' => 'date',
+                'content' => function ($model) {
+                    return Yii::$app->formatter->asDate($model->date->sec, 'short');
+                },
+            ],
+
             [
                 'attribute' => 'topic',
                 'content' => function ($model) {
                     return Html::a($model->topic, ['vks-request/view', 'id' => (string)$model->primaryKey]);
                 },
-                'contentOptions' => ['style' => 'width: 62%']
             ],
+
             [
                 'attribute' => 'status',
                 'value' => function ($model) {
                     return Request::statusName($model->status);
                 },
-                'contentOptions' => ['style' => 'width: 13%']
             ],
-            [
-                'attribute' => 'date',
-                'content' => function ($model) {
-                    return Yii::$app->formatter->asDate($model->date->sec) . " c {$model->beginTimeString} по {$model->endTimeString}";
-                },
-                'contentOptions' => ['style' => 'width: 20%']
-            ],
+
             [
                 'class' => \yii\grid\ActionColumn::className(),
                 'controller' => 'vks-request',
