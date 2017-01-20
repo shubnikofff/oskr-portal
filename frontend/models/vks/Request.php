@@ -173,6 +173,7 @@ class Request extends \common\models\Request
     public function attributeLabels()
     {
         return [
+            'number' => 'Номер заявки',
             'topic' => 'Тема',
             'dateInput' => 'Дата',
             'date' => 'Дата',

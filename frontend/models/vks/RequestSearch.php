@@ -33,7 +33,7 @@ class RequestSearch extends Request implements SearchModelInterface
     public function scenarios()
     {
         return [
-            $this::SCENARIO_SEARCH_SCHEDULE => ['dateInput', 'participantsId'],
+            $this::SCENARIO_SEARCH_SCHEDULE => ['dateInput', 'participantsId', 'number'],
             $this::SCENARIO_SEARCH_PERSONAL => ['createdBy', 'searchKey']
         ];
     }
@@ -93,6 +93,9 @@ class RequestSearch extends Request implements SearchModelInterface
         }
 
         $query->andFilterWhere(['date' => $this->date]);
+
+        $number = empty($this->number) ? null : (integer)$this->number;
+        $query->andFilterWhere(['number' => $number]);
 
         if (is_array($this->participantsId)) {
             $query->andWhere(['participantsId' => ['$in' => $this->participantsId]]);
