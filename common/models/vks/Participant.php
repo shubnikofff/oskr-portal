@@ -22,6 +22,7 @@ use yii\validators\EachValidator;
  * @property string $shortName
  * @property \MongoId|string $companyId
  * @property Company $company
+ * @property boolean $multiConference
  * @property boolean $ahuConfirmation
  * @property \MongoId $confirmPersonId
  * @property array $supportEmails
@@ -29,7 +30,8 @@ use yii\validators\EachValidator;
  * @property string $phone
  * @property string $contact
  * @property string $model
- * @property string $ipAddress
+ * @property string $dialString
+ * @property string $protocol
  * @property string $gatekeeperNumber
  * @property string $note
  * @property bool|null $isBusy
@@ -45,6 +47,8 @@ class Participant extends ActiveRecord
     const STATUS_CANCEL = 'cancel';
     const STATUS_CONSIDIRATION = 'considiration';
 
+    const PROTOCOL_SIP = 'SIP';
+    const PROTOCOL_H323 = 'H323';
     /**
      * @var bool is busy this participant in minute range
      */
@@ -80,13 +84,15 @@ class Participant extends ActiveRecord
             'name',
             'shortName',
             'companyId',
+            'multiConference',
             'ahuConfirmation',
             'confirmPersonId',
             'supportEmails',
             'phone',
             'contact',
             'model',
-            'ipAddress',
+            'dialString',
+            'protocol',
             'gatekeeperNumber',
             'note',
             'log'
@@ -125,7 +131,8 @@ class Participant extends ActiveRecord
 
             ['companyId', 'exist', 'targetClass' => Company::className(), 'targetAttribute' => '_id'],
 
-            ['ahuConfirmation', 'boolean'],
+            [['multiConference', 'ahuConfirmation'], 'boolean'],
+
             ['ahuConfirmation', 'filter', 'filter' => function ($value) {
                 return boolval($value);
             }],
@@ -146,9 +153,9 @@ class Participant extends ActiveRecord
                 }
             }, 'skipOnEmpty' => false],
 
-            ['ipAddress', 'match', 'pattern' => '/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/'],
+            ['protocol', 'in', 'range' => [self::PROTOCOL_H323, self::PROTOCOL_SIP]],
 
-            [['phone', 'contact', 'model', 'gatekeeperNumber', 'note'], 'safe'],
+            [['dialString', 'phone', 'contact', 'model', 'gatekeeperNumber', 'note'], 'safe'],
 
             [['companyId', 'confirmPersonId'], MongoIdValidator::className(), 'forceFormat' => 'object'],
         ];
@@ -167,12 +174,14 @@ class Participant extends ActiveRecord
             'status' => 'Статус',
             'companyId' => 'Компания',
             'ahuConfirmation' => 'Необходимость согласования с АХУ',
+            'multiConference' => 'Участие в нескольких конференциях одновременно',
             'confirmPersonId' => 'Согласующее лицо',
             'supportEmailsInput' => 'Email(ы) техподдержки',
             'phone' => 'Телефон',
             'contact' => 'Контактное лицо',
             'model' => 'Модель оборудования',
-            'ipAddress' => 'IP адрес',
+            'dialString' => 'Строка вызова',
+            'protocol' => 'Протокол',
             'gatekeeperNumber' => 'Номер на GateKeeper',
             'note' => 'Примечание',
         ];
@@ -183,6 +192,16 @@ class Participant extends ActiveRecord
         parent::afterFind();
         if (is_array($this->supportEmails)) {
             $this->supportEmailsInput = implode(';', $this->supportEmails);
+        }
+    }
+
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            $this->multiConference = (bool)$this->multiConference;
+            return true;
+        } else {
+            return false;
         }
     }
 

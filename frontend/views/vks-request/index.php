@@ -28,7 +28,8 @@ $this->title = "Расписание" ?>
 
         <?php Modal::begin([
             'id' => 'vks-view-modal-widget',
-            'header' => "<h5>Подробная информация</h5>"
+            'header' => "<h5>Подробная информация</h5>",
+            'size' => Modal::SIZE_LARGE
         ]) ?>
 
         <div id="vks-view-container"></div>

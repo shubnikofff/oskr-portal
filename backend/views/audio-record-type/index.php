@@ -1,24 +1,24 @@
 <?php
 
-use yii\grid\GridView;
-use kartik\helpers\Html;
+use yii\helpers\Html;
 use yii\grid\ActionColumn;
+
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Сервера сборки';
+$this->title = 'Типы аудиозаписи';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="deploy-server-index">
+<div class="audio-record-type-index">
 
-    <?= Html::pageHeader($this->title) ?>
+    <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a("<span class='glyphicon glyphicon-plus'></span>", ['create'], ['class' => 'btn btn-default']) ?>
+        <?= Html::a('Новый тип', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
-
-    <?= GridView::widget([
+    <?= \yii\grid\GridView::widget([
         'dataProvider' => $dataProvider,
+
         'columns' => [
             [
                 'class' => ActionColumn::className(),
@@ -26,16 +26,14 @@ $this->params['breadcrumbs'][] = $this->title;
                 'contentOptions' => ['width' => '1px;']
             ],
 
+            '_id',
             'name',
-            'ip',
-            'brand',
 
             [
                 'class' => ActionColumn::className(),
                 'template' => '{delete}',
                 'contentOptions' => ['width' => '1px;']
             ],
-        ],
-    ]); ?>
-
+        ]
+    ]) ?>
 </div>

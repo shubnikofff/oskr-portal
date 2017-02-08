@@ -1,8 +1,7 @@
 <?php
 
-namespace app\models;
+namespace backend\models;
 
-use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\SearchModelInterface;
@@ -20,7 +19,7 @@ class VksParticipantSearch extends Participant implements SearchModelInterface
     {
         return [
             ['companyId', MongoIdValidator::className(), 'forceFormat' => 'object'],
-            [['name', 'shortName', 'ipAddress', 'note'], 'safe'],
+            [['name', 'shortName', 'dialString', 'note'], 'safe'],
         ];
     }
 
@@ -55,7 +54,7 @@ class VksParticipantSearch extends Participant implements SearchModelInterface
         $query->andFilterWhere(['like', 'name', $this->name])
             ->andFilterWhere(['like', 'shortName', $this->shortName])
             ->andFilterWhere(['companyId' => $this->companyId])
-            ->andFilterWhere(['like', 'ipAddress', $this->ipAddress])
+            ->andFilterWhere(['like', 'dialString', $this->dialString])
             ->andFilterWhere(['like', 'note', $this->note]);
 
         return $dataProvider;

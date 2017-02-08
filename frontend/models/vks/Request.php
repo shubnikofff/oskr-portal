@@ -7,19 +7,20 @@
  */
 namespace frontend\models\vks;
 
+use yii\helpers\ArrayHelper;
+use yii\mongodb\Collection;
+use yii\mongodb\validators\MongoDateValidator;
+use yii\mongodb\validators\MongoIdValidator;
 use common\components\events\RequestStatusChangedEvent;
-use common\models\vks\DeployServer;
+use common\models\vks\AudioRecordType;
+use common\models\vks\MCU;
 use common\models\vks\Participant;
+use common\components\MinuteFormatter;
 use frontend\components\services\CancelMeetingGreenAtomNotifier;
 use frontend\components\services\FutureMeetingGreenAtomNotifier;
 use frontend\models\rso\File;
 use frontend\models\rso\NotificationStrategy;
 use frontend\models\rso\UserNotificationStrategy;
-use yii\helpers\ArrayHelper;
-use common\components\MinuteFormatter;
-use yii\mongodb\Collection;
-use yii\mongodb\validators\MongoDateValidator;
-use yii\mongodb\validators\MongoIdValidator;
 
 /**
  * Class Request представляет модель заявки на ВКС
@@ -37,8 +38,13 @@ use yii\mongodb\validators\MongoIdValidator;
  * @property string $modeString
  * @property array $equipment
  * @property bool $audioRecord
- * @property \MongoId $deployServerId
- * @property DeployServer $deployServer
+ * @property string $mcuId
+ * @property MCU $mcu
+ * @property string $audioRecordTypeId
+ * @property AudioRecordType $audioRecordType
+ * @property string $conferenceName
+ * @property string $conferenceId
+ * @property string $conferencePassword
  * @property \MongoId[] $participantsId
  * @property array $roomsOnConsidiration
  * @property Participant[] $participants
@@ -58,9 +64,8 @@ class Request extends \common\models\Request
     const MODE_WITH_VKS = 0;
     const MODE_WITHOUT_VKS = 1;
 
-    const SCENARIO_APPROVE = 'approve';
     const SCENARIO_CANCEL = 'cancel';
-    const SCENARIO_SET_DEPLOY_SERVER = 'set_deploy_server';
+    const SCENARIO_DEPLOY_CONFERENCE = 'deploy_conference';
 
     const RSO_AGREEMENT_NO_NEED = "Нет необходимости";
     const RSO_AGREEMENT_IN_PROCESS = "В процессе";
@@ -98,7 +103,10 @@ class Request extends \common\models\Request
             'mode',
             'equipment',
             'audioRecord',
-            'deployServerId',
+            'mcuId',
+            'audioRecordTypeId',
+            'conferenceId',
+            'conferencePassword',
             'participantsId',
             'roomsOnConsidiration',
             'cancellationReason',
@@ -121,9 +129,8 @@ class Request extends \common\models\Request
     public function scenarios()
     {
         return [
-            self::SCENARIO_APPROVE => ['status'],
-            self::SCENARIO_CANCEL => ['status', 'cancellationReason'],
-            self::SCENARIO_SET_DEPLOY_SERVER => ['deployServerId']
+            self::SCENARIO_CANCEL => ['cancellationReason'],
+            self::SCENARIO_DEPLOY_CONFERENCE => ['mcuId', 'audioRecordTypeId']
         ];
     }
 
@@ -134,13 +141,13 @@ class Request extends \common\models\Request
     {
         return array_merge(parent::rules(), [
 
-            ['cancellationReason', 'required'],
+            [['cancellationReason', 'mcuId', 'audioRecordTypeId'], 'required'],
 
-            ['dateInput', MongoDateValidator::className(), 'format' => 'dd.MM.yyyy', 'mongoDateAttribute' => 'date'],
+            ['dateInput', MongoDateValidator::class, 'format' => 'dd.MM.yyyy', 'mongoDateAttribute' => 'date'],
 
-            ['deployServerId', 'default', 'value' => null],
-            ['deployServerId', MongoIdValidator::className(), 'forceFormat' => 'object'],
-            ['deployServerId', 'exist', 'targetClass' => DeployServer::className(), 'targetAttribute' => '_id'],
+            ['mcuId', 'exist', 'targetClass' => MCU::class, 'targetAttribute' => '_id'],
+
+            ['audioRecordTypeId', 'exist', 'targetClass' => AudioRecordType::class, 'targetAttribute' => '_id'],
 
             ['participantsId', 'checkParticipantsIdFormat'],
         ]);
@@ -182,7 +189,8 @@ class Request extends \common\models\Request
             'mode' => 'Режим совещания',
             'equipment' => 'Дополнительное оборудование',
             'audioRecord' => 'Аудиозапись',
-            'deployServerId' => 'Сервер сборки',
+            'mcuId' => 'MCU',
+            'audioRecordTypeId' => 'Тип аудиозаписи',
             'participantsId' => 'Участники',
             'status' => 'Статус',
             'cancellationReason' => 'Причина отмены',
@@ -238,10 +246,14 @@ class Request extends \common\models\Request
         return $name;
     }
 
-
-    public function getDeployServer()
+    public function getMcu()
     {
-        return $this->hasOne(DeployServer::className(), ['_id' => 'deployServerId']);
+        return $this->hasOne(MCU::class, ['_id' => 'mcuId']);
+    }
+
+    public function getAudioRecordType()
+    {
+        return $this->hasOne(AudioRecordType::class, ['_id' => 'audioRecordTypeId']);
     }
 
     /**
@@ -251,7 +263,7 @@ class Request extends \common\models\Request
     public function getParticipantNameList()
     {
         $names = ArrayHelper::toArray($this->participants, [
-            Participant::className() => ['name']
+            Participant::class => ['name']
         ]);
         return ArrayHelper::getColumn($names, 'name');
     }
@@ -263,7 +275,7 @@ class Request extends \common\models\Request
     public function getParticipantShortNameList()
     {
         $names = ArrayHelper::toArray($this->participants, [
-            Participant::className() => ['shortName']
+            Participant::class => ['shortName']
         ]);
         return ArrayHelper::getColumn($names, 'shortName');
     }
@@ -399,4 +411,8 @@ class Request extends \common\models\Request
         return isset($max['number']) ? $max['number'] + 1 : 100;
     }
 
+    public function getConferenceName()
+    {
+        return date('d-m-Y', $this->date->sec) . "_" . $this->number;
+    }
 }

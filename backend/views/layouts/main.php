@@ -5,7 +5,7 @@ use yii\helpers\Html;
 use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
 use common\widgets\Alert;
-
+use yii\widgets\Breadcrumbs;
 /* @var $this \yii\web\View */
 /* @var $content string */
 
@@ -44,7 +44,8 @@ AppAsset::register($this);
                 ['label' => 'ВКС', 'items' => [
                     ['label' => 'Участники', 'url' => ['/vks-participant/index']],
                     ['label' => 'Компании', 'url' => ['/vks-company/index']],
-                    ['label' => 'Сервера сборки', 'url' => ['/vks-deploy-server/index']],
+                    ['label' => 'MCU', 'url' => ['/mcu/index']],
+                    ['label' => 'Тип аудизаписи', 'url' => ['/audio-record-type/index']],
                     ['label' => 'Порядок отображения', 'url' => ['/order/save']],
                 ]],
 
@@ -68,6 +69,9 @@ AppAsset::register($this);
 
     <div class="container">
         <?= Alert::widget() ?>
+
+        <?= Breadcrumbs::widget(['links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : []])?>
+
         <?= $content ?>
     </div>
 

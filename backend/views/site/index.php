@@ -1,13 +1,14 @@
 <?php
 /* @var $this yii\web\View */
 use yii\helpers\Html;
+
 $this->title = Yii::$app->name;
 ?>
 <div class="site-index">
 
     <div class="jumbotron">
-        <h1>Телепорт</h1>
 
+        <h1>ОСКР Портал</h1>
         <p class="lead">Панель управления</p>
 
     </div>
@@ -15,29 +16,58 @@ $this->title = Yii::$app->name;
     <div class="body-content">
 
         <div class="row">
-            <div class="col-lg-4">
-                <h2>Участники ВКС</h2>
+            <div class="col-lg-4 col-lg-offset-2">
 
-                <p>Справочник участников ВКС позволяет управлять информацией об участниках. Группировать их по компаниям, и многое другое</p>
+                <div class="panel panel-default">
 
-                <p><?= Html::a('Справочник участников &raquo;', ['vks-participant/index'], ['class' => 'btn btn-default'])?></p>
+                    <div class="panel-heading">
+                        <h3 class="panel-title">ВКС</h3>
+                    </div>
+
+                    <div class="panel-body">
+                        <ul>
+                            <li><?= Html::a('Участники', ['/vks-participant/index']) ?></li>
+                        </ul>
+                        <ul>
+                            <li><?= Html::a('Компании', ['/vks-company/index']) ?></li>
+                        </ul>
+                        <ul>
+                            <li><?= Html::a('MCU', ['/mcu/index']) ?></li>
+                        </ul>
+                        <ul>
+                            <li><?= Html::a('Типы аудиозаписи', ['/audio-record-type/index']) ?></li>
+                        </ul>
+                        <ul>
+                            <li><?= Html::a('Порядок отображения компаний', ['/order/save']) ?></li>
+                        </ul>
+                    </div>
+                </div>
 
             </div>
+
             <div class="col-lg-4">
-                <h2>Пользователи системы</h2>
 
-                <p>Данный раздел позволяет управлять пользователями системы. Назначять им роли и привилегии, а также менять информацию профиля.</p>
+                <div class="panel panel-default">
 
-                <p><?= Html::a('Пользователи сисетмы &raquo;', ['user/index'], ['class' => 'btn btn-default'])?></p>
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Безопасность</h3>
+                    </div>
+
+                    <div class="panel-body">
+                        <ul>
+                            <li><?= Html::a('Пользователи', ['/users']) ?></li>
+                        </ul>
+                        <ul>
+                            <li><?= Html::a('Роли', ['/roles']) ?></li>
+                        </ul>
+                        <ul>
+                            <li><?= Html::a('Привилегии', ['/permissions']) ?></li>
+                        </ul>
+                    </div>
+                </div>
+
             </div>
-            <div class="col-lg-4">
-                <h2>Компании</h2>
 
-                <p>Справочник компаний содержит информацию об организациях, которые могут принимать участие в ВКС.
-                    Также компании назначаются пользователям при регистрации. Данный раздел позволяет редактировать справочник компаний.</p>
-
-                <p><?= Html::a('Справочник компаний &raquo;', ['vks-company/index'], ['class' => 'btn btn-default'])?></p>
-            </div>
         </div>
 
     </div>

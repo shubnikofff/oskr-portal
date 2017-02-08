@@ -2,7 +2,6 @@
 
 namespace backend\controllers;
 
-use Yii;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
@@ -12,7 +11,7 @@ use common\components\actions\DeleteAction;
 use common\components\actions\SearchAction;
 use common\components\actions\UpdateAction;
 use common\components\actions\ViewAction;
-use app\models\VksParticipantSearch;
+use backend\models\VksParticipantSearch;
 /**
  * RoomController implements the CRUD actions for Participant model.
  */
@@ -22,7 +21,7 @@ class VksParticipantController extends Controller
     {
         return [
             'access' => [
-                'class' => AccessControl::className(),
+                'class' => AccessControl::class,
                 'rules' => [
                     [
                         'roles' => ['@'],
@@ -31,7 +30,7 @@ class VksParticipantController extends Controller
                 ],
             ],
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'index' => ['get'],
                     'view' => ['get'],
@@ -47,24 +46,24 @@ class VksParticipantController extends Controller
     {
         return [
             'index' => [
-                'class' => SearchAction::className(),
-                'modelClass' => VksParticipantSearch::className()
+                'class' => SearchAction::class,
+                'modelClass' => VksParticipantSearch::class
             ],
             'view' => [
-                'class' => ViewAction::className(),
-                'modelClass' => Participant::className()
+                'class' => ViewAction::class,
+                'modelClass' => Participant::class
             ],
             'create' => [
-                'class' => CreateAction::className(),
-                'modelClass' => Participant::className(),
+                'class' => CreateAction::class,
+                'modelClass' => Participant::class,
             ],
             'update' => [
-                'class' => UpdateAction::className(),
-                'modelClass' => Participant::className()
+                'class' => UpdateAction::class,
+                'modelClass' => Participant::class
             ],
             'delete' => [
-                'class' => DeleteAction::className(),
-                'modelClass' => Participant::className()
+                'class' => DeleteAction::class,
+                'modelClass' => Participant::class
             ]
         ];
     }

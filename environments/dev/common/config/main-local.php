@@ -10,6 +10,9 @@ if (!YII_ENV_TEST) {
             'mongodb' => [
                 'class' => 'yii\\mongodb\\debug\\MongoDbPanel',
             ],
+            'httpclient' => [
+                'class' => 'yii\\httpclient\\debug\\HttpClientPanel',
+            ]
         ],
     ];
 

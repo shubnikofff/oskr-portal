@@ -90,7 +90,7 @@ $maxMinute = Yii::$app->params['vks.maxTime'];
 
                             <?= Html::beginTag('button', [
                                 'class' => $statusClass . ' vks-request',
-                                'title' => "{$request->beginTimeString} - {$request->endTimeString} ({$participantList})",
+                                'title' => "№{$request->number} {$request->beginTimeString} - {$request->endTimeString} ({$participantList})",
                                 'data' => [
                                     'href' => \yii\helpers\Url::to(['/vks-request/view', 'id' => (string)$request->primaryKey]),
                                     'top' => $request->beginTime - $minMinute,
@@ -122,7 +122,7 @@ $maxMinute = Yii::$app->params['vks.maxTime'];
 
                             <?= Html::tag('div', $request->topic, ['class' => 'vks-request-theme']) ?>
 
-                            <div class="vks-request-service-data"><strong><?= $request->deployServer->name ?></strong></div>
+                            <div class="vks-request-service-data"><strong><?= $request->mcu->name ?></strong></div>
 
                             <?= Html::endTag('button') ?>
 

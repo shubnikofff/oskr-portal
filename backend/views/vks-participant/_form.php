@@ -1,11 +1,12 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\ActiveForm;
+use yii\bootstrap\ActiveForm;
 use common\models\Company;
-use yii\widgets\MaskedInput;
 use common\components\helpers\ViewHelper;
+use common\models\vks\Participant;
 use kartik\select2\Select2;
+
 /* @var $this yii\web\View */
 /* @var $model \common\models\vks\Participant */
 /* @var $form yii\widgets\ActiveForm */
@@ -23,6 +24,8 @@ use kartik\select2\Select2;
         'data' => ViewHelper::items(Company::className(), '_id', 'name')
     ]); ?>
 
+    <?= $form->field($model, 'multiConference')->checkbox() ?>
+
     <?= $form->field($model, 'ahuConfirmation')->checkbox() ?>
 
     <?= $form->field($model, 'confirmPersonId')->widget(Select2::className(), [
@@ -35,22 +38,25 @@ use kartik\select2\Select2;
 
     <?= $form->field($model, 'supportEmailsInput') ?>
 
+    <?= $form->field($model, 'dialString') ?>
+
+    <?= $form->field($model, 'protocol')->inline()->radioList([
+        Participant::PROTOCOL_H323 => 'H323',
+        Participant::PROTOCOL_SIP => 'SIP'
+    ]) ?>
+
     <?= $form->field($model, 'contact')->textarea() ?>
 
     <?= $form->field($model, 'phone') ?>
 
     <?= $form->field($model, 'model') ?>
 
-    <?= $form->field($model, 'ipAddress')->widget(MaskedInput::className(), [
-        'mask' => '9[9][9].9[9][9].9[9][9].9[9][9]'
-    ]) ?>
-
     <?= $form->field($model, 'gatekeeperNumber') ?>
 
     <?= $form->field($model, 'note')->textarea() ?>
 
     <div class="form-group">
-        <?= Html::submitButton('<span class="glyphicon '. ($model->isNewRecord ? 'glyphicon-plus' : 'glyphicon-ok') . '"></span> ' .
+        <?= Html::submitButton('<span class="glyphicon ' . ($model->isNewRecord ? 'glyphicon-plus' : 'glyphicon-ok') . '"></span> ' .
             ($model->isNewRecord ? 'Создать' : 'Сохранить'),
             ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
     </div>

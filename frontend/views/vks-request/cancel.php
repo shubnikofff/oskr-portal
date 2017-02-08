@@ -22,11 +22,11 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>Для отмены заявки, необходимо указать причину:</p>
 
-    <?php $form = ActiveForm::begin([]) ?>
+    <?php $form = ActiveForm::begin() ?>
 
     <?= $form->field($model, 'cancellationReason')->textarea() ?>
 
-    <?= Html::submitButton('Отменить', ['class' => 'btn btn-warning'])?>
+    <?= Html::submitButton('Отменить', ['class' => 'btn btn-warning']) ?>
 
     <?php ActiveForm::end() ?>
 

@@ -37,7 +37,7 @@ $participants = Participant::findAllByRequest($model)
                         Html::tag('dt', 'Название') . Html::tag('dd', $participant->name) .
                         Html::tag('dt', 'Организация') . Html::tag('dd', $participant->company->name) .
                         Html::tag('dt', 'Технический специалист') . Html::tag('dd', $participant->contact) .
-                        Html::tag('dt', 'IP адрес') . Html::tag('dd', $participant->ipAddress) .
+                        Html::tag('dt', 'IP адрес') . Html::tag('dd', $participant->dialString) .
                         Html::endTag('dl'); ?>
 
                     <?= Html::button($participant->shortName, ['class' => 'btn btn-default btn-room-info', 'data' => [
@@ -139,7 +139,7 @@ $participants = Participant::findAllByRequest($model)
                                     'short-name' => $participant->shortName,
                                     'company-name' => $participant->company->name,
                                     'contact' => $participant->contact,
-                                    'ip-address' => $participant->ipAddress,
+                                    'ip-address' => $participant->dialString,
                                 ],
                             ]);
 

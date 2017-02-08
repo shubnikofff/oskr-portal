@@ -1,6 +1,5 @@
 <?php
-namespace frontend\tests\models\vks;
-
+namespace frontend\tests\unit\models\vks;
 
 use common\fixtures\RequestFixture;
 use frontend\models\vks\Request;

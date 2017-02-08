@@ -16,7 +16,7 @@ $link = Yii::$app->urlManager->createAbsoluteUrl(['vks-request/view', 'id' => (s
 
 <p style="font-size: large"><i>"<?= $model->topic ?>"</i></p>
 
-<p>Заявке присвоен номер <strong style="font-size: 15pt"><?= $model->number?></strong>. Пожалуйста будьте готовы сообщить его при обращении в УСКР.</p>
+<p>Заявке присвоен номер <strong style="font-size: 15pt"><?= $model->number?></strong>.</p>
 
 <p>Статус заявки изменился на <strong><?= $model->statusName ?></strong></p>
 

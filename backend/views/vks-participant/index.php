@@ -27,7 +27,8 @@ $this->title = 'Переговорные комнаты';
                 'attribute' => 'companyId',
                 'value' => 'company.name'
             ],
-            'ipAddress',
+            'dialString',
+            'protocol',
             'note:ntext',
 
             [

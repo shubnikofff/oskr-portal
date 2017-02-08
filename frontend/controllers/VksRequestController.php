@@ -8,22 +8,20 @@
 
 namespace frontend\controllers;
 
-use common\components\actions\CrudAction;
-use common\components\actions\DeleteAction;
-use common\components\actions\ModelMethodAction;
 use common\models\vks\Participant;
+use common\rbac\SystemRole;
 use frontend\models\vks\ApproveRoomForm;
 use frontend\models\vks\RequestForm;
 use frontend\models\vks\RequestSearch;
 use frontend\models\vks\Schedule;
+use frontend\services\MCUService;
+use frontend\services\MeetingService;
 use yii\filters\VerbFilter;
 use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\ForbiddenHttpException;
-use yii\web\HttpException;
 use yii\web\NotFoundHttpException;
 use common\rbac\SystemPermission;
-use common\components\actions\UpdateAction;
 use common\components\actions\ViewAction;
 use frontend\models\vks\Request;
 use yii\web\Response;
@@ -51,12 +49,17 @@ class VksRequestController extends Controller
             ],
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['approve-booking', 'update', 'create'],
+                'except' => ['index','view', 'cancel'],
                 'rules' => [
                     [
                         'actions' => ['create'],
                         'allow' => true,
                         'roles' => ['@']
+                    ],
+                    [
+                        'actions' => ['approve', 'delete'],
+                        'allow' => true,
+                        'roles' => [SystemRole::OSKR]
                     ],
                     [
                         'actions' => ['approve-booking'],
@@ -99,39 +102,16 @@ class VksRequestController extends Controller
     public function actions()
     {
         return [
-            'delete' => [
-                'class' => DeleteAction::className(),
-                'modelClass' => Request::className(),
-                'permission' => SystemPermission::DELETE_REQUEST,
-                'successMessage' => 'Заявка удалена'
-            ],
             'view' => [
-                'class' => ViewAction::className(),
-                'modelClass' => Request::className(),
+                'class' => ViewAction::class,
+                'modelClass' => Request::class,
             ],
-            'approve' => [
-                'class' => ModelMethodAction::className(),
-                'modelClass' => Request::className(),
-                'modelMethod' => ['approve'],
-                'scenario' => Request::SCENARIO_APPROVE,
-                'permission' => SystemPermission::APPROVE_REQUEST,
-                'successMessage' => 'Заявка согласована'
-            ],
-            'cancel' => [
-                'class' => UpdateAction::className(),
-                'modelClass' => Request::className(),
-                'modelMethod' => ['cancel'],
-                'scenario' => Request::SCENARIO_CANCEL,
-                'permission' => SystemPermission::CANCEL_REQUEST,
-                'view' => 'cancel',
-                'successMessage' => 'Заявка отменена'
-            ]
         ];
     }
 
     public function actionIndex()
     {
-        Url::remember('', CrudAction::URL_NAME_INDEX_ACTION);
+        Url::remember();
         $model = new RequestSearch();
         $model->scenario = RequestSearch::SCENARIO_SEARCH_SCHEDULE;
         $request = \Yii::$app->request;
@@ -162,7 +142,7 @@ class VksRequestController extends Controller
 
             if ($model->save()) {
                 \Yii::$app->session->setFlash('success', "Заявка создана");
-                return $this->redirect(Url::previous(CrudAction::URL_NAME_INDEX_ACTION));
+                return $this->redirect(Url::previous());
             }
         }
 
@@ -172,7 +152,7 @@ class VksRequestController extends Controller
     public function actionUpdate($id)
     {
         /** @var RequestForm $model */
-        $model = $this->findModel(RequestForm::class, $id);
+        $model = self::findModel(RequestForm::class, $id);
 
         if ($model->load(\Yii::$app->request->post())) {
             $model->rsoUploadedFiles = UploadedFile::getInstances($model, 'rsoUploadedFiles');
@@ -184,11 +164,22 @@ class VksRequestController extends Controller
 
             if ($model->save()) {
                 \Yii::$app->session->setFlash('success', "Заявка сохранена");
-                return $this->redirect(Url::previous(CrudAction::URL_NAME_INDEX_ACTION));
+                return $this->redirect(Url::previous());
             }
         }
 
         return $this->render('update', ['model' => $model]);
+    }
+
+    public function actionDelete($id)
+    {
+        /** @var Request $model */
+        $model = self::findModel(Request::class, $id);
+        MCUService::destroyConference($model);
+        if($model->delete()) {
+            \Yii::$app->session->setFlash('success', "Совещание удалено.");
+        }
+        return $this->redirect(Url::previous());
     }
 
     public function actionRefreshParticipants($requestId = null)
@@ -204,22 +195,28 @@ class VksRequestController extends Controller
         throw new NotFoundHttpException('Страница не найдена');
     }
 
-    public function actionSetDeployServer($id)
+    public function actionApprove($requestId)
     {
-        $request = \Yii::$app->request;
         /** @var Request $model */
-        $model = Request::findOne($id);
+        $model = self::findModel(Request::class, $requestId);
+        MeetingService::approve($model);
+        MCUService::createConference($model, \Yii::$app->request->post());
+        return $this->redirect(Url::previous());
+    }
 
-        if ($request->isAjax && $model !== null) {
-            $model->scenario = Request::SCENARIO_SET_DEPLOY_SERVER;
-            if ($model->load($request->post()) && $model->save()) {
-                return new Response();
-            } else {
-                throw new HttpException('Невозможно установить сервер сборки');
-            }
-        } else {
-            throw new NotFoundHttpException('Страница не найдена');
+    public function actionCancel($id)
+    {
+        $model = self::findModel(Request::class, $id);
+        /** @var Request $model */
+        if (!\Yii::$app->user->can(SystemPermission::CANCEL_REQUEST, ['object' => $model])) {
+            throw new ForbiddenHttpException("Вы не можете отменить эту заявку. Операция запрещена.");
         }
+        $model->scenario = Request::SCENARIO_CANCEL;
+        if($model->load(\Yii::$app->request->post())) {
+            MeetingService::cancel($model);
+            return $this->redirect(Url::previous());
+        }
+        return $this->render('cancel', ['model' => $model]);
     }
 
     public function actionPrint($id)
@@ -261,7 +258,7 @@ class VksRequestController extends Controller
     public function actionRenderFile($id)
     {
         /** @var File $model */
-        $model = $this->findModel(File::class, $id);
+        $model = self::findModel(File::class, $id);
         $response = \Yii::$app->response;
         $response->headers->set('Content-type', $model->mimeType);
         $response->headers->set('Content-Disposition', 'inline; filename="'.$model->filename.'"');
@@ -271,7 +268,7 @@ class VksRequestController extends Controller
         return $response;
     }
 
-    private function findModel($modelClass, $id)
+    private static function findModel($modelClass, $id)
     {
         $model = call_user_func([$modelClass, 'findOne'], $id);
 
