@@ -47,6 +47,9 @@ class MCUService extends Service
 
     public static function destroyConference(Meeting &$meeting)
     {
+        if ($meeting->mode !== Meeting::MODE_WITH_VKS) {
+            return;
+        }
         if ($response = self::sendRequest(new DeleteRequest($meeting))) {
             if ($response->isOk) {
                 $meeting->mcuId = $meeting->conferenceId = $meeting->conferencePassword = $meeting->audioRecordTypeId = null;
