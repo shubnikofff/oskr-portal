@@ -240,7 +240,7 @@ class Participant extends ActiveRecord
 
         foreach ($participants as $key => $participant) {
             $busyParticipantKey = array_search($participant->primaryKey, $busyParticipantsId);
-            if ($busyParticipantKey !== false) {
+            if ($busyParticipantKey !== false && $participant->multiConference !== true) {
                 $participants[$key]->setBusy();
                 $participants[$key]->busyFrom = $busyParticipants[$busyParticipantKey]['beginTime'];
                 $participants[$key]->busyTo = $busyParticipants[$busyParticipantKey]['endTime'];
