@@ -45,7 +45,7 @@ $this->title = "Расписание" ?>
 
         <div class="row">
 
-            <div class="col-lg-9">
+            <div class="col-lg-10">
 
                 <div class="row">
 
@@ -72,7 +72,7 @@ $this->title = "Расписание" ?>
 
                     </div>
 
-                    <div class="col-lg-7">
+                    <div class="col-lg-4">
 
                         <?php $query = Participant::find()->select(['_id', 'name', 'companyId'])->with('company');
                         $participants = ArrayHelper::toArray($query->all(), [
@@ -96,11 +96,19 @@ $this->title = "Расписание" ?>
 
                     </div>
 
+                    <div class="col-lg-3">
+                        <?= $form->field($model, 'mode')->inline()->radioList([
+                            '' => 'Все',
+                            $model::MODE_WITH_VKS => 'Только с ВКС'
+                        ]) ?>
+                    </div>
+
                     <div class="col-lg-2" style="padding-top: 25px">
 
                         <div class="btn-group" role="group" aria-label="...">
-                            <button type="submit" class="btn btn-primary"><span class='glyphicon glyphicon-search'></span></button>
-                            <?= Html::a("<span class='glyphicon glyphicon-remove'></span>", ['/vks-request/index'], ['class' => 'btn btn-default'])?>
+                            <button type="submit" class="btn btn-primary"><span
+                                        class='glyphicon glyphicon-search'></span></button>
+                            <?= Html::a("<span class='glyphicon glyphicon-remove'></span>", ['/vks-request/index'], ['class' => 'btn btn-default']) ?>
                         </div>
 
                     </div>

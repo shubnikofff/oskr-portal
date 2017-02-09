@@ -25,6 +25,7 @@ class RequestSearch extends Request implements SearchModelInterface
     {
         $this->dateInput = \Yii::$app->formatter->asDate(mktime(0, 0, 0), 'dd.MM.yyyy');
         $this->trigger(self::EVENT_INIT);
+        $this->mode = '';
     }
 
     /**
@@ -33,7 +34,7 @@ class RequestSearch extends Request implements SearchModelInterface
     public function scenarios()
     {
         return [
-            $this::SCENARIO_SEARCH_SCHEDULE => ['dateInput', 'participantsId', 'number'],
+            $this::SCENARIO_SEARCH_SCHEDULE => ['dateInput', 'participantsId', 'number', 'mode'],
             $this::SCENARIO_SEARCH_PERSONAL => ['createdBy', 'searchKey']
         ];
     }
@@ -45,6 +46,7 @@ class RequestSearch extends Request implements SearchModelInterface
     {
         return array_merge(parent::rules(), [
             ['createdBy', 'default', 'value' => \Yii::$app->user->can(SystemPermission::APPROVE_REQUEST) ? null : \Yii::$app->user->identity['primaryKey']],
+            [['number', 'mode'], 'filter', 'filter' => 'intval', 'skipOnEmpty' => true],
             ['searchKey', 'safe']
         ]);
     }
@@ -92,10 +94,11 @@ class RequestSearch extends Request implements SearchModelInterface
             return $dataProvider;
         }
 
+        $query->andFilterWhere(['mode' => $this->mode]);
+
         $query->andFilterWhere(['date' => $this->date]);
 
-        $number = empty($this->number) ? null : (integer)$this->number;
-        $query->andFilterWhere(['number' => $number]);
+        $query->andFilterWhere(['number' => $this->number]);
 
         if (is_array($this->participantsId)) {
             $query->andWhere(['participantsId' => ['$in' => $this->participantsId]]);
