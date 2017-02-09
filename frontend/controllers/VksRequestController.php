@@ -49,7 +49,7 @@ class VksRequestController extends Controller
             ],
             'access' => [
                 'class' => AccessControl::className(),
-                'except' => ['index','view', 'cancel'],
+                'only' => ['create', 'approve', 'delete', 'approve-booking', 'update'],
                 'rules' => [
                     [
                         'actions' => ['create'],
@@ -142,7 +142,7 @@ class VksRequestController extends Controller
 
             if ($model->save()) {
                 \Yii::$app->session->setFlash('success', "Заявка создана");
-                return $this->redirect(Url::previous());
+                return $this->redirect(Url::home());
             }
         }
 
@@ -164,7 +164,7 @@ class VksRequestController extends Controller
 
             if ($model->save()) {
                 \Yii::$app->session->setFlash('success', "Заявка сохранена");
-                return $this->redirect(Url::previous());
+                return $this->redirect(Url::home());
             }
         }
 

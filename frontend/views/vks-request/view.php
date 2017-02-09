@@ -202,6 +202,13 @@ $isUserCanRsoRefuse = Yii::$app->user->can(SystemPermission::RSO_REFUSE);
 
             <?php endif; ?>
 
+            <?php if ($model->status !== $model::STATUS_APPROVE && $model->mode === $model::MODE_WITHOUT_VKS): ?>
+
+                <?= Html::a("<span class='glyphicon glyphicon-ok'></span> Согласовать", ['vks-request/approve', 'requestId' => (string)$model->primaryKey], ['class' => 'btn btn-success', 'data' => ['method' => 'post']]) ?>
+
+            <?php endif; ?>
+
+
             <?php if ($model->status !== $model::STATUS_CANCEL && Yii::$app->user->can(SystemPermission::CANCEL_REQUEST, ['object' => $model])): ?>
 
                 <?= Html::a("<span class='glyphicon glyphicon-ban-circle'></span> Отменить", ['vks-request/cancel', 'id' => (string)$model->primaryKey], ['class' => 'btn btn-warning']) ?>

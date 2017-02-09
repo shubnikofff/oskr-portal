@@ -21,6 +21,9 @@ class MCUService extends Service
 {
     public static function createConference(Meeting &$meeting, array $postData)
     {
+        if ($meeting->mode !== Meeting::MODE_WITH_VKS) {
+            return;
+        }
         $meeting->scenario = Meeting::SCENARIO_DEPLOY_CONFERENCE;
         $meeting->load($postData);
 
