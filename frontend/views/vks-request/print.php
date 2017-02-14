@@ -70,12 +70,6 @@ $this->title = "Заявка на помещение";
 
     <p>Совещание в режиме ВКС: <b><?= Yii::$app->formatter->asBoolean($model->mode === $model::MODE_WITH_VKS) ?></b></p>
 
-    <?php if ($model->mode === $model::MODE_WITH_VKS): ?>
-
-        <p>Сделать аудиозапись: <b><?= Yii::$app->formatter->asBoolean($model->audioRecord) ?></b></p>
-
-    <?php endif; ?>
-
     <?php if ($model->mode === $model::MODE_WITHOUT_VKS && is_array($model->equipment)): ?>
 
         <p><b>Дополнительное оборудование:</b> <?= implode(', ', $model->equipment) ?></p>

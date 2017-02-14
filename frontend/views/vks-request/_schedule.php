@@ -110,12 +110,6 @@ $maxMinute = Yii::$app->params['vks.maxTime'];
 
                                     <?php endif; ?>
 
-                                    <?php if ($request->audioRecord): ?>
-
-                                        <span class="glyphicon glyphicon-headphones"></span>
-
-                                    <?php endif; ?>
-
                                 </div>
 
                             </div>

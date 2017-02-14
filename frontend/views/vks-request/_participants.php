@@ -76,9 +76,9 @@ $participants = Participant::findAllByRequest($model)
         </div>
     </div>
 
-    <small class="help-block"><span class="glyphicon glyphicon-info-sign"></span> Для получения информации о занятости
-        переговрных помещений в других ВКС, дата и время совещания должны быть указаны полностью
-    </small>
+    <p class="help-block"><span class="glyphicon glyphicon-info-sign"></span> Для получения информации о занятости
+        переговрных помещений в других ВКС, дата и время совещания должны быть указаны полностью. Помещения с пометкой VIP необходимо согласовать с Н.П. Шешокиным
+    </p>
 
     <div class="form-group">
 

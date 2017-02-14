@@ -13,14 +13,38 @@
     <div class="panel-heading"><strong>Информация по подключению к ВКС</strong></div>
 
     <table class="table">
+
         <tr>
-            <td style="width: 40%">Для корпоративных сотрудников ОА ИК АСЭ</td>
-            <td style="width: 60%"><?= $model->mcu->prefix . $model->conferenceId ?></td>
+            <th></th>
+            <th>Для видео абонентов</th>
+            <th>Для аудио абонентов</th>
         </tr>
         <tr>
-            <td>Для участников сторонних организаций</td>
-            <td><?= $model->mcu->externalIp . "##" . $model->mcu->prefix . $model->conferenceId ?></td>
+            <th>Для внутренних абонентов ОА ИК "АСЭ"</th>
+            <td>
+                <div>Номер конференции: <?= $model->mcu->prefix . $model->conferenceId ?></div>
+                <div>Пароль: <?= $model->conferencePassword ?>#</div>
+            </td>
+            <td>
+                <div>Номер телефона: 005 или 200-05</div>
+                <div>Номер конференции: <?= $model->mcu->prefix . $model->conferenceId ?></div>
+                <div>Пароль: <?= $model->conferencePassword ?>#</div>
+            </td>
         </tr>
+        <tr>
+            <th>Для сторонних организаций</th>
+            <td>
+                <div>Номер конференции: <?= $model->mcu->externalIp . "##" . $model->mcu->prefix . $model->conferenceId ?></div>
+                <div>Пароль: <?= $model->conferencePassword ?>#</div>
+            </td>
+            <td>
+                <div>Номер телефона: +7 (831) 422-10-05</div>
+                <div>Номер конференции: <?= $model->mcu->prefix . $model->conferenceId ?></div>
+                <div>Пароль: <?= $model->conferencePassword ?>#</div>
+            </td>
+
+        </tr>
+
     </table>
 
 </div>

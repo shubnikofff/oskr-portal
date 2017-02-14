@@ -84,13 +84,7 @@ $isUserCanRsoRefuse = Yii::$app->user->can(SystemPermission::RSO_REFUSE);
 
         <?php if ($model->mode === $model::MODE_WITH_VKS): ?>
 
-            <?php if ($model->audioRecord): ?>
-
-                <p class="text-danger" style="font-size: 11pt"><strong>Необходима аудиозапись ВКС</strong></p>
-
-            <?php endif; ?>
-
-            <?php if ($isUserCanUpdateRequest): ?>
+            <?php if ($isUserCanUpdateRequest && $model->isConferenceCreated): ?>
 
                 <?= $this->render('_connectingInfo', ['model' => $model]) ?>
 

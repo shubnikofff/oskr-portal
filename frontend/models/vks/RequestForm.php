@@ -75,7 +75,7 @@ class RequestForm extends Request
     public function scenarios()
     {
         return [
-            'default' => ['status', 'topic', 'dateInput', 'beginTimeInput', 'endTimeInput', 'foreignOrganizations', 'rsoUploadedFiles', 'mode', 'equipment', 'audioRecord', 'participantsId', 'note'],
+            'default' => ['status', 'topic', 'dateInput', 'beginTimeInput', 'endTimeInput', 'foreignOrganizations', 'rsoUploadedFiles', 'mode', 'equipment', 'participantsId', 'note'],
             self::SCENARIO_REFRESH_PARTICIPANTS => ['dateInput', 'beginTimeInput', 'endTimeInput', 'participantsId'],
         ];
     }
@@ -134,11 +134,6 @@ class RequestForm extends Request
                 'max' => MinuteFormatter::asString(\Yii::$app->params['vks.maxTime']),
                 'minuteAttribute' => 'endTime'
             ],
-
-            ['audioRecord', 'boolean'],
-            ['audioRecord', 'filter', 'filter' => function ($value) {
-                return boolval($value);
-            }],
 
             ['mode', 'in', 'range' => [self::MODE_WITH_VKS, self::MODE_WITHOUT_VKS]],
             ['mode', 'filter', 'filter' => function ($value) {

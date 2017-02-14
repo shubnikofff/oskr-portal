@@ -68,12 +68,12 @@ use common\components\MinuteFormatter;
 
     </div>
 
-    <small class="help-block"><span class="glyphicon glyphicon-info-sign"></span> Укажите дату не
+    <p class="help-block"><span class="glyphicon glyphicon-info-sign"></span> Укажите дату не
         ранее <?= Yii::$app->formatter->asDate(time(), 'long') ?> и не
         позднее <?= Yii::$app->formatter->asDate(strtotime("+1 week"), 'long') ?>
         Время должно быть в интервале c <?= MinuteFormatter::asString(Yii::$app->params['vks.minTime']) ?>
         до <?= MinuteFormatter::asString(Yii::$app->params['vks.maxTime']) ?>.
-    </small>
+    </p>
 
     <?= $form->field($model, 'foreignOrganizations', ['inputOptions' => ['id' => 'foreign-organizations']])->inline()->radioList([
         1 => 'С участием',
@@ -99,10 +99,7 @@ use common\components\MinuteFormatter;
     ]) ?>
 
     <div id="vks-audio-record" style="display: <?= $model->mode === $model::MODE_WITH_VKS ? 'block' : 'none' ?>">
-        <?= $form->field($model, 'audioRecord')->checkbox() ?>
-        <small class="help-block"><span class="glyphicon glyphicon-info-sign"></span> Срок хранения
-            аудиозаписи - 1 месяц
-        </small>
+        <p class="help-block"><span class="glyphicon glyphicon-info-sign"></span> Аудиозапись видеоконференций ведется в автоматическом режиме. Срок хранения аудиозаписи - 1 месяц.</p>
     </div>
 
     <div id="vks-equipment" style="display: <?= $model->mode === $model::MODE_WITHOUT_VKS ? 'block' : 'none' ?>">

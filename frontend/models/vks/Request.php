@@ -35,13 +35,12 @@ use frontend\models\rso\UserNotificationStrategy;
  * @property int $endTime
  * @property string endTimeString
  * @property int $mode
- * @property string $modeString
  * @property array $equipment
- * @property bool $audioRecord
  * @property string $mcuId
  * @property MCU $mcu
  * @property string $audioRecordTypeId
  * @property AudioRecordType $audioRecordType
+ * @property bool $isConferenceCreated
  * @property string $conferenceName
  * @property string $conferenceId
  * @property string $conferencePassword
@@ -102,7 +101,6 @@ class Request extends \common\models\Request
             'rsoFiles',
             'mode',
             'equipment',
-            'audioRecord',
             'mcuId',
             'audioRecordTypeId',
             'conferenceId',
@@ -188,7 +186,6 @@ class Request extends \common\models\Request
             'endTimeInput' => 'Время конца',
             'mode' => 'Режим совещания',
             'equipment' => 'Дополнительное оборудование',
-            'audioRecord' => 'Аудиозапись',
             'mcuId' => 'MCU',
             'audioRecordTypeId' => 'Тип аудиозаписи',
             'participantsId' => 'Участники',
@@ -353,27 +350,17 @@ class Request extends \common\models\Request
         return $this->_roomsStatus[(string)$roomId];
     }
 
-    /**
-     * @return string
-     */
-    public function getModeString()
-    {
-        switch ($this->mode) {
-            case self::MODE_WITH_VKS:
-                return 'В режиме ВКС';
-            case self::MODE_WITHOUT_VKS:
-                return 'Без ВКС';
-            default:
-                return '';
-        }
-    }
-
     public function setRsoAgreement($value, NotificationStrategy $notifyStrategy)
     {
         if ($this->rsoAgreement !== $value) {
             $this->rsoAgreement = $value;
             $notifyStrategy->notify($this);
         }
+    }
+
+    public function getIsConferenceCreated()
+    {
+        return !empty($this->conferenceId);
     }
 
     /**
