@@ -23,7 +23,7 @@ class PostRequest extends MCURequest
         $participants = [];
         foreach ($this->_meeting->participants as $participant) {
             $item = [];
-            $item['participantName'] = $participant->name;
+            $item['participantName'] = $participant->shortName;
             $item['address'] = $participant->dialString;
             $item['protocol'] = $participant->protocol;
             $item['conferenceName'] = $conferenceName;
@@ -37,7 +37,7 @@ class PostRequest extends MCURequest
             'endTime' => $date . 'T' . $this->_meeting->endTimeString . ":00",
             'mcuid' => $this->_meeting->mcuId,
             'numericId' => $this->_meeting->conferenceId,
-            'pin' => $this->_meeting->conferenceId,
+            'pin' => $this->_meeting->conferencePassword,
             'recordType' => $this->_meeting->audioRecordTypeId,
             'Participants' => $participants
         ];
