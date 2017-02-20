@@ -9,7 +9,8 @@ namespace frontend\models\vks;
 
 use yii\helpers\ArrayHelper;
 use yii\mongodb\Collection;
-
+use MongoDB\BSON\UTCDateTime;
+use MongoDB\BSON\Javascript;
 /**
  * @author Shubnikov Alexey <a.shubnikov@niaep.ru>
  *
@@ -18,15 +19,15 @@ use yii\mongodb\Collection;
 class Schedule
 {
     /**
-     * @param \MongoDate $date
+     * @param UTCDateTime $date
      * @return array|string
      */
-    public static function participantsCountPerHour(\MongoDate $date)
+    public static function participantsCountPerHour(UTCDateTime $date)
     {
         /** @var $collection Collection */
         $collection = \Yii::$app->get('mongodb')->getCollection(Request::collectionName());
 
-        $map = new \MongoCode("function() {
+        $map = new Javascript("function() {
             for (var i = 8 * 60; i < 19 * 60; i = i + 30) {
                 if (this.beginTime < i + 30 && this.endTime > i) {
                     emit(i, this.participantsId.length);
@@ -34,7 +35,7 @@ class Schedule
             }
         }");
 
-        $reduce = new \MongoCode("function (key, values) {return Array.sum(values)}");
+        $reduce = new Javascript("function (key, values) {return Array.sum(values)}");
 
         $out = ['inline' => true];
 

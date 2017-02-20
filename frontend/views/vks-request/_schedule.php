@@ -17,7 +17,7 @@ use frontend\models\vks\Request;
 $minMinute = Yii::$app->params['vks.minTime'];
 $maxMinute = Yii::$app->params['vks.maxTime'];
 ?>
-    <p class="lead">Расписание на <?= Yii::$app->formatter->asDate($model->date->sec, 'long') ?></p>
+    <p class="lead">Расписание на <?= Yii::$app->formatter->asDate($model->date->toDateTime(), 'long') ?></p>
 
     <div id="vks-schedule">
 

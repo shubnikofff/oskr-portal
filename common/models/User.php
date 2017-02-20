@@ -3,6 +3,7 @@ namespace common\models;
 
 use common\models\vks\Participant;
 use frontend\models\vks\Request as VksRequest;
+use MongoDB\BSON\UTCDateTime;
 use yii\base\NotSupportedException;
 use yii\mongodb\ActiveRecord;
 use yii\mongodb\Collection;
@@ -21,8 +22,8 @@ use common\components\behaviors\TimestampBehavior;
  * @property string $activateToken
  * @property string $authKey
  * @property integer $status
- * @property \MongoDate $createdAt
- * @property \MongoDate $updatedAt
+ * @property UTCDateTime $createdAt
+ * @property UTCDateTime $updatedAt
  * @property string $password write-only password
  * @property string $statusName
  * @property string $lastName

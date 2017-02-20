@@ -13,6 +13,7 @@ use common\components\MinuteFormatter;
 use common\rbac\SystemPermission;
 use frontend\models\rso\File;
 use frontend\models\rso\RsoNotificationStrategy;
+use MongoDB\BSON\UTCDateTime;
 use yii\mongodb\validators\MongoDateValidator;
 use common\components\validators\MinuteValidator;
 use yii\helpers\ArrayHelper;
@@ -51,10 +52,10 @@ class RequestForm extends Request
     {
         parent::init();
 
-        $this->date = new \MongoDate(mktime(0, 0, 0, date("n"), date("j") + 1));
+        $this->date = new UTCDateTime(mktime(0, 0, 0, date("n"), date("j") + 1));
         $this->beginTime = \Yii::$app->params['vks.minTime'];
         $this->endTime = \Yii::$app->params['vks.maxTime'];
-        $this->dateInput = \Yii::$app->formatter->asDate($this->date->sec, 'dd.MM.yyyy');
+        $this->dateInput = \Yii::$app->formatter->asDate($this->date->__toString(), 'dd.MM.yyyy');
         $this->beginTimeInput = MinuteFormatter::asString($this->beginTime);
         $this->endTimeInput = MinuteFormatter::asString($this->endTime);
     }

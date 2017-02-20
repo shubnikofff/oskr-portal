@@ -7,6 +7,7 @@
  */
 namespace frontend\models\vks;
 
+use MongoDB\BSON\UTCDateTime;
 use yii\helpers\ArrayHelper;
 use yii\mongodb\Collection;
 use yii\mongodb\validators\MongoDateValidator;
@@ -29,7 +30,7 @@ use frontend\models\rso\UserNotificationStrategy;
  *
  * @property int $number
  * @property string $topic
- * @property \MongoDate $date
+ * @property UTCDateTime $date
  * @property int $beginTime
  * @property string beginTimeString
  * @property int $endTime
@@ -392,7 +393,7 @@ class Request extends \common\models\Request
         }
     }
 
-    public static function generateNumber(\MongoDate $date)
+    public static function generateNumber(UTCDateTime $date)
     {
         $max = self::getCollection()->find(['date' => $date], ['number' => 1])->sort(['number' => -1])->limit(1)->getNext();
         return isset($max['number']) ? $max['number'] + 1 : 100;

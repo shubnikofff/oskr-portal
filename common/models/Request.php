@@ -10,6 +10,7 @@ namespace common\models;
 use common\components\behaviors\BlameableBehavior;
 use common\components\behaviors\TimestampBehavior;
 use common\components\helpers\mail\Mailer;
+use MongoDB\BSON\UTCDateTime;
 use yii\mongodb\ActiveRecord;
 
 /**
@@ -21,8 +22,8 @@ use yii\mongodb\ActiveRecord;
  * @property int $status
  * @property string $statusName
  * @property User $owner
- * @property \MongoDate $createdAt
- * @property \MongoDate $updatedAt
+ * @property UTCDateTime $createdAt
+ * @property UTCDateTime $updatedAt
  * @property \MongoId $createdBy
  * @property \MongoId $updatedBy
  */
