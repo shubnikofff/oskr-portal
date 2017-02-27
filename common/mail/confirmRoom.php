@@ -18,7 +18,7 @@ $link = Yii::$app->urlManager->createAbsoluteUrl(['vks-request/approve-booking',
     которая входит в зону Вашей компетенции.</p>
 
 <p>Данная комната была забронирована в рамках проведения совещнаия на тему: &laquo;<?= $request->topic ?>&raquo;,
-    которое будет проходить <b><?= Yii::$app->formatter->asDate($request->date->sec) ?></b> c
+    которое будет проходить <b><?= Yii::$app->formatter->asDate($request->date->toDateTime(), 'long') ?></b> c
     <b><?= MinuteFormatter::asString($request->beginTime) ?></b> до
     <b><?= MinuteFormatter::asString($request->endTime) ?></b>.</p>
 

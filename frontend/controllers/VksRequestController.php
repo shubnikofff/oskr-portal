@@ -16,6 +16,7 @@ use frontend\models\vks\RequestSearch;
 use frontend\models\vks\Schedule;
 use frontend\services\MCUService;
 use frontend\services\MeetingService;
+use MongoDB\BSON\ObjectID;
 use yii\filters\VerbFilter;
 use yii\helpers\Url;
 use yii\web\Controller;
@@ -84,7 +85,7 @@ class VksRequestController extends Controller
                                 return false;
                             }
 
-                            $allowTime = $request->date->sec + ($request->beginTime - \Yii::$app->params['vks.allowRequestUpdateMinute']) * 60;
+                            $allowTime = $request->date->toDateTime()->getTimestamp() + ($request->beginTime - \Yii::$app->params['vks.allowRequestUpdateMinute']) * 60;
                             $now = time() + 3 * 60 * 60; //Минус разница формата TimeZone
 
                             if ($now > $allowTime) {
@@ -221,7 +222,7 @@ class VksRequestController extends Controller
 
     public function actionPrint($id)
     {
-        $model = Request::findOne(['_id' => new \MongoId($id), 'status' => Request::STATUS_APPROVE]);
+        $model = Request::findOne(['_id' => new ObjectID($id), 'status' => Request::STATUS_APPROVE]);
         if ($model) {
             return $this->renderPartial('print', ['model' => $model]);
         }

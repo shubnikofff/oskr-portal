@@ -23,7 +23,7 @@ $maxMinute = Yii::$app->params['vks.maxTime'];
 
         <?php $currentMinute = \common\components\MinuteFormatter::asInt(date('H:i')) ?>
 
-        <?php if (gmmktime(0, 0, 0) == $model->date->sec && $currentMinute >= $minMinute && $currentMinute <= $maxMinute): ?>
+        <?php if (gmmktime(0, 0, 0) == $model->date->toDateTime()->getTimestamp() && $currentMinute >= $minMinute && $currentMinute <= $maxMinute): ?>
 
             <?= Html::tag('div', '', [
                 'id' => 'current-time',

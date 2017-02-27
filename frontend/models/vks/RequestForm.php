@@ -52,10 +52,10 @@ class RequestForm extends Request
     {
         parent::init();
 
-        $this->date = new UTCDateTime(mktime(0, 0, 0, date("n"), date("j") + 1));
+        $this->date = new UTCDateTime(strtotime('tomorrow') * 1000);
         $this->beginTime = \Yii::$app->params['vks.minTime'];
         $this->endTime = \Yii::$app->params['vks.maxTime'];
-        $this->dateInput = \Yii::$app->formatter->asDate($this->date->__toString(), 'dd.MM.yyyy');
+        $this->dateInput = \Yii::$app->formatter->asDate($this->date->toDateTime(), 'php:d.m.Y');
         $this->beginTimeInput = MinuteFormatter::asString($this->beginTime);
         $this->endTimeInput = MinuteFormatter::asString($this->endTime);
     }
@@ -88,7 +88,7 @@ class RequestForm extends Request
     {
         parent::afterFind();
 
-        $this->dateInput = \Yii::$app->formatter->asDate($this->date->sec, 'dd.MM.yyyy');
+        $this->dateInput = \Yii::$app->formatter->asDate($this->date->toDateTime(), 'php:d.m.Y');
         $this->beginTimeInput = $this->beginTimeString;
         $this->endTimeInput = $this->endTimeString;
         $this->foreignOrganizations = $this->rsoAgreement === self::RSO_AGREEMENT_NO_NEED ? 0 : 1;
@@ -122,7 +122,7 @@ class RequestForm extends Request
                 if (\Yii::$app->user->can(SystemPermission::APPROVE_REQUEST)) {
                     return;
                 }
-                $allowTimeStamp = $this->date->sec + ($this->beginTime - \Yii::$app->params['vks.allowRequestUpdateMinute']) * 60;
+                $allowTimeStamp = $this->date->toDateTime()->getTimestamp() + ($this->beginTime - \Yii::$app->params['vks.allowRequestUpdateMinute']) * 60;
                 $now = time() + 3 * 60 * 60;
 
                 if ($now > $allowTimeStamp) {

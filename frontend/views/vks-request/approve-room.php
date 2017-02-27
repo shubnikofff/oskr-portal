@@ -23,7 +23,7 @@ $requestIdStr = (string)$request->_id;
         <b>&laquo;<?= $model->request->topic ?>&raquo;</b> <?= Html::a('Подробнее >', ['vks-request/view', 'id' => $requestIdStr]) ?>
     </p>
 
-    <p>Дата и время <b><?= Yii::$app->formatter->asDate($request->date->sec) ?></b>
+    <p>Дата и время <b><?= Yii::$app->formatter->asDate($request->date->toDateTime(), 'long') ?></b>
         с <b><?= MinuteFormatter::asString($request->beginTime) ?></b> до
         <b><?= MinuteFormatter::asString($request->endTime) ?></b>
     </p>

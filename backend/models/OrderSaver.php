@@ -7,6 +7,7 @@
 
 namespace backend\models;
 
+use MongoDB\BSON\ObjectID;
 use yii\base\InvalidConfigException;
 use yii\base\Model;
 use yii\mongodb\ActiveRecord;
@@ -58,7 +59,7 @@ class OrderSaver extends Model
                 $mongoIdValidator = new MongoIdValidator();
                 foreach (explode($this->delimiter, $value) as $modelId) {
                     if ($mongoIdValidator->validate($modelId)) {
-                        $ids[] = new \MongoId($modelId);
+                        $ids[] = new ObjectID($modelId);
                     }
                 }
                 return $ids;

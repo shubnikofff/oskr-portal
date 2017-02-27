@@ -7,9 +7,11 @@
  */
 namespace frontend\models\vks;
 
+use MongoDB\BSON\ObjectID;
 use MongoDB\BSON\UTCDateTime;
 use yii\helpers\ArrayHelper;
 use yii\mongodb\Collection;
+use yii\mongodb\Query;
 use yii\mongodb\validators\MongoDateValidator;
 use yii\mongodb\validators\MongoIdValidator;
 use common\components\events\RequestStatusChangedEvent;
@@ -45,13 +47,13 @@ use frontend\models\rso\UserNotificationStrategy;
  * @property string $conferenceName
  * @property string $conferenceId
  * @property string $conferencePassword
- * @property \MongoId[] $participantsId
+ * @property ObjectID[] $participantsId
  * @property array $roomsOnConsidiration
  * @property Participant[] $participants
  * @property array $participantNameList
  * @property array $participantShortNameList
  * @property string $cancellationReason
- * @property \MongoId $buildServerId
+ * @property ObjectID $buildServerId
  * @property string $note
  * @property array $log
  * @property string $rsoAgreement
@@ -161,7 +163,7 @@ class Request extends \common\models\Request
             $mongoIdValidator = new MongoIdValidator();
             foreach ($participants as $participant) {
                 if ($mongoIdValidator->validate($participant)) {
-                    $participantsValue[] = new \MongoId($participant);
+                    $participantsValue[] = new ObjectID($participant);
                 } else {
                     $this->addError($attribute, $errorMessage);
                     return;
@@ -304,7 +306,7 @@ class Request extends \common\models\Request
         $this->cancellationReason = null;
 
         if ($this->save(false)) {
-            $notifyTime = $this->date->sec + ($this->beginTime - 60) * 60;
+            $notifyTime = $this->date->toDateTime()->getTimestamp() + ($this->beginTime - 60) * 60;
             if ((time() + 3 * 60 * 60) > $notifyTime) {
                 FutureMeetingGreenAtomNotifier::sendMail($this);
             }
@@ -328,12 +330,12 @@ class Request extends \common\models\Request
     }
 
     /**
-     * @param \MongoId $roomId
+     * @param ObjectID $roomId
      * @return string
      * @throws \yii\base\InvalidConfigException
      * @throws \yii\mongodb\Exception
      */
-    public function getRoomStatus(\MongoId $roomId)
+    public function getRoomStatus(ObjectID $roomId)
     {
         if ($this->_roomsStatus === null) {
             /** @var Collection $collection */
@@ -395,12 +397,13 @@ class Request extends \common\models\Request
 
     public static function generateNumber(UTCDateTime $date)
     {
-        $max = self::getCollection()->find(['date' => $date], ['number' => 1])->sort(['number' => -1])->limit(1)->getNext();
-        return isset($max['number']) ? $max['number'] + 1 : 100;
+        $result = self::find()->where(['date' => $date])->orderBy(['number' => SORT_DESC])->limit(1)->asArray()->all();
+        $number = $result[0]['number'];
+        return $number === null ? 100 : $number + 1;
     }
 
     public function getConferenceName()
     {
-        return date('d-m-Y', $this->date->sec) . "_" . $this->number;
+        return date('d-m-Y', $this->date->toDateTime()->getTimestamp()) . "_" . $this->number;
     }
 }

@@ -8,6 +8,7 @@ use common\components\helpers\mail\Mailer;
 use common\models\Company;
 use common\models\User;
 use frontend\models\vks\Request;
+use MongoDB\BSON\ObjectID;
 use yii\helpers\ArrayHelper;
 use yii\mongodb\ActiveRecord;
 use yii\mongodb\validators\MongoIdValidator;
@@ -17,14 +18,14 @@ use yii\validators\EachValidator;
 /**
  * This is the model class for collection "vks.participant".
  *
- * @property \MongoId|string $_id
+ * @property ObjectID $_id
  * @property string $name
  * @property string $shortName
- * @property \MongoId|string $companyId
+ * @property ObjectID $companyId
  * @property Company $company
  * @property boolean $multiConference
  * @property boolean $ahuConfirmation
- * @property \MongoId $confirmPersonId
+ * @property ObjectID $confirmPersonId
  * @property array $supportEmails
  * @property User $confirmPerson
  * @property string $phone

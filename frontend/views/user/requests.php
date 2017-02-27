@@ -49,8 +49,9 @@ $this->title = "Заявки";
 
             [
                 'attribute' => 'date',
-                'content' => function ($model) {
-                    return Yii::$app->formatter->asDate($model->date->sec, 'short');
+                'content' => function (\frontend\models\vks\Request $model) {
+
+                    return Yii::$app->formatter->asDate($model->date->toDateTime(), 'short');
                 },
             ],
 

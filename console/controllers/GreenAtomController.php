@@ -22,7 +22,7 @@ class GreenAtomController extends Controller
     {
         $beginTime = intval(date('G')) * 60 + intval(date('i')) + intval($inTime);
         $set = Request::find()->where([
-            'date' => new UTCDateTime(gmmktime(0, 0, 0)),
+            'date' => new UTCDateTime(gmmktime(0, 0, 0) * 1000),
             'beginTime' => [
                 '$gte' => $beginTime,
                 '$lt' => $beginTime + $interval
@@ -37,7 +37,7 @@ class GreenAtomController extends Controller
     {
         $beginTime = 8 * 60;
         $tomorrowBookingSet = Request::find()->where([
-            'date' => new UTCDateTime(strtotime("+1 day", gmmktime(0, 0, 0))),
+            'date' => new UTCDateTime(strtotime("+1 day", gmmktime(0, 0, 0)) * 1000),
             'beginTime' => [
                 '$gte' => $beginTime,
                 '$lt' => $beginTime + 60,
@@ -46,7 +46,7 @@ class GreenAtomController extends Controller
         ])->all();
 
         $eveningBookingSet = Request::find()->where([
-            'date' => new UTCDateTime(gmmktime(0, 0, 0)),
+            'date' => new UTCDateTime(gmmktime(0, 0, 0) * 1000),
             'beginTime' => [
                 '$gte' => 18 * 60
             ]

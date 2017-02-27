@@ -30,6 +30,6 @@ class RequestTest extends \Codeception\Test\Unit
     public function testGenerateCorrectNumber()
     {
         $this->assertEquals(100, Request::generateNumber(new UTCDateTime()));
-        $this->assertEquals(105, Request::generateNumber(new UTCDateTime(strtotime("2017-01-15 00:00:00"))));
+        $this->assertEquals(105, Request::generateNumber(new UTCDateTime(strtotime("2017-01-15 00:00:00") * 1000)));
     }
 }

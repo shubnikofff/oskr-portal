@@ -1,6 +1,7 @@
 <?php
 namespace common\models;
 
+use MongoDB\BSON\ObjectID;
 use Yii;
 use yii\base\Model;
 
@@ -141,7 +142,7 @@ class UserForm extends Model
     }
 
     /**
-     * @param \MongoId|string $id
+     * @param ObjectID|string $id
      */
     public function initRoles($id){
         foreach (Yii::$app->authManager->getRolesByUser($id) as $role) {
@@ -150,7 +151,7 @@ class UserForm extends Model
     }
 
     /**
-     * @param \MongoId|string $id
+     * @param ObjectID|string $id
      */
     public function assignRoles($id){
         $authManager = Yii::$app->getAuthManager();
