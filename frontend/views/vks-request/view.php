@@ -42,7 +42,7 @@ $isUserCanRsoRefuse = Yii::$app->user->can(SystemPermission::RSO_REFUSE);
 
         </div>
 
-        <p style="font-size: 12pt">Время проведения: <?= Yii::$app->formatter->asDate($model->date->sec, 'long') ?>
+        <p style="font-size: 12pt">Время проведения: <?= Yii::$app->formatter->asDate($model->date->toDateTime(), 'long') ?>
             c <?= $model->beginTimeString ?> до <?= $model->endTimeString ?></p>
 
         <p><strong>Тема совещания:</strong> <?= $model->topic ?></p>
@@ -196,7 +196,7 @@ $isUserCanRsoRefuse = Yii::$app->user->can(SystemPermission::RSO_REFUSE);
 
             <?php endif; ?>
 
-            <?php if ($model->status !== $model::STATUS_APPROVE && $model->mode === $model::MODE_WITHOUT_VKS): ?>
+            <?php if ($isOSKRUser && $model->status !== $model::STATUS_APPROVE && $model->mode === $model::MODE_WITHOUT_VKS): ?>
 
                 <?= Html::a("<span class='glyphicon glyphicon-ok'></span> Согласовать", ['vks-request/approve', 'requestId' => (string)$model->primaryKey], ['class' => 'btn btn-success', 'data' => ['method' => 'post']]) ?>
 

@@ -12,7 +12,7 @@
 
 <p>Здравствуйте!</p>
 
-<p>По Вашей заявке на проведение совещания <b><?= Yii::$app->formatter->asDate($request->date->sec) ?></b> на тему
+<p>По Вашей заявке на проведение совещания <b><?= Yii::$app->formatter->asDate($request->date->toDateTime(), 'long') ?></b> на тему
     <i><?= $request->topic ?></i> была <b>изменена комната</b> с <b><?= $oldRoom->name ?></b> на <b><?= $newRoom->name ?></b>.
 </p>
 

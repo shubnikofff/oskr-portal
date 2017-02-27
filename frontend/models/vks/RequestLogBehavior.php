@@ -9,6 +9,7 @@ namespace frontend\models\vks;
 
 use common\components\MinuteFormatter;
 use common\models\vks\Participant;
+use MongoDB\BSON\UTCDateTime;
 use yii\base\Behavior;
 use yii\db\ActiveRecord;
 
@@ -32,7 +33,7 @@ class RequestLogBehavior extends Behavior
     public function createLog()
     {
         $log[] = [
-            'date' => new \MongoDate(),
+            'date' => new UTCDateTime(),
             'user' => \Yii::$app->user->identity['fullName'],
             'action' => 'Заявка создана'
         ];
@@ -60,14 +61,14 @@ class RequestLogBehavior extends Behavior
 
     /**
      * @param $attribute
-     * @param \MongoDate|string|int $oldValue
-     * @param \MongoDate|string|int $newValue
+     * @param UTCDateTime|string|int $oldValue
+     * @param UTCDateTime|string|int $newValue
      * @return array|bool
      */
     private function getLogRow($attribute, $oldValue, $newValue)
     {
         $row = [
-            'date' => new \MongoDate(),
+            'date' => new UTCDateTime(),
             'user' => \Yii::$app->user->identity['fullName']
         ];
 

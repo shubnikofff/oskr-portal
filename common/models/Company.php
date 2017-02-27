@@ -2,14 +2,14 @@
 
 namespace common\models;
 
-use Yii;
+use MongoDB\BSON\ObjectID;
 use yii\mongodb\ActiveQuery;
 use yii\mongodb\ActiveRecord;
 
 /**
  * This is the model class for collection "vks.company".
  *
- * @property \MongoId|string $_id
+ * @property ObjectID $_id
  * @property string $name
  * @property string $address
  */

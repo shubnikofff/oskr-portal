@@ -28,6 +28,10 @@ return [
         ],
         'authManager' => [
             'class' => 'yii\rbac\DbManager',
+            /*'class' => 'yii\mongodb\rbac\MongoDbManager',
+            'itemCollection' => 'auth.item',
+            'assignmentCollection' => 'auth.assignment',
+            'ruleCollection' => 'auth.rule'*/
         ],
         'formatter' => [
             'defaultTimeZone' => 'Europe/Moscow',

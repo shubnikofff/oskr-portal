@@ -3,6 +3,8 @@ namespace common\models;
 
 use common\models\vks\Participant;
 use frontend\models\vks\Request as VksRequest;
+use MongoDB\BSON\ObjectID;
+use MongoDB\BSON\UTCDateTime;
 use yii\base\NotSupportedException;
 use yii\mongodb\ActiveRecord;
 use yii\mongodb\Collection;
@@ -12,7 +14,7 @@ use common\components\behaviors\TimestampBehavior;
 /**
  * User model
  *
- * @property \MongoId $_id
+ * @property ObjectID $_id
  * @property string $id
  * @property string $username
  * @property string $passwordHash
@@ -21,8 +23,8 @@ use common\components\behaviors\TimestampBehavior;
  * @property string $activateToken
  * @property string $authKey
  * @property integer $status
- * @property \MongoDate $createdAt
- * @property \MongoDate $updatedAt
+ * @property UTCDateTime $createdAt
+ * @property UTCDateTime $updatedAt
  * @property string $password write-only password
  * @property string $statusName
  * @property string $lastName
@@ -312,7 +314,7 @@ class User extends ActiveRecord implements IdentityInterface
     {
         /** @var Collection $collection */
         $collection = \Yii::$app->get('mongodb')->getCollection(Participant::collectionName());
-        $count = $collection->find(['confirmPersonId' => $this->_id])->count();
+        $count = $collection->count(['confirmPersonId' => $this->_id]);
         
         return $count > 0 ? true : false;
     }

@@ -34,7 +34,7 @@ $this->title = "Заявка на помещение";
     <hr>
 
     <div style="font-size: 15px; display: inline-block">
-        Время проведения <?= Yii::$app->formatter->asDate($model->date->sec, 'long') ?>
+        Время проведения <?= Yii::$app->formatter->asDate($model->date->toDateTime(), 'long') ?>
         c <?= $model->beginTimeString ?> до <?= $model->endTimeString ?>
     </div>
 
@@ -129,7 +129,7 @@ $this->title = "Заявка на помещение";
 
     <?php endif; ?>
 
-    <p>Заявка подана <?= Yii::$app->formatter->asDatetime($model->createdAt->sec, 'long') ?></p>
+    <p>Заявка подана <?= Yii::$app->formatter->asDatetime($model->createdAt->toDateTime(), 'long') ?></p>
 
 </div>
 

@@ -10,6 +10,8 @@ namespace common\models;
 use common\components\behaviors\BlameableBehavior;
 use common\components\behaviors\TimestampBehavior;
 use common\components\helpers\mail\Mailer;
+use MongoDB\BSON\ObjectID;
+use MongoDB\BSON\UTCDateTime;
 use yii\mongodb\ActiveRecord;
 
 /**
@@ -17,14 +19,14 @@ use yii\mongodb\ActiveRecord;
  *
  * Request
  *
- * @property \MongoId $_id
+ * @property ObjectID $_id
  * @property int $status
  * @property string $statusName
  * @property User $owner
- * @property \MongoDate $createdAt
- * @property \MongoDate $updatedAt
- * @property \MongoId $createdBy
- * @property \MongoId $updatedBy
+ * @property UTCDateTime $createdAt
+ * @property UTCDateTime $updatedAt
+ * @property ObjectID $createdBy
+ * @property ObjectID $updatedBy
  */
 abstract class Request extends ActiveRecord
 {

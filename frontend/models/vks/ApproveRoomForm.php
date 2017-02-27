@@ -10,6 +10,7 @@ namespace frontend\models\vks;
 use common\components\events\RoomStatusChangedEvent;
 use common\components\MinuteFormatter;
 use common\models\vks\Participant;
+use MongoDB\BSON\ObjectID;
 use yii\base\Model;
 use yii\helpers\Html;
 use yii\mongodb\Collection;
@@ -51,7 +52,7 @@ class ApproveRoomForm extends Model
                     'beginTime' => ['$lt' => $this->request->endTime],
                     'endTime' => ['$gt' => $this->request->beginTime],
                     'status' => ['$ne' => Request::STATUS_CANCEL],
-                    'participantsId' => new \MongoId($this->{$attribute})
+                    'participantsId' => new ObjectID($this->{$attribute})
                 ]);
 
                 if ($request !== null) {
@@ -62,7 +63,7 @@ class ApproveRoomForm extends Model
         ];
     }
 
-    private function saveRoomStatus(\MongoId $roomId, $status, $newRecord = false)
+    private function saveRoomStatus(ObjectID $roomId, $status, $newRecord = false)
     {
         /** @var Collection $collection */
         $collection = \Yii::$app->get('mongodb')->getCollection(Participant::collectionName());
@@ -93,8 +94,8 @@ class ApproveRoomForm extends Model
     public function approveRoom($roomId)
     {
         $request = $this->request;
-        $roomMongoId = new \MongoId($roomId);
-        $approvedRoomMongoId = new \MongoId($this->approvedRoomId);
+        $roomMongoId = new ObjectID($roomId);
+        $approvedRoomMongoId = new ObjectID($this->approvedRoomId);
         /** @var Collection $participantCollection*/
         $participantCollection = \Yii::$app->get('mongodb')->getCollection(Participant::collectionName());
         /** @var Collection $requestCollection*/
@@ -129,7 +130,7 @@ class ApproveRoomForm extends Model
 
     public function cancelRoom($roomId)
     {
-        $this->saveRoomStatus(new \MongoId($roomId), Participant::STATUS_CANCEL);
+        $this->saveRoomStatus(new ObjectID($roomId), Participant::STATUS_CANCEL);
     }
 
     public function attributeLabels()

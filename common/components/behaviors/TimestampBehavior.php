@@ -8,6 +8,7 @@
 
 namespace common\components\behaviors;
 
+use MongoDB\BSON\UTCDateTime;
 use yii\db\Expression;
 
 class TimestampBehavior extends \yii\behaviors\TimestampBehavior
@@ -29,7 +30,7 @@ class TimestampBehavior extends \yii\behaviors\TimestampBehavior
         if ($this->value instanceof Expression) {
             return $this->value;
         } else {
-            return $this->value !== null ? call_user_func($this->value, $event) : new \MongoDate();
+            return $this->value !== null ? call_user_func($this->value, $event) : new UTCDateTime();
         }
     }
 }

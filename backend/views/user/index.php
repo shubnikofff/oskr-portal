@@ -58,7 +58,7 @@ $this->title = "Пользователи";
             [
                 'attribute' => 'createdAt',
                 'content' => function($model){
-                    return Yii::$app->formatter->asDate($model->createdAt->sec);
+                    return Yii::$app->formatter->asDate($model->createdAt->toDateTime());
                 }
             ],
             [

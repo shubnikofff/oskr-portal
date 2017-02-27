@@ -17,13 +17,13 @@ use frontend\models\vks\Request;
 $minMinute = Yii::$app->params['vks.minTime'];
 $maxMinute = Yii::$app->params['vks.maxTime'];
 ?>
-    <p class="lead">Расписание на <?= Yii::$app->formatter->asDate($model->date->sec, 'long') ?></p>
+    <p class="lead">Расписание на <?= Yii::$app->formatter->asDate($model->date->toDateTime(), 'long') ?></p>
 
     <div id="vks-schedule">
 
         <?php $currentMinute = \common\components\MinuteFormatter::asInt(date('H:i')) ?>
 
-        <?php if (gmmktime(0, 0, 0) == $model->date->sec && $currentMinute >= $minMinute && $currentMinute <= $maxMinute): ?>
+        <?php if (gmmktime(0, 0, 0) == $model->date->toDateTime()->getTimestamp() && $currentMinute >= $minMinute && $currentMinute <= $maxMinute): ?>
 
             <?= Html::tag('div', '', [
                 'id' => 'current-time',

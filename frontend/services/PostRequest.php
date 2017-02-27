@@ -30,7 +30,7 @@ class PostRequest extends MCURequest
             $participants[] = $item;
         }
 
-        $date = date('Y-m-d', $this->_meeting->date->sec);
+        $date = date('Y-m-d', $this->_meeting->date->toDateTime()->getTimestamp());
         $data = [
             'conferenceName' => $conferenceName,
             'startTime' => $date . 'T' . $this->_meeting->beginTimeString . ":00",

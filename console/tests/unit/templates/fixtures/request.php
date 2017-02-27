@@ -10,5 +10,5 @@
 return [
     'number' => 100 + $index,
     'topic' => $faker->text(),
-    'date' => new MongoDate(strtotime("2017-01-15 00:00:00")),
+    'date' => new \MongoDB\BSON\UTCDateTime(strtotime("2017-01-15 00:00:00")),
 ];
