@@ -10,6 +10,7 @@ use kartik\select2\Select2;
 /* @var $this yii\web\View */
 /* @var $model \common\models\vks\Participant */
 /* @var $form yii\widgets\ActiveForm */
+$userList = $model::userList();
 ?>
 
 <div class="vks-room-form col-md-6">
@@ -20,23 +21,31 @@ use kartik\select2\Select2;
 
     <?= $form->field($model, 'shortName') ?>
 
-    <?= $form->field($model, 'companyId')->widget(Select2::className(), [
-        'data' => ViewHelper::items(Company::className(), '_id', 'name')
-    ]); ?>
+    <?= $form->field($model, 'companyId')->widget(Select2::class, [
+        'data' => ViewHelper::items(Company::class, '_id', 'name')
+    ]) ?>
 
     <?= $form->field($model, 'multiConference')->checkbox() ?>
 
     <?= $form->field($model, 'ahuConfirmation')->checkbox() ?>
 
-    <?= $form->field($model, 'confirmPersonId')->widget(Select2::className(), [
-        'data' => $model::confirmPersonList(),
-        'options' => ['placeholder' => 'Выберите пользователя ...'],
+    <?= $form->field($model, 'confirmPersonId')->widget(Select2::class, [
+        'data' => $userList,
+        'options' => ['placeholder' => 'Выберите пользователя'],
         'pluginOptions' => [
             'allowClear' => true
         ],
-    ]); ?>
+    ]) ?>
 
     <?= $form->field($model, 'supportEmailsInput') ?>
+
+    <?= $form->field($model, 'observerList')->widget(Select2::class, [
+        'data' => $userList,
+        'options' => [
+            'placeholder' => 'Выберите пользователей',
+            'multiple' => true
+        ],
+    ]) ?>
 
     <?= $form->field($model, 'dialString') ?>
 

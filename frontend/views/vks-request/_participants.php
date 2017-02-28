@@ -10,7 +10,6 @@ use common\components\MinuteFormatter;
 use common\models\Company;
 use yii\helpers\BaseHtml;
 use common\models\vks\Participant;
-
 /**
  * @var $form \kartik\form\ActiveForm
  * @var $this \yii\web\View
@@ -112,13 +111,20 @@ $participants = Participant::findAllByRequest($model)
 
                 <div class="row">
 
+
+                    <?php $userId = Yii::$app->user->identity['_id'] ?>
+
                     <?= BaseHtml::activeCheckboxList($model, 'participantsId', ArrayHelper::map($participants, function ($item) {
                         /** @var $item \common\models\vks\Participant */
                         return (string)$item->primaryKey;
                     }, 'name'), [
-                        'item' => function ($index, $label, $name, $checked, $value) use ($participants) {
+                        'item' => function ($index, $label, $name, $checked, $value) use ($participants, $userId) {
                             /** @var Participant $participant */
                             $participant = $participants[$index];
+
+                            if(is_array($participant->observerList) && !in_array($userId, $participant->observerList)) {
+                                return '';
+                            }
 
                             $defaultOptions = [
                                 'value' => $value,

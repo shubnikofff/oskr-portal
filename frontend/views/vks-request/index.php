@@ -76,7 +76,7 @@ $this->title = "Расписание" ?>
 
                         <?php $query = Participant::find()->select(['_id', 'name', 'companyId'])->with('company');
                         $participants = ArrayHelper::toArray($query->all(), [
-                            Participant::className() => [
+                            Participant::class => [
                                 'id' => function ($item) {
                                     return (string)$item->primaryKey;
                                 },
@@ -86,7 +86,7 @@ $this->title = "Расписание" ?>
                         ]);
                         $participantsIdData = ArrayHelper::map($participants, 'id', 'name', 'company'); ?>
 
-                        <?= $form->field($model, 'participantsId')->widget(Select2::className(), [
+                        <?= $form->field($model, 'participantsId')->widget(Select2::class, [
                             'data' => $participantsIdData,
                             'showToggleAll' => false,
                             'options' => [

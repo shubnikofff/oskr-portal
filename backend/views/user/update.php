@@ -21,7 +21,7 @@ $this->title = "Пользователь $user->username"
                 <span class="glyphicon glyphicon-lock text-danger"></span>
             <?php endif; ?>
             <?= $this->title ?>&nbsp;
-            <small>последнее обновление <?= Yii::$app->formatter->asDate($user->updatedAt->sec) ?></small>
+            <small>дата регистрации <?= Yii::$app->formatter->asDate($user->createdAt->toDateTime(), 'long') ?></small>
         </h3>
     </div>
 

@@ -28,6 +28,7 @@ use yii\validators\EachValidator;
  * @property ObjectID $confirmPersonId
  * @property array $supportEmails
  * @property User $confirmPerson
+ * @property ObjectID[] $observerList
  * @property string $phone
  * @property string $contact
  * @property string $model
@@ -66,6 +67,10 @@ class Participant extends ActiveRecord
      * @var string
      */
     public $supportEmailsInput;
+    /**
+     * @var array
+     */
+    public $observerListInput;
 
     /**
      * @return string
@@ -89,6 +94,7 @@ class Participant extends ActiveRecord
             'ahuConfirmation',
             'confirmPersonId',
             'supportEmails',
+            'observerList',
             'phone',
             'contact',
             'model',
@@ -159,7 +165,26 @@ class Participant extends ActiveRecord
             [['dialString', 'phone', 'contact', 'model', 'gatekeeperNumber', 'note'], 'safe'],
 
             [['companyId', 'confirmPersonId'], MongoIdValidator::className(), 'forceFormat' => 'object'],
+
+            ['observerList', 'checkObserverList']
         ];
+    }
+
+    public function checkObserverList($attribute)
+    {
+        $attributeValue = $this->$attribute;
+        $observerList = [];
+
+        if (!is_array($attributeValue)) {
+            $this->addError($attribute, "Неверный формат данных");
+            return;
+        }
+
+        foreach ($attributeValue as $item) {
+            $user = User::findOne($item);
+            $user ? $observerList[] = $user->_id : $this->addError($attribute, "Пользователь не найден");
+        }
+        $this->observerList = $observerList;
     }
 
     public function getCompany()
@@ -178,6 +203,7 @@ class Participant extends ActiveRecord
             'multiConference' => 'Участие в нескольких конференциях одновременно',
             'confirmPersonId' => 'Согласующее лицо',
             'supportEmailsInput' => 'Email(ы) техподдержки',
+            'observerList' => 'Список наблюдателей',
             'phone' => 'Телефон',
             'contact' => 'Контактное лицо',
             'model' => 'Модель оборудования',
@@ -298,7 +324,7 @@ class Participant extends ActiveRecord
     /**
      * @return array
      */
-    static public function confirmPersonList()
+    static public function userList()
     {
         $query = User::find()->asArray()->orderBy('lastName');
         return ArrayHelper::map($query->all(), function ($elem) {
