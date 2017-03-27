@@ -22,7 +22,8 @@ class PostRequest extends MCURequest
         $conferenceName = $this->_meeting->conferenceName;
         $participants = [];
         foreach ($this->_meeting->participants as $participant) {
-            if($this->_meeting->getRoomStatus($participant->_id) === $participant::STATUS_APPROVE) {
+            $roomStatus = $this->_meeting->getRoomStatus($participant->_id);
+            if($roomStatus !== $participant::STATUS_CANCEL && $roomStatus !== $participant::STATUS_CONSIDIRATION) {
                 $item = [];
                 $item['participantName'] = $participant->shortName;
                 $item['address'] = $participant->dialString;
