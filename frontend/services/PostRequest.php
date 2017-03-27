@@ -22,12 +22,14 @@ class PostRequest extends MCURequest
         $conferenceName = $this->_meeting->conferenceName;
         $participants = [];
         foreach ($this->_meeting->participants as $participant) {
-            $item = [];
-            $item['participantName'] = $participant->shortName;
-            $item['address'] = $participant->dialString;
-            $item['protocol'] = $participant->protocol;
-            $item['conferenceName'] = $conferenceName;
-            $participants[] = $item;
+            if($this->_meeting->getRoomStatus($participant->_id) === $participant::STATUS_APPROVE) {
+                $item = [];
+                $item['participantName'] = $participant->shortName;
+                $item['address'] = $participant->dialString;
+                $item['protocol'] = $participant->protocol;
+                $item['conferenceName'] = $conferenceName;
+                $participants[] = $item;
+            }
         }
 
         $date = date('Y-m-d', $this->_meeting->date->toDateTime()->getTimestamp());
