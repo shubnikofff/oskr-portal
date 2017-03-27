@@ -1,3 +1,11 @@
+form.schedule-filter-form {
+    z-index: 100;
+    background-color: #f4f4f4;
+    position: fixed;
+    border: 1px solid #b6b6b6;
+    padding: 10px;
+}
+
 table.vks-time-grid {
     width: 100%;
     border-top: 1px solid;

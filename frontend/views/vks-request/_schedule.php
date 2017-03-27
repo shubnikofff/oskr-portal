@@ -6,7 +6,6 @@
  */
 
 use yii\helpers\Html;
-use frontend\models\vks\Request;
 
 /**
  * @var $this \yii\web\View
@@ -17,7 +16,7 @@ use frontend\models\vks\Request;
 $minMinute = Yii::$app->params['vks.minTime'];
 $maxMinute = Yii::$app->params['vks.maxTime'];
 ?>
-    <p class="lead">Расписание на <?= Yii::$app->formatter->asDate($model->date->toDateTime(), 'long') ?></p>
+    <p class="lead" style="padding-top: 90px">Расписание на <?= Yii::$app->formatter->asDate($model->date->toDateTime(), 'long') ?></p>
 
     <div id="vks-schedule">
 
@@ -158,22 +157,31 @@ $maxMinute = Yii::$app->params['vks.maxTime'];
     </div>
 
     <div id="vks-schedule-legend">
-        <div>
-            <div class="status-color-box status-considiration"></div>
-            - <?= Request::statusName(Request::STATUS_OSKR_CONSIDERATION) ?>
+
+        <div class="row">
+
+            <div class="col-lg-3">
+                <div class="status-color-box status-approve"></div>
+                согласовано
+            </div>
+
+            <div class="col-lg-3">
+                <div class="status-color-box status-considiration"></div>
+                на рассмотрении УСКР
+            </div>
+
+            <div class="col-lg-3">
+                <div class="status-color-box status-ahu-approve"></div>
+                комнаты на рассмотрении
+            </div>
+
+            <div class="col-lg-3">
+                <div class="status-color-box status-cancel"></div>
+                отменено
+            </div>
+
         </div>
-        <div>
-            <div class="status-color-box status-approve"></div>
-            - <?= Request::statusName(Request::STATUS_APPROVE) ?>
-        </div>
-        <div>
-            <div class="status-color-box status-ahu-approve"></div>
-            - <?= Request::statusName(Request::STATUS_ROOMS_CONSIDIRATION) ?>
-        </div>
-        <div>
-            <div class="status-color-box status-cancel"></div>
-            - <?= Request::statusName(Request::STATUS_CANCEL) ?>
-        </div>
+
     </div>
 
 <?php $options = \yii\helpers\Json::encode([

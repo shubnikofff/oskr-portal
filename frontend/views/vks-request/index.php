@@ -41,6 +41,7 @@ $this->title = "Расписание" ?>
             'action' => ['vks-request/index'],
             'method' => 'get',
             'enableClientValidation' => false,
+            'options' => ['class' => 'container schedule-filter-form']
         ]) ?>
 
         <div class="row">
