@@ -98,8 +98,8 @@ $this->title = "Расписание" ?>
 
                     <div class="col-lg-3">
                         <?= $form->field($model, 'mode')->inline()->radioList([
-                            '' => 'Все',
-                            $model::MODE_WITH_VKS => 'Только с ВКС'
+                            $model::MODE_WITH_VKS => 'с ВКС',
+                            $model::MODE_WITHOUT_VKS => 'без ВКС'
                         ]) ?>
                     </div>
 
