@@ -8,6 +8,7 @@
 namespace frontend\services;
 
 use common\services\Service;
+use frontend\components\services\FutureMeetingGreenAtomNotifier;
 use frontend\models\vks\Request as Meeting;
 
 /**
@@ -30,6 +31,7 @@ class MeetingService extends Service
                 ->setTo($meeting->owner->email)
                 ->setSubject("Заявка №" . $meeting->number . " согласована.");
             self::sendEmail($message);
+            FutureMeetingGreenAtomNotifier::sendMail($meeting);
             \Yii::$app->session->setFlash('success', "Совещение согласовано.");
         }
     }
