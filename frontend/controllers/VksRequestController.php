@@ -176,7 +176,6 @@ class VksRequestController extends Controller
     {
         /** @var Request $model */
         $model = self::findModel(Request::class, $id);
-        MCUService::destroyConference($model);
         if($model->delete()) {
             \Yii::$app->session->setFlash('success', "Совещание удалено.");
         }
@@ -222,7 +221,7 @@ class VksRequestController extends Controller
 
     public function actionPrint($id)
     {
-        $model = Request::findOne(['_id' => new ObjectID($id), 'status' => Request::STATUS_APPROVE]);
+        $model = Request::findOne(['_id' => new ObjectID($id), 'status' => Request::STATUS_APPROVED]);
         if ($model) {
             return $this->renderPartial('print', ['model' => $model]);
         }

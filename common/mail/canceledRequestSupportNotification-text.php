@@ -8,10 +8,10 @@
  * @var $participant \common\models\vks\Participant
  */
 ?>
-Доброго времени суток!
+Уведомляем Вас об отмене совещания,
 
+которое должно было проходить <?= Yii::$app->formatter->asDate($request->date->toDateTime(), 'long') ?> c <?= $request->beginTimeString ?> по <?= $request->endTimeString ?> в <?= $participant->company->name . ' - ' . $participant->name ?>.
 
-Уведомляем Вас об отмене совещания, которое должно было проходить <?= Yii::$app->formatter->asDate($request->date->toDateTime(), 'long') ?> c <?= $request->beginTimeString ?> по <?= $request->endTimeString ?> в <?= $participant->company->name . ' - ' . $participant->name ?>.
 Причина отмены: <?= $request->cancellationReason ?>.
 
 

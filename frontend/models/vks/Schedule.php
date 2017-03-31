@@ -42,7 +42,7 @@ class Schedule
         $condition = [
             'date' => $date,
             'mode' => Request::MODE_WITH_VKS,
-            'status' => ['$ne' => Request::STATUS_CANCEL]
+            'status' => ['$ne' => Request::STATUS_CANCELED]
         ];
 
         $result = $collection->mapReduce($map, $reduce, $out, $condition);

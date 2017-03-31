@@ -29,7 +29,7 @@ $isUserCanRsoRefuse = Yii::$app->user->can(SystemPermission::RSO_REFUSE);
 
             <div class="pull-right" style="display: inline-block">
 
-                <?php if ($model->status == \frontend\models\vks\Request::STATUS_APPROVE): ?>
+                <?php if ($model->status == \frontend\models\vks\Request::STATUS_APPROVED): ?>
 
                     <?= Html::a("<span class='glyphicon glyphicon-print'></span> Распечатать", ['vks-request/print', 'id' => (string)$model->primaryKey], [
                         'class' => 'btn btn-default',
@@ -48,17 +48,17 @@ $isUserCanRsoRefuse = Yii::$app->user->can(SystemPermission::RSO_REFUSE);
         <p><strong>Тема совещания:</strong> <?= $model->topic ?></p>
 
         <?php switch ($model->status) {
-            case $model::STATUS_APPROVE:
+            case $model::STATUS_APPROVED:
                 $statusCssClass = 'text-success';
                 break;
-            case $model::STATUS_CANCEL:
+            case $model::STATUS_CANCELED:
                 $statusCssClass = 'text-danger';
                 break;
         } ?>
 
         <p><strong>Статус заявки:</strong> <span class="<?= $statusCssClass ?>"><?= $model->statusName ?></span></p>
 
-        <?php if ($model->status === $model::STATUS_CANCEL): ?>
+        <?php if ($model->status === $model::STATUS_CANCELED): ?>
 
             <p class="text-danger" style="font-size: large"><?= $model->cancellationReason ?></p>
 
@@ -196,14 +196,14 @@ $isUserCanRsoRefuse = Yii::$app->user->can(SystemPermission::RSO_REFUSE);
 
             <?php endif; ?>
 
-            <?php if ($isOSKRUser && $model->status !== $model::STATUS_APPROVE && $model->mode === $model::MODE_WITHOUT_VKS): ?>
+            <?php if ($isOSKRUser && $model->status !== $model::STATUS_APPROVED && $model->mode === $model::MODE_WITHOUT_VKS): ?>
 
                 <?= Html::a("<span class='glyphicon glyphicon-ok'></span> Согласовать", ['vks-request/approve', 'requestId' => (string)$model->primaryKey], ['class' => 'btn btn-success', 'data' => ['method' => 'post']]) ?>
 
             <?php endif; ?>
 
 
-            <?php if ($model->status !== $model::STATUS_CANCEL && Yii::$app->user->can(SystemPermission::CANCEL_REQUEST, ['object' => $model])): ?>
+            <?php if ($model->status !== $model::STATUS_CANCELED && Yii::$app->user->can(SystemPermission::CANCEL_REQUEST, ['object' => $model])): ?>
 
                 <?= Html::a("<span class='glyphicon glyphicon-ban-circle'></span> Отменить", ['vks-request/cancel', 'id' => (string)$model->primaryKey], ['class' => 'btn btn-warning']) ?>
 

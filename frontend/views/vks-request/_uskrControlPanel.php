@@ -9,14 +9,15 @@ use common\models\vks\AudioRecordType;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 use yii\helpers\Html;
-use common\models\vks\MCU;
-
+use frontend\models\vks\MCURepository;
+use frontend\models\vks\MCUProfileRepository;
 /**
  * @var $this \yii\web\View
  * @var $model \frontend\models\vks\Request
  */
 
-$mcuServers = MCU::find()->orderBy('_id')->asArray()->all();
+$mcuServers = ArrayHelper::map(MCURepository::instance()->getRaw(), 'id', 'name');
+//$mcuProfiles = ArrayHelper::map(MCUProfileRepository::instance()->getRaw($model->mcuId), 'id', 'name');
 $audioRecordTypes = AudioRecordType::find()->orderBy('_id')->asArray()->all();
 ?>
 
@@ -28,13 +29,13 @@ $audioRecordTypes = AudioRecordType::find()->orderBy('_id')->asArray()->all();
 
         <?php $form = ActiveForm::begin([
             'action' => Url::to([
-                $model->status === $model::STATUS_APPROVE ? 'mcu/deploy' : 'vks-request/approve',
+                $model->status === $model::STATUS_APPROVED ? 'mcu/deploy' : 'vks-request/approve',
                 'requestId' => (string)$model->primaryKey
             ])]) ?>
 
         <div class="row">
 
-            <div class="col-lg-3"><?= $form->field($model, 'mcuId')->dropDownList(ArrayHelper::map($mcuServers, '_id', 'name')) ?></div>
+            <div class="col-lg-3"><?= $form->field($model, 'mcuId')->dropDownList($mcuServers) ?></div>
 
             <div class="col-lg-3"><?= $form->field($model, 'audioRecordTypeId')->dropDownList(ArrayHelper::map($audioRecordTypes, '_id', 'name')) ?></div>
 
@@ -42,7 +43,7 @@ $audioRecordTypes = AudioRecordType::find()->orderBy('_id')->asArray()->all();
 
                 <div class="row">
                     <div class="col-lg-12" style="padding-top: 22px">
-                        <?= Html::submitButton($model->status === $model::STATUS_APPROVE ? "<span class='glyphicon glyphicon-wrench'></span> Пересобрать" : "<span class='glyphicon glyphicon-ok'></span> Согласовать и собрать", ['class' => 'btn btn-success']) ?>
+                        <?= Html::submitButton($model->status === $model::STATUS_APPROVED ? "<span class='glyphicon glyphicon-wrench'></span> Пересобрать" : "<span class='glyphicon glyphicon-ok'></span> Согласовать и собрать", ['class' => 'btn btn-success']) ?>
                         <?= Html::a("<span class='glyphicon glyphicon-remove'></span> Разобрать", ['mcu/destroy', 'requestId' => (string)$model->primaryKey], [
                             'class' => 'btn btn-danger',
                             'data' => [

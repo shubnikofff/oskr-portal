@@ -8,9 +8,11 @@
 namespace console\controllers;
 
 use frontend\components\services\FutureMeetingGreenAtomNotifier;
+use frontend\models\NotifyService;
 use frontend\models\vks\Request;
 use yii\console\Controller;
 use MongoDB\BSON\UTCDateTime;
+
 /**
  * @author Shubnikov Alexey <a.shubnikov@niaep.ru>
  *
@@ -27,10 +29,10 @@ class GreenAtomController extends Controller
                 '$gte' => $beginTime,
                 '$lt' => $beginTime + $interval
             ],
-            'status' => Request::STATUS_APPROVE
+            'status' => Request::STATUS_APPROVED
         ])->all();
 
-        self::notify($set);
+        $this->notify($set);
     }
 
     public function actionEveningNotification()
@@ -42,7 +44,7 @@ class GreenAtomController extends Controller
                 '$gte' => $beginTime,
                 '$lt' => $beginTime + 60,
             ],
-            'status' => Request::STATUS_APPROVE
+            'status' => Request::STATUS_APPROVED
         ])->all();
 
         $eveningBookingSet = Request::find()->where([
@@ -52,16 +54,20 @@ class GreenAtomController extends Controller
             ]
         ])->all();
 
-        self::notify(array_merge($tomorrowBookingSet, $eveningBookingSet));
+        $this->notify(array_merge($tomorrowBookingSet, $eveningBookingSet));
     }
 
     /**
      * @param $requestSet Request[]
      */
-    protected static function notify($requestSet)
+    protected function notify($requestSet)
     {
         foreach ($requestSet as $request) {
-            FutureMeetingGreenAtomNotifier::sendMail($request);
+            try {
+                NotifyService::notifySupportAboutApprovedRequest($request);
+            } catch (\Exception $exception) {
+                echo $exception->getMessage() . "\n";
+            }
         }
     }
 }

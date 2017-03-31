@@ -20,10 +20,10 @@ class MeetingService extends Service
 {
     public static function approve(Meeting &$meeting)
     {
-        if ($meeting->status === Meeting::STATUS_APPROVE) {
+        if ($meeting->status === Meeting::STATUS_APPROVED) {
             return;
         }
-        $meeting->status = Meeting::STATUS_APPROVE;
+        $meeting->status = Meeting::STATUS_APPROVED;
         if ($meeting->save(false)) {
             $message = \Yii::$app->mailer->compose('meeting-approved', ['meeting' => $meeting])
                 ->setFrom([\Yii::$app->params['email'] => \Yii::$app->name])
@@ -36,10 +36,10 @@ class MeetingService extends Service
 
     public static function cancel(Meeting &$meeting)
     {
-        if ($meeting->status === Meeting::STATUS_CANCEL) {
+        if ($meeting->status === Meeting::STATUS_CANCELED) {
             return;
         }
-        $meeting->status = Meeting::STATUS_CANCEL;
+        $meeting->status = Meeting::STATUS_CANCELED;
         if ($meeting->save()) {
             MCUService::destroyConference($meeting);
             $message = \Yii::$app->mailer->compose('meeting-canceled', ['meeting' => $meeting])

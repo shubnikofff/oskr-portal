@@ -7,20 +7,16 @@
  */
 namespace frontend\models\vks;
 
+use frontend\models\NotifyService;
 use MongoDB\BSON\ObjectID;
 use MongoDB\BSON\UTCDateTime;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Html;
 use yii\mongodb\Collection;
-use yii\mongodb\Query;
 use yii\mongodb\validators\MongoDateValidator;
 use yii\mongodb\validators\MongoIdValidator;
-use common\components\events\RequestStatusChangedEvent;
-use common\models\vks\AudioRecordType;
-use common\models\vks\MCU;
 use common\models\vks\Participant;
 use common\components\MinuteFormatter;
-use frontend\components\services\CancelMeetingGreenAtomNotifier;
-use frontend\components\services\FutureMeetingGreenAtomNotifier;
 use frontend\models\rso\File;
 use frontend\models\rso\NotificationStrategy;
 use frontend\models\rso\UserNotificationStrategy;
@@ -38,22 +34,14 @@ use frontend\models\rso\UserNotificationStrategy;
  * @property int $endTime
  * @property string endTimeString
  * @property int $mode
+ * @property Conference $conference
  * @property array $equipment
- * @property string $mcuId
- * @property MCU $mcu
- * @property string $audioRecordTypeId
- * @property AudioRecordType $audioRecordType
- * @property bool $isConferenceCreated
- * @property string $conferenceName
- * @property string $conferenceId
- * @property string $conferencePassword
  * @property ObjectID[] $participantsId
  * @property array $roomsOnConsidiration
  * @property Participant[] $participants
  * @property array $participantNameList
  * @property array $participantShortNameList
  * @property string $cancellationReason
- * @property ObjectID $buildServerId
  * @property string $note
  * @property array $log
  * @property string $rsoAgreement
@@ -103,15 +91,11 @@ class Request extends \common\models\Request
             'rsoAgreement',
             'rsoFiles',
             'mode',
+            'conference',
             'equipment',
-            'mcuId',
-            'audioRecordTypeId',
-            'conferenceId',
-            'conferencePassword',
             'participantsId',
             'roomsOnConsidiration',
             'cancellationReason',
-            'buildServerId',
             'note',
             'log'
         ]);
@@ -131,7 +115,6 @@ class Request extends \common\models\Request
     {
         return [
             self::SCENARIO_CANCEL => ['cancellationReason'],
-            self::SCENARIO_DEPLOY_CONFERENCE => ['mcuId', 'audioRecordTypeId']
         ];
     }
 
@@ -142,13 +125,9 @@ class Request extends \common\models\Request
     {
         return array_merge(parent::rules(), [
 
-            [['cancellationReason', 'mcuId', 'audioRecordTypeId'], 'required'],
+            ['cancellationReason', 'required'],
 
             ['dateInput', MongoDateValidator::class, 'format' => 'dd.MM.yyyy', 'mongoDateAttribute' => 'date'],
-
-            ['mcuId', 'exist', 'targetClass' => MCU::class, 'targetAttribute' => '_id'],
-
-            ['audioRecordTypeId', 'exist', 'targetClass' => AudioRecordType::class, 'targetAttribute' => '_id'],
 
             ['participantsId', 'checkParticipantsIdFormat'],
         ]);
@@ -189,8 +168,6 @@ class Request extends \common\models\Request
             'endTimeInput' => 'Время конца',
             'mode' => 'Режим совещания',
             'equipment' => 'Дополнительное оборудование',
-            'mcuId' => 'MCU',
-            'audioRecordTypeId' => 'Тип аудиозаписи',
             'participantsId' => 'Участники',
             'status' => 'Статус',
             'cancellationReason' => 'Причина отмены',
@@ -227,10 +204,10 @@ class Request extends \common\models\Request
     {
         $name = null;
         switch ($status) {
-            case self::STATUS_CANCEL:
+            case self::STATUS_CANCELED:
                 $name = 'Отменено';
                 break;
-            case self::STATUS_APPROVE:
+            case self::STATUS_APPROVED:
                 $name = 'Согласовано';
                 break;
             case self::STATUS_COMPLETE:
@@ -244,16 +221,6 @@ class Request extends \common\models\Request
                 break;
         };
         return $name;
-    }
-
-    public function getMcu()
-    {
-        return $this->hasOne(MCU::class, ['_id' => 'mcuId']);
-    }
-
-    public function getAudioRecordType()
-    {
-        return $this->hasOne(AudioRecordType::class, ['_id' => 'audioRecordTypeId']);
     }
 
     /**
@@ -288,31 +255,31 @@ class Request extends \common\models\Request
         return $this->beginTime ? MinuteFormatter::asString($this->beginTime) : '';
     }
 
-    /**
-     * @return string
-     */
+
     public function getEndTimeString()
     {
         return $this->endTime ? MinuteFormatter::asString($this->endTime) : '';
     }
 
+    /**
+     * @return bool
+     */
     public function approve()
     {
-        if ($this->status === self::STATUS_APPROVE) {
+        if ($this->status !== self::STATUS_APPROVED) {
+            $this->status = self::STATUS_APPROVED;
+            try {
+                NotifyService::notifyOwnerAboutApprovedRequest($this);
+                $notifyTime = $this->date->toDateTime()->getTimestamp() + ($this->beginTime - 60) * 60;
+                if ((time() + 3 * 60 * 60) > $notifyTime) {
+                    NotifyService::notifySupportAboutApprovedRequest($this);
+                }
+            } catch (\Exception $exception) {
+                \Yii::$app->session->setFlash('danger', $exception->getMessage());
+            }
             return true;
         }
-
-        $this->status = self::STATUS_APPROVE;
-        $this->cancellationReason = null;
-
-        if ($this->save(false)) {
-            $notifyTime = $this->date->toDateTime()->getTimestamp() + ($this->beginTime - 60) * 60;
-            if ((time() + 3 * 60 * 60) > $notifyTime) {
-                FutureMeetingGreenAtomNotifier::sendMail($this);
-            }
-            $this->trigger(self::EVENT_STATUS_CHANGED, new RequestStatusChangedEvent(['request' => $this]));
-        }
-        return true;
+        return false;
     }
 
     /**
@@ -320,11 +287,64 @@ class Request extends \common\models\Request
      */
     public function cancel()
     {
-        $this->status = self::STATUS_CANCEL;
-        if ($this->save()) {
-            CancelMeetingGreenAtomNotifier::sendMail($this);
-            $this->trigger(self::EVENT_STATUS_CHANGED, new RequestStatusChangedEvent(['request' => $this]));
+        if ($this->status !== self::STATUS_CANCELED && $this->validate()) {
+            $this->status = self::STATUS_CANCELED;
+            if ($this->conference) {
+                $this->destroyConference();
+            }
+            try {
+                NotifyService::notifyOwnerAboutCanceledRequest($this);
+                NotifyService::notifySupportAboutCanceledRequest($this);
+            } catch (\Exception $exception) {
+                \Yii::$app->session->setFlash('danger', $exception->getMessage());
+            }
             return true;
+        }
+        return false;
+    }
+
+    /**
+     * @param ConferenceForm $form
+     * @return bool
+     */
+    public function createConference(ConferenceForm $form)
+    {
+        if ($form->validate()) {
+            try {
+                $result = ConferenceService::instance()->create($this, $form)->getData();
+                if ($result['retcode' === 100]) {
+                    $raw = $result['Conferences'][0];
+                    $this->conference = new Conference($raw['conferenceName'], $raw['numericId'], $raw['pin'], $raw['mcuid'], $raw['profile'], $raw['recordType'], $result['extDS'], $result['intDS']);
+                    return true;
+                } else {
+                    \Yii::$app->session->setFlash('danger', $result['errorMessage']);
+                }
+            } catch (\Exception $exception) {
+                \Yii::$app->session->setFlash('danger', $exception->getMessage());
+            }
+        } else {
+            \Yii::$app->session->setFlash('danger', Html::errorSummary($this));
+        }
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function destroyConference()
+    {
+        if ($this->conference) {
+            try {
+                $result = ConferenceService::instance()->destroy($this->conference)->getData();
+                if ($result['retcode'] === 100) {
+                    $this->conference = null;
+                    return true;
+                } else {
+                    \Yii::$app->session->setFlash('danger', $result['errorMessage']);
+                }
+            } catch (\Exception $exception) {
+                \Yii::$app->session->setFlash('danger', $exception->getMessage());
+            }
         }
         return false;
     }
@@ -384,9 +404,42 @@ class Request extends \common\models\Request
         return $this->save(false);
     }
 
+    public function afterFind()
+    {
+        parent::afterFind();
+        $row = $this->conference;
+        $conference = new Conference($row['name'], $row['number'], $row['password'], $row['mcuId'], $row['profileId'], $row['audioRecordTypeId'], $row['externalDS'], $row['internalDS']);
+        $this->conference = $conference;
+    }
+
+
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            if ($conference = $this->conference) {
+                $this->conference = [
+                    'name' => $conference->getName(),
+                    'number' => $conference->getNumber(),
+                    'password' => $conference->getPassword(),
+                    'mcuId' => $conference->getMcuId(),
+                    'profileId' => $conference->getProfileId(),
+                    'audioRecordTypeId' => $conference->getAudioRecordTypeId(),
+                    'externalDS' => $conference->getExternalDS(),
+                    'internalDS' => $conference->getInternalDS(),
+                ];
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public function beforeDelete()
     {
         if (parent::beforeDelete()) {
+            if ($this->conference) {
+                $this->destroyConference();
+            }
             $fileIds = ArrayHelper::getColumn($this->rsoFiles, 'id');
             File::deleteAll(['_id' => ['$in' => $fileIds]]);
             return true;
@@ -402,8 +455,4 @@ class Request extends \common\models\Request
         return $number === null ? 100 : $number + 1;
     }
 
-    public function getConferenceName()
-    {
-        return date('d-m-Y', $this->date->toDateTime()->getTimestamp()) . "_" . $this->number;
-    }
 }

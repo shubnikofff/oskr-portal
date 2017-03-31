@@ -71,10 +71,10 @@ $maxMinute = Yii::$app->params['vks.maxTime'];
 
                             $statusClass = '';
                             switch ($request->status) {
-                                case $request::STATUS_CANCEL:
+                                case $request::STATUS_CANCELED:
                                     $statusClass = 'status-cancel';
                                     break;
-                                case $request::STATUS_APPROVE:
+                                case $request::STATUS_APPROVED:
                                     $statusClass = 'status-approve';
                                     break;
                                 case $request::STATUS_OSKR_CONSIDERATION:

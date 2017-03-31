@@ -51,7 +51,7 @@ class ApproveRoomForm extends Model
                     'date' => $this->request->date,
                     'beginTime' => ['$lt' => $this->request->endTime],
                     'endTime' => ['$gt' => $this->request->beginTime],
-                    'status' => ['$ne' => Request::STATUS_CANCEL],
+                    'status' => ['$ne' => Request::STATUS_CANCELED],
                     'participantsId' => new ObjectID($this->{$attribute})
                 ]);
 

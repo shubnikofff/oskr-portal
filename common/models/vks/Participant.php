@@ -255,7 +255,7 @@ class Participant extends ActiveRecord
                 'date' => $request->date,
                 'beginTime' => ['$lt' => $request->endTime],
                 'endTime' => ['$gt' => $request->beginTime],
-                'status' => ['$ne' => $request::STATUS_CANCEL]
+                'status' => ['$ne' => $request::STATUS_CANCELED]
             ]],
             ['$unwind' => '$participantsId'],
             ['$project' => ['_id' => 0, 'id' => '$participantsId', 'beginTime' => 1, 'endTime' => 1]]

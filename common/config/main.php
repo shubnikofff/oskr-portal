@@ -6,6 +6,8 @@ return [
 
     'vendorPath' => dirname(dirname(__DIR__)) . '/vendor',
 
+    'timeZone' => 'Europe/Moscow',
+
     'bootstrap' => ['log'],
 
     'components' => [

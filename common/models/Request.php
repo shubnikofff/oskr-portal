@@ -32,8 +32,8 @@ abstract class Request extends ActiveRecord
 {
     const EVENT_STATUS_CHANGED = 'request_status_changed';
 
-    const STATUS_CANCEL = 0;
-    const STATUS_APPROVE = 1;
+    const STATUS_CANCELED = 0;
+    const STATUS_APPROVED = 1;
     const STATUS_OSKR_CONSIDERATION = 2;
     const STATUS_COMPLETE = 3;
 
