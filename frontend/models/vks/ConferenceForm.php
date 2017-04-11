@@ -23,12 +23,12 @@ class ConferenceForm extends Model
 
     public $profile;
 
-    public $audiRecordType;
+    public $audioRecordType;
 
     public function rules()
     {
         return [
-            [['mcu', 'profile', 'audioRecordType'], 'required']
+            [['mcu', 'profile', 'audioRecordType'], 'safe']
         ];
     }
 
@@ -43,17 +43,17 @@ class ConferenceForm extends Model
 
     /**
      * Creates new instance
-     * @param Conference $conference
+     * @param Conference|null $conference
      * @return ConferenceForm
      */
-    public static function create(Conference $conference)
+    public static function make($conference)
     {
-        $form = new self();
-        if ($conference) {
-            $form->mcu = $conference->getMcuId();
-            $form->profile = $conference->getProfileId();
-            $form->audiRecordType = $conference->getAudioRecordTypeId();
+        $instance = new self();
+        if ($conference instanceof Conference) {
+            $instance->mcu = $conference->getMcuId();
+            $instance->profile = $conference->getProfileId();
+            $instance->audioRecordType = $conference->getAudioRecordTypeId();
         }
-        return $form;
+        return $instance;
     }
 }

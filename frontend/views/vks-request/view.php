@@ -84,7 +84,7 @@ $isUserCanRsoRefuse = Yii::$app->user->can(SystemPermission::RSO_REFUSE);
 
         <?php if ($model->mode === $model::MODE_WITH_VKS): ?>
 
-            <?php if ($isUserCanUpdateRequest && $model->isConferenceCreated): ?>
+            <?php if ($isUserCanUpdateRequest): ?>
 
                 <?= $this->render('_connectingInfo', ['model' => $model]) ?>
 

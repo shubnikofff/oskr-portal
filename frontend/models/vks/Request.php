@@ -270,10 +270,7 @@ class Request extends \common\models\Request
             $this->status = self::STATUS_APPROVED;
             try {
                 NotifyService::notifyOwnerAboutApprovedRequest($this);
-                $notifyTime = $this->date->toDateTime()->getTimestamp() + ($this->beginTime - 60) * 60;
-                if ((time() + 3 * 60 * 60) > $notifyTime) {
-                    NotifyService::notifySupportAboutApprovedRequest($this);
-                }
+                NotifyService::notifySupportAboutApprovedRequest($this);
             } catch (\Exception $exception) {
                 \Yii::$app->session->setFlash('danger', $exception->getMessage());
             }
@@ -312,7 +309,7 @@ class Request extends \common\models\Request
         if ($form->validate()) {
             try {
                 $result = ConferenceService::instance()->create($this, $form)->getData();
-                if ($result['retcode' === 100]) {
+                if ($result['retcode'] === 100) {
                     $raw = $result['Conferences'][0];
                     $this->conference = new Conference($raw['conferenceName'], $raw['numericId'], $raw['pin'], $raw['mcuid'], $raw['profile'], $raw['recordType'], $result['extDS'], $result['intDS']);
                     return true;
@@ -407,9 +404,10 @@ class Request extends \common\models\Request
     public function afterFind()
     {
         parent::afterFind();
-        $row = $this->conference;
-        $conference = new Conference($row['name'], $row['number'], $row['password'], $row['mcuId'], $row['profileId'], $row['audioRecordTypeId'], $row['externalDS'], $row['internalDS']);
-        $this->conference = $conference;
+        if($row = $this->conference) {
+            $conference = new Conference($row['name'], $row['number'], $row['password'], $row['mcuId'], $row['profileId'], $row['audioRecordTypeId'], $row['externalDS'], $row['internalDS']);
+            $this->conference = $conference;
+        }
     }
 
 

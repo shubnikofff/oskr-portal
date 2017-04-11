@@ -189,6 +189,10 @@ class RequestForm extends Request
      */
     public function beforeSave($insert)
     {
+        if($this->conference) {
+            $this->destroyConference();
+        }
+
         if (parent::beforeSave($insert)) {
 
             $this->setRsoAgreement($this->foreignOrganizations ? self::RSO_AGREEMENT_IN_PROCESS : self::RSO_AGREEMENT_NO_NEED, new RsoNotificationStrategy());
@@ -222,7 +226,7 @@ class RequestForm extends Request
                         $this->status = self::STATUS_ROOMS_CONSIDIRATION;
                     }
                 }
-            } elseif (!\Yii::$app->user->can(SystemPermission::APPROVE_REQUEST) && $this->status !== self::STATUS_ROOMS_CONSIDIRATION) {
+            } elseif ($this->status !== self::STATUS_ROOMS_CONSIDIRATION) {
                 $this->status = self::STATUS_OSKR_CONSIDERATION;
                 $this->trigger(self::EVENT_STATUS_CHANGED, new RequestStatusChangedEvent(['request' => $this]));
             }

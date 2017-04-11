@@ -6,17 +6,23 @@
  */
 
 use yii\helpers\Html;
+use yii\helpers\ArrayHelper;
+use frontend\models\vks\MCURepository;
+use frontend\models\vks\Schedule;
 
 /**
  * @var $this \yii\web\View
  * @var $dataProvider \yii\data\ActiveDataProvider
  * @var $model \frontend\models\vks\RequestSearch
- * @var $participantsCountPerHour array
  */
 $minMinute = Yii::$app->params['vks.minTime'];
 $maxMinute = Yii::$app->params['vks.maxTime'];
+$isOskrUser = Yii::$app->user->can(\common\rbac\SystemPermission::APPROVE_REQUEST);
+$mcuServers = $isOskrUser ? ArrayHelper::map(MCURepository::instance()->getRaw(), 'id', 'name') : [];
+$participantsCountPerHour = $isOskrUser ? Schedule::participantsCountPerHour($model->date) : [];
 ?>
-    <p class="lead" style="padding-top: 90px">Расписание на <?= Yii::$app->formatter->asDate($model->date->toDateTime(), 'long') ?></p>
+    <p class="lead" style="padding-top: 90px">Расписание
+        на <?= Yii::$app->formatter->asDate($model->date->toDateTime(), 'long') ?></p>
 
     <div id="vks-schedule">
 
@@ -115,7 +121,13 @@ $maxMinute = Yii::$app->params['vks.maxTime'];
 
                             <?= Html::tag('div', $request->topic, ['class' => 'vks-request-theme']) ?>
 
-                            <div class="vks-request-service-data"><strong><?= $request->mcu->name ?></strong></div>
+                            <div class="vks-request-service-data">
+                                <?php if ($isOskrUser): ?>
+                                    <strong>
+                                        <?= $request->conference ? $mcuServers[$request->conference->getMcuId()] : 'Конференция не создана' ?>
+                                    </strong>
+                                <?php endif; ?>
+                            </div>
 
                             <?= Html::endTag('button') ?>
 
@@ -131,24 +143,27 @@ $maxMinute = Yii::$app->params['vks.maxTime'];
 
         <?php endif; ?>
 
-
         <?= Html::beginTag('table', ['class' => 'vks-time-grid']) ?>
 
         <?php for ($i = $minMinute; $i < $maxMinute; $i += 30) {
 
             $isFullHour = !(bool)($i % 60);
-            $participantsCount = $participantsCountPerHour[$i];
-            $participantsCountColorClass = 'participants-count-success';
-            if ($participantsCount >= 25) {
-                $participantsCountColorClass = 'participants-count-warning';
-            }
-            if ($participantsCount >= 33) {
-                $participantsCountColorClass = 'participants-count-danger';
-            }
 
             echo Html::beginTag('tr', ['class' => 'vks-time-grid ' . ($isFullHour ? 'full-hour' : 'half-hour')]);
             echo Html::tag('td', $isFullHour ? (string)($i / 60) . Html::tag('sup', '00') : '', ['width' => 1]);
-            echo Html::tag('td', Html::tag('b', $participantsCount), ['class' => 'participants-count small ' . $participantsCountColorClass]);
+
+            if ($isOskrUser) {
+                $participantsCount = $participantsCountPerHour[$i];
+                $participantsCountColorClass = 'participants-count-success';
+                if ($participantsCount >= 25) {
+                    $participantsCountColorClass = 'participants-count-warning';
+                }
+                if ($participantsCount >= 33) {
+                    $participantsCountColorClass = 'participants-count-danger';
+                }
+                echo Html::tag('td', Html::tag('b', $participantsCount), ['class' => 'participants-count small ' . $participantsCountColorClass]);
+            }
+
             echo Html::endTag('tr');
         } ?>
 
@@ -192,5 +207,6 @@ $maxMinute = Yii::$app->params['vks.maxTime'];
     'requestContainerSelector' => 'button.vks-request',
     'modalWidgetSelector' => '#vks-view-modal-widget',
     'modalContentSelector' => '#vks-view-container',
+    'getProfilesURL' => \yii\helpers\Url::to(['/conference/get-profiles'])
 ]);
 $this->registerJs("$('#vks-schedule').schedule({$options});"); ?>

@@ -8,9 +8,13 @@
 namespace frontend\controllers;
 
 use frontend\models\vks\ConferenceForm;
+use frontend\models\vks\MCUProfileRepository;
 use frontend\models\vks\Request;
-use frontend\models\vks\RequestSearch;
+use function GuzzleHttp\Psr7\str;
 use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
+use yii\helpers\Json;
+use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
@@ -38,18 +42,21 @@ class ConferenceController extends Controller
     public function actionCreate($requestId)
     {
         $conferenceForm = new ConferenceForm();
-        if($conferenceForm->load(\Yii::$app->request->post())) {
+        if ($conferenceForm->load(\Yii::$app->request->post())) {
             $request = $this->getRequest($requestId);
-            if($request->createConference($conferenceForm)) {
+            if ($request->createConference($conferenceForm)) {
                 $request->save(false);
             }
         }
-        //return $this->redirect(['index', 'RequestSearch[dateInput]' => ]);
+        return $this->redirect(Url::previous());
     }
 
-    public function actionDestroy()
+    public function actionDestroy($requestId)
     {
-
+        $request = $this->getRequest($requestId);
+        $request->destroyConference();
+        $request->save(false);
+        return $this->redirect(Url::previous());
     }
 
     /**
@@ -66,4 +73,9 @@ class ConferenceController extends Controller
         return $request;
     }
 
+    public function actionGetProfiles()
+    {
+        $mcuId = \Yii::$app->request->post('depdrop_parents')[0];
+        echo json_encode(['output' => MCUProfileRepository::instance()->getRaw($mcuId), 'selected' => null]);
+    }
 }

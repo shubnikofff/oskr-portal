@@ -67,7 +67,7 @@ class ConferenceService
             'endTime' => $this->generateEndTime($request),
             'mcuid' => $form->mcu,
             'profile' => $form->profile,
-            'recordType' => $form->audiRecordType,
+            'recordType' => $form->audioRecordType,
             'Participants' => $this->generateParticipants($request)
 
         ];

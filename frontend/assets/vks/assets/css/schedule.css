@@ -44,7 +44,7 @@ td.participants-count-danger {
     border: 1px dashed red;
     position: relative;
     display: none;
-    z-index: 100;
+    z-index: 50;
 }
 
 #vks-schedule-grid {

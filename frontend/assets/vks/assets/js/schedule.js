@@ -49,7 +49,8 @@
             requestsGridSelector: null,
             requestContainerSelector: null,
             modalWidgetSelector: null,
-            modalContentSelector: null
+            modalContentSelector: null,
+            getProfilesURL: null
         },
         settings: {},
         $requestsGrid: null,
@@ -72,7 +73,8 @@
 
             this.$requestContainer.on('click', {
                 $content: this.$modalContent,
-                $widget: this.$modalWidget
+                $widget: this.$modalWidget,
+                $getProfilesURL: settings.getProfilesURL
             }, this.showModal);
         },
 
@@ -101,6 +103,15 @@
         showModal: function (event) {
 
             event.data.$content.load($(this).data('href'), function () {
+
+                $("#profile-id").depdrop({
+                    depends: ['mcu-id'],
+                    url: event.data.$getProfilesURL,
+                    loadingText: 'Загружаю...',
+                    placeholder: 'Не указан',
+                    emptyMsg: 'Профили не найдены'
+                });
+
                 event.data.$widget.modal('show');
             });
         }
