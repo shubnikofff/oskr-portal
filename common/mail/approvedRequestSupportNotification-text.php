@@ -11,7 +11,7 @@ $organizer = $request->owner;
 ?>
 Уведомляем Вас,
 
-что <?= Yii::$app->formatter->asDate($request->date->toDateTime(), 'long') ?> c <?= $request->beginTimeString ?> по <?= $request->endTimeString ?> пройдет совещание <?= $request->mode === $request::MODE_WITH_VKS ? 'в режиме ВКС' : '' ?>
+что на <?= Yii::$app->formatter->asDate($request->date->toDateTime(), 'long') ?> c <?= $request->beginTimeString ?> до <?= $request->endTimeString ?> согласовано совещание <?= $request->mode === $request::MODE_WITH_VKS ? 'в режиме ВКС' : '' ?>
 
 Место проеведения: <?= $participant->company->name . ' - ' . $participant->name ?>
 

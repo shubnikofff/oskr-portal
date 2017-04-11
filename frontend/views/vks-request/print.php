@@ -39,17 +39,17 @@ $this->title = "Заявка на помещение";
     </div>
 
     <?php switch ($model->status) {
-        case $model::STATUS_APPROVE:
+        case $model::STATUS_APPROVED:
             $statusCssClass = 'text-success';
             break;
-        case $model::STATUS_CANCEL:
+        case $model::STATUS_CANCELED:
             $statusCssClass = 'text-danger';
             break;
     } ?>
 
     <p>Статус заявки: <b class="<?= $statusCssClass ?>"><?= $model->statusName ?></b></p>
 
-    <?php if ($model->status === $model::STATUS_CANCEL): ?>
+    <?php if ($model->status === $model::STATUS_CANCELED): ?>
 
         <p class="text-danger" style="font-size: large"><?= $model->cancellationReason ?></p>
 

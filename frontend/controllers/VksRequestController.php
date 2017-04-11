@@ -11,11 +11,9 @@ namespace frontend\controllers;
 use common\models\vks\Participant;
 use common\rbac\SystemRole;
 use frontend\models\vks\ApproveRoomForm;
+use frontend\models\vks\ConferenceForm;
 use frontend\models\vks\RequestForm;
 use frontend\models\vks\RequestSearch;
-use frontend\models\vks\Schedule;
-use frontend\services\MCUService;
-use frontend\services\MeetingService;
 use MongoDB\BSON\ObjectID;
 use yii\filters\VerbFilter;
 use yii\helpers\Url;
@@ -23,7 +21,6 @@ use yii\web\Controller;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use common\rbac\SystemPermission;
-use common\components\actions\ViewAction;
 use frontend\models\vks\Request;
 use yii\web\Response;
 use yii\filters\AccessControl;
@@ -45,6 +42,7 @@ class VksRequestController extends Controller
                     'update' => ['get', 'post'],
                     'delete' => ['post'],
                     'approve' => ['post'],
+                    'approve-and-create-conference' => ['post'],
                     'cancel' => ['get', 'post'],
                 ]
             ],
@@ -100,16 +98,6 @@ class VksRequestController extends Controller
         ];
     }
 
-    public function actions()
-    {
-        return [
-            'view' => [
-                'class' => ViewAction::class,
-                'modelClass' => Request::class,
-            ],
-        ];
-    }
-
     public function actionIndex()
     {
         Url::remember();
@@ -119,14 +107,22 @@ class VksRequestController extends Controller
         $model->load($request->get());
         $viewParams = [
             'model' => $model,
-            'dataProvider' => $model->search(),
-            'participantsCountPerHour' => \Yii::$app->user->can(SystemPermission::APPROVE_REQUEST) ? Schedule::participantsCountPerHour($model->date) : [],
+            'dataProvider' => $model->search()
         ];
         if ($request->isPjax) {
             return $this->render('_participants', $viewParams);
         }
 
         return $this->render('index', $viewParams);
+    }
+
+
+    public function actionView($id)
+    {
+        /** @var RequestForm $request */
+        $request = self::findModel(Request::class, $id);
+
+        return \Yii::$app->request->isAjax ? $this->renderPartial('view', ['model' => $request]) : $this->render('view', ['model' => $request]);
     }
 
     public function actionCreate()
@@ -176,8 +172,7 @@ class VksRequestController extends Controller
     {
         /** @var Request $model */
         $model = self::findModel(Request::class, $id);
-        MCUService::destroyConference($model);
-        if($model->delete()) {
+        if ($model->delete()) {
             \Yii::$app->session->setFlash('success', "Совещание удалено.");
         }
         return $this->redirect(Url::previous());
@@ -200,8 +195,22 @@ class VksRequestController extends Controller
     {
         /** @var Request $model */
         $model = self::findModel(Request::class, $requestId);
-        MeetingService::approve($model);
-        MCUService::createConference($model, \Yii::$app->request->post());
+        if ($model->approve()) {
+            $model->save(false);
+        }
+        return $this->redirect(Url::previous());
+    }
+
+    public function actionApproveAndCreateConference($requestId)
+    {
+        /** @var Request $request */
+        $request = self::findModel(Request::class, $requestId);
+        $conferenceForm = new ConferenceForm();
+        if ($conferenceForm->load(\Yii::$app->request->post())) {
+            if ($request->approve() && $request->createConference($conferenceForm)) {
+                $request->save(false);
+            }
+        }
         return $this->redirect(Url::previous());
     }
 
@@ -213,8 +222,8 @@ class VksRequestController extends Controller
             throw new ForbiddenHttpException("Вы не можете отменить эту заявку. Операция запрещена.");
         }
         $model->scenario = Request::SCENARIO_CANCEL;
-        if($model->load(\Yii::$app->request->post())) {
-            MeetingService::cancel($model);
+        if ($model->load(\Yii::$app->request->post()) && $model->cancel()) {
+            $model->save(false);
             return $this->redirect(Url::previous());
         }
         return $this->render('cancel', ['model' => $model]);
@@ -222,7 +231,7 @@ class VksRequestController extends Controller
 
     public function actionPrint($id)
     {
-        $model = Request::findOne(['_id' => new ObjectID($id), 'status' => Request::STATUS_APPROVE]);
+        $model = Request::findOne(['_id' => new ObjectID($id), 'status' => Request::STATUS_APPROVED]);
         if ($model) {
             return $this->renderPartial('print', ['model' => $model]);
         }
@@ -262,7 +271,7 @@ class VksRequestController extends Controller
         $model = self::findModel(File::class, $id);
         $response = \Yii::$app->response;
         $response->headers->set('Content-type', $model->mimeType);
-        $response->headers->set('Content-Disposition', 'inline; filename="'.$model->filename.'"');
+        $response->headers->set('Content-Disposition', 'inline; filename="' . $model->filename . '"');
         $response->statusCode = 200;
         $response->format = Response::FORMAT_RAW;
         $response->data = $model->getFileContent();

@@ -6,45 +6,55 @@
  *
  * @var \frontend\models\vks\Request $model
  */
+$conference = $model->conference;
 ?>
 
 <div class="panel panel-default">
 
     <div class="panel-heading"><strong>Информация по подключению к ВКС</strong></div>
 
-    <table class="table">
+    <?php if ($conference): ?>
 
-        <tr>
-            <th></th>
-            <th>Для видео абонентов</th>
-            <th>Для аудио абонентов</th>
-        </tr>
-        <tr>
-            <th>Для внутренних абонентов ОА ИК "АСЭ"</th>
-            <td>
-                <div>Номер конференции: <?= $model->mcu->prefix . $model->conferenceId ?></div>
-                <div>Пароль: <?= $model->conferencePassword ?>#</div>
-            </td>
-            <td>
-                <div>Номер телефона: 005 или 200-05</div>
-                <div>Номер конференции: <?= $model->mcu->prefix . $model->conferenceId ?></div>
-                <div>Пароль: <?= $model->conferencePassword ?>#</div>
-            </td>
-        </tr>
-        <tr>
-            <th>Для сторонних организаций</th>
-            <td>
-                <div>Номер конференции: <?= $model->mcu->externalIp . "##" . $model->mcu->prefix . $model->conferenceId ?></div>
-                <div>Пароль: <?= $model->conferencePassword ?>#</div>
-            </td>
-            <td>
-                <div>Номер телефона: +7 (831) 422-10-05</div>
-                <div>Номер конференции: <?= $model->mcu->prefix . $model->conferenceId ?></div>
-                <div>Пароль: <?= $model->conferencePassword ?>#</div>
-            </td>
+        <table class="table">
 
-        </tr>
+            <tr>
+                <th></th>
+                <th>Для видео абонентов</th>
+                <th>Для аудио абонентов</th>
+            </tr>
+            <tr>
+                <th>Для внутренних абонентов ОА ИК "АСЭ"</th>
+                <td>
+                    <div>Номер конференции: <?= $conference->getInternalDS() . $conference->getNumber() ?></div>
+                    <div>Пароль: <?= $conference->getPassword() ?>#</div>
+                </td>
+                <td>
+                    <div>Номер телефона: 005 или 200-05</div>
+                    <div>Номер конференции: <?= $conference->getInternalDS() . $conference->getNumber() ?></div>
+                    <div>Пароль: <?= $conference->getPassword() ?>#</div>
+                </td>
+            </tr>
+            <tr>
+                <th>Для сторонних организаций</th>
+                <td>
+                    <div>Номер
+                        конференции: <?= $conference->getExternalDS() . $conference->getNumber() ?></div>
+                    <div>Пароль: <?= $conference->getPassword() ?>#</div>
+                </td>
+                <td>
+                    <div>Номер телефона: +7 (831) 422-10-05</div>
+                    <div>Номер конференции: <?= $conference->getInternalDS() . $conference->getNumber() ?></div>
+                    <div>Пароль: <?= $conference->getPassword() ?>#</div>
+                </td>
 
-    </table>
+            </tr>
+
+        </table>
+
+    <?php else: ?>
+
+        <div class="panel-body text-center">Конференция пока не собрана</div>
+
+    <?php endif; ?>
 
 </div>

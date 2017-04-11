@@ -11,6 +11,7 @@ use yii\helpers\ArrayHelper;
 use yii\mongodb\Collection;
 use MongoDB\BSON\UTCDateTime;
 use MongoDB\BSON\Javascript;
+
 /**
  * @author Shubnikov Alexey <a.shubnikov@niaep.ru>
  *
@@ -28,7 +29,7 @@ class Schedule
         $collection = \Yii::$app->get('mongodb')->getCollection(Request::collectionName());
 
         $map = new Javascript("function() {
-            for (var i = 8 * 60; i < 19 * 60; i = i + 30) {
+            for (var i = 7 * 60; i < 22 * 60; i = i + 30) {
                 if (this.beginTime < i + 30 && this.endTime > i) {
                     emit(i, this.participantsId.length);
                 }
@@ -42,7 +43,7 @@ class Schedule
         $condition = [
             'date' => $date,
             'mode' => Request::MODE_WITH_VKS,
-            'status' => ['$ne' => Request::STATUS_CANCEL]
+            'status' => ['$ne' => Request::STATUS_CANCELED]
         ];
 
         $result = $collection->mapReduce($map, $reduce, $out, $condition);

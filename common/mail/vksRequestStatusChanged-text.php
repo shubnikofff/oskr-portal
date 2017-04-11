@@ -18,7 +18,7 @@ $viewLink = Yii::$app->urlManager->createAbsoluteUrl(['vks-request/view', 'id' =
 
 Статус заявки изменился на "<?= $model->statusName ?>"
 
-<?php if($model->status === $model::STATUS_CANCEL):?>
+<?php if($model->status === $model::STATUS_CANCELED):?>
 Причина отмены: <?= $model->cancellationReason ?>
 <?php endif; ?>
 

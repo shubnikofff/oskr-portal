@@ -20,7 +20,7 @@ $link = Yii::$app->urlManager->createAbsoluteUrl(['vks-request/view', 'id' => (s
 
 <p>Статус заявки изменился на <strong><?= $model->statusName ?></strong></p>
 
-<?php if($model->status === $model::STATUS_CANCEL):?>
+<?php if($model->status === $model::STATUS_CANCELED):?>
     <p><strong>Причина отмены:</strong> <?= $model->cancellationReason ?></p>
 <?php endif; ?>
 

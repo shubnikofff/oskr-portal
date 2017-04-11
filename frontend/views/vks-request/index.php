@@ -19,7 +19,6 @@ use yii\helpers\ArrayHelper;
  * @var $this \yii\web\View
  * @var $model \frontend\models\vks\RequestSearch
  * @var $dataProvider \yii\data\ActiveDataProvider
- * @var $participantsCountPerHour array
  */
 
 $this->title = "Расписание" ?>
@@ -131,8 +130,7 @@ $this->title = "Расписание" ?>
 
         <?= $this->render('_schedule', [
             'model' => $model,
-            'dataProvider' => $dataProvider,
-            'participantsCountPerHour' => $participantsCountPerHour
+            'dataProvider' => $dataProvider
         ]) ?>
 
         <?php Pjax::end() ?>
@@ -140,6 +138,7 @@ $this->title = "Расписание" ?>
     </div>
 
 <?php \frontend\assets\vks\SearchFormAsset::register($this);
+\kartik\depdrop\DepDropAsset::register($this);
 $this->registerJs("$('#vks-search-form').searchForm();");
 $refreshPeriod = Yii::$app->params['vks.schedule.refreshPeriod'];
 //TODO не рефрешить прошедшие периоды
