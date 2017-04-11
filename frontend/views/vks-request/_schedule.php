@@ -122,7 +122,7 @@ $participantsCountPerHour = $isOskrUser ? Schedule::participantsCountPerHour($mo
                             <?= Html::tag('div', $request->topic, ['class' => 'vks-request-theme']) ?>
 
                             <div class="vks-request-service-data">
-                                <?php if ($isOskrUser): ?>
+                                <?php if ($isOskrUser && $request->mode === $request::MODE_WITH_VKS): ?>
                                     <strong>
                                         <?= $request->conference ? $mcuServers[$request->conference->getMcuId()] : 'Конференция не создана' ?>
                                     </strong>

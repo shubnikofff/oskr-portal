@@ -37,7 +37,7 @@ class ConferenceForm extends Model
         return [
             'mcu' => 'MCU',
             'profile' => 'Профиль',
-            'audiRecordType' => 'Тип аудиозаписи'
+            'audioRecordType' => 'Тип аудиозаписи'
         ];
     }
 
