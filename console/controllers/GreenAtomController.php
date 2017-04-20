@@ -7,7 +7,6 @@
 
 namespace console\controllers;
 
-use frontend\components\services\FutureMeetingGreenAtomNotifier;
 use frontend\models\NotifyService;
 use frontend\models\vks\Request;
 use yii\console\Controller;
@@ -37,12 +36,12 @@ class GreenAtomController extends Controller
 
     public function actionEveningNotification()
     {
-        $beginTime = 8 * 60;
+        $beginTime = 7 * 60;
         $tomorrowBookingSet = Request::find()->where([
             'date' => new UTCDateTime(strtotime("+1 day", gmmktime(0, 0, 0)) * 1000),
             'beginTime' => [
                 '$gte' => $beginTime,
-                '$lt' => $beginTime + 60,
+                '$lt' => $beginTime + 3 * 60,
             ],
             'status' => Request::STATUS_APPROVED
         ])->all();
@@ -51,7 +50,8 @@ class GreenAtomController extends Controller
             'date' => new UTCDateTime(gmmktime(0, 0, 0) * 1000),
             'beginTime' => [
                 '$gte' => 18 * 60
-            ]
+            ],
+            'status' => Request::STATUS_APPROVED
         ])->all();
 
         $this->notify(array_merge($tomorrowBookingSet, $eveningBookingSet));

@@ -114,6 +114,7 @@ $isUserCanRsoRefuse = Yii::$app->user->can(SystemPermission::RSO_REFUSE);
                 <th>Организация</th>
                 <th>Контактное лицо</th>
                 <th>Контактный телефон</th>
+                <th>Согласующее лицо</th>
                 <?php if ($isOSKRUser): ?>
                     <th>IP адрес</th>
                 <?php endif; ?>
@@ -144,6 +145,8 @@ $isUserCanRsoRefuse = Yii::$app->user->can(SystemPermission::RSO_REFUSE);
                     <td><?= $participant->company->name ?></td>
                     <td><?= $participant->contact ?></td>
                     <td><?= $participant->phone ?></td>
+                    <td><?= ($confirmPerson = $participant->confirmPerson) ? $confirmPerson->fullName .' тел.: '. $confirmPerson->phone . ' ' .
+                            Html::a($confirmPerson->email, 'mailto:'.$confirmPerson->email) : '' ?></td>
                     <?php if ($isOSKRUser): ?>
                         <td><?= $participant->dialString ?></td>
                     <?php endif; ?>
@@ -196,7 +199,7 @@ $isUserCanRsoRefuse = Yii::$app->user->can(SystemPermission::RSO_REFUSE);
 
             <?php endif; ?>
 
-            <?php if ($isOSKRUser && $model->status !== $model::STATUS_APPROVED && $model->mode === $model::MODE_WITHOUT_VKS): ?>
+            <?php if ($isOSKRUser && $model->status !== $model::STATUS_APPROVED): ?>
 
                 <?= Html::a("<span class='glyphicon glyphicon-ok'></span> Согласовать", ['vks-request/approve', 'requestId' => (string)$model->primaryKey], ['class' => 'btn btn-success', 'data' => ['method' => 'post']]) ?>
 

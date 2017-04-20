@@ -93,9 +93,12 @@ $participantsCountPerHour = $isOskrUser ? Schedule::participantsCountPerHour($mo
 
                             <?php $participantList = implode(' - ', $request->participantShortNameList) ?>
 
+                            <?php $mcuName = ($isOskrUser && $request->mode === $request::MODE_WITH_VKS) ?
+                                $mcuName = $request->conference ? $mcuServers[$request->conference->getMcuId()] : 'Конференция не создана' : '' ?>
+
                             <?= Html::beginTag('button', [
                                 'class' => $statusClass . ' vks-request',
-                                'title' => "№{$request->number} {$request->beginTimeString} - {$request->endTimeString} ({$participantList})",
+                                'title' => "№{$request->number} {$request->beginTimeString} - {$request->endTimeString} {$mcuName} ({$participantList}) ",
                                 'data' => [
                                     'href' => \yii\helpers\Url::to(['/vks-request/view', 'id' => (string)$request->primaryKey]),
                                     'top' => $request->beginTime - $minMinute,
@@ -121,13 +124,7 @@ $participantsCountPerHour = $isOskrUser ? Schedule::participantsCountPerHour($mo
 
                             <?= Html::tag('div', $request->topic, ['class' => 'vks-request-theme']) ?>
 
-                            <div class="vks-request-service-data">
-                                <?php if ($isOskrUser && $request->mode === $request::MODE_WITH_VKS): ?>
-                                    <strong>
-                                        <?= $request->conference ? $mcuServers[$request->conference->getMcuId()] : 'Конференция не создана' ?>
-                                    </strong>
-                                <?php endif; ?>
-                            </div>
+                            <div class="vks-request-service-data"><strong><?= $mcuName ?></strong></div>
 
                             <?= Html::endTag('button') ?>
 

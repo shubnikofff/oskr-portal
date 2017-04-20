@@ -182,7 +182,7 @@ class Request extends \common\models\Request
     public function getParticipants()
     {
         if (!$this->_participants) {
-            $this->_participants = is_array($this->participantsId) ? Participant::find()->with('company')->where(['_id' => ['$in' => $this->participantsId]])->all() : [];
+            $this->_participants = is_array($this->participantsId) ? Participant::find()->with('company', 'confirmPerson')->where(['_id' => ['$in' => $this->participantsId]])->all() : [];
         }
 
         return $this->_participants;

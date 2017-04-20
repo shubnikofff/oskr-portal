@@ -13,6 +13,7 @@ use frontend\assets\vks\RequestFormAsset;
 use yii\helpers\Url;
 use yii\helpers\BaseHtml;
 use common\components\MinuteFormatter;
+use common\rbac\SystemPermission;
 
 /**
  * @var $this \yii\web\View
@@ -68,9 +69,11 @@ use common\components\MinuteFormatter;
 
     </div>
 
-    <p class="help-block"><span class="glyphicon glyphicon-info-sign"></span> Укажите дату не
-        ранее <?= Yii::$app->formatter->asDate(time(), 'long') ?> и не
-        позднее <?= Yii::$app->formatter->asDate(strtotime("+1 week"), 'long') ?>
+    <p class="help-block"><span class="glyphicon glyphicon-info-sign"></span>
+
+        <?php if (!\Yii::$app->user->can(SystemPermission::BOOK_FOR_THE_YEAR)) : ?>
+            Укажите дату не ранее <?= Yii::$app->formatter->asDate(time(), 'long') ?> и не позднее <?= Yii::$app->formatter->asDate(strtotime("+1 week"), 'long') ?>
+        <?php endif; ?>
         Время должно быть в интервале c <?= MinuteFormatter::asString(Yii::$app->params['vks.minTime']) ?>
         до <?= MinuteFormatter::asString(Yii::$app->params['vks.maxTime']) ?>.
     </p>
@@ -99,7 +102,8 @@ use common\components\MinuteFormatter;
     ]) ?>
 
     <div id="vks-audio-record" style="display: <?= $model->mode === $model::MODE_WITH_VKS ? 'block' : 'none' ?>">
-        <p class="help-block"><span class="glyphicon glyphicon-info-sign"></span> Аудиозапись видеоконференций ведется в автоматическом режиме. Срок хранения аудиозаписи - 1 месяц.</p>
+        <p class="help-block"><span class="glyphicon glyphicon-info-sign"></span> Аудиозапись видеоконференций ведется в
+            автоматическом режиме. Срок хранения аудиозаписи - 1 месяц.</p>
     </div>
 
     <div id="vks-equipment" style="display: <?= $model->mode === $model::MODE_WITHOUT_VKS ? 'block' : 'none' ?>">

@@ -109,7 +109,7 @@ class RequestForm extends Request
 
             ['dateInput', MongoDateValidator::className(), 'format' => 'dd.MM.yyyy',
                 'min' => \Yii::$app->formatter->asDate(mktime(0, 0, 0), 'dd.MM.yyyy'),
-                'max' => \Yii::$app->formatter->asDate(strtotime("+1 week"), 'dd.MM.yyyy'),
+                'max' => \Yii::$app->formatter->asDate(strtotime(\Yii::$app->user->can(SystemPermission::BOOK_FOR_THE_YEAR) ? "+1 year" : "+1 week"), 'dd.MM.yyyy'),
             ],
 
             ['beginTimeInput', MinuteValidator::className(),
@@ -189,7 +189,8 @@ class RequestForm extends Request
      */
     public function beforeSave($insert)
     {
-        if($this->conference) {
+        $beginTime = date_create_from_format('d.m.Y H:i', $this->dateInput .' '. $this->beginTimeInput);
+        if($this->conference && $beginTime->getTimestamp() > time()) {
             $this->destroyConference();
         }
 

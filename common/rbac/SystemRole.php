@@ -20,4 +20,5 @@ class SystemRole
     const EMPLOYEE = 'employee';
     const OSKR = 'oskr';
     const RSO = 'rso';
+    const UNLIMITED_BOOKING = 'unlimited_booking';
 }
