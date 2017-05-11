@@ -24,14 +24,26 @@ use yii\helpers\Html;
                 <table class="table" >
 
                     <tr>
-                        <th>Номер</th>
+                        <th>Городской номер</th>
+                        <td>+7 (831) 421-81-00</td>
+
+                    </tr>
+
+                    <tr>
+                        <th>Внутренний номер (АО ИК «АСЭ»)</th>
+                        <td>0-0-4</td>
+
+                    </tr>
+
+                    <tr>
+                        <th>Номер аудиоконференции</th>
                         <td><?= $conference->getNumber() ?></td>
 
                     </tr>
 
                     <tr>
-                        <th>Пароль</th>
-                        <td><?= $conference->getPin() ?></td>
+                        <th>Пароль аудиоконференции</th>
+                        <td><?= $conference->getPin() ?>&nbsp;#</td>
 
                     </tr>
                     <tr>
