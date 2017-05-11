@@ -8,6 +8,7 @@
 namespace frontend\controllers;
 
 use frontend\models\audioconference\AudioConferenceService;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 
@@ -22,6 +23,17 @@ class AudioConferenceController extends Controller
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'create', 'delete'],
+                        'roles' => ['@'],
+                    ],
+
+                ]
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
