@@ -43,6 +43,7 @@ AppAsset::register($this);
         $userMenu[] = ['label' => '<span class="glyphicon glyphicon-user"></span> ' . $identity->shortName, 'items' => [
             ['label' => '<span class="glyphicon glyphicon-cog"></span> Профиль', 'url' => ['/user/profile']],
             ['label' => '<span class="glyphicon glyphicon-list-alt"></span> Заявки', 'url' => ['/user/requests']],
+            ['label' => '<span class="glyphicon glyphicon-earphone"></span> Аудиоконференция', 'url' => ['/audio-conference/index']],
             ['label' => 'Выход', 'url' => ['/site/logout'], 'linkOptions' => ['data-method' => 'post']]
         ]];
         $leftMenuItems[] = ['label' => '<span class="glyphicon glyphicon-headphones"></span> Архив аудиозаписей', 'url' => 'http://oskrportal/records/other/', 'linkOptions' => ['target' => '_blank']];
