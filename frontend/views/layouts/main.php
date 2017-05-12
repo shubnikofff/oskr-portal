@@ -46,7 +46,6 @@ AppAsset::register($this);
             ['label' => '<span class="glyphicon glyphicon-earphone"></span> Аудиоконференция', 'url' => ['/audio-conference/index']],
             ['label' => 'Выход', 'url' => ['/site/logout'], 'linkOptions' => ['data-method' => 'post']]
         ]];
-        $leftMenuItems[] = ['label' => '<span class="glyphicon glyphicon-headphones"></span> Архив аудиозаписей', 'url' => 'http://oskrportal/records/other/', 'linkOptions' => ['target' => '_blank']];
     }
 
     $leftMenuItems[] = ['label' => '<span class="glyphicon glyphicon-list-alt"></span> Формы заявок', 'url' => ['/site/request-forms']]; ?>

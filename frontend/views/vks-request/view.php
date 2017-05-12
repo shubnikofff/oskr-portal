@@ -7,6 +7,7 @@
 use yii\bootstrap\Html;
 use common\rbac\SystemPermission;
 use common\models\vks\Participant;
+use frontend\models\vks\ConferenceService;
 
 /**
  * @var $this \yii\web\View
@@ -42,7 +43,8 @@ $isUserCanRsoRefuse = Yii::$app->user->can(SystemPermission::RSO_REFUSE);
 
         </div>
 
-        <p style="font-size: 12pt">Время проведения: <?= Yii::$app->formatter->asDate($model->date->toDateTime(), 'long') ?>
+        <p style="font-size: 12pt">Время
+            проведения: <?= Yii::$app->formatter->asDate($model->date->toDateTime(), 'long') ?>
             c <?= $model->beginTimeString ?> до <?= $model->endTimeString ?></p>
 
         <p><strong>Тема совещания:</strong> <?= $model->topic ?></p>
@@ -65,6 +67,21 @@ $isUserCanRsoRefuse = Yii::$app->user->can(SystemPermission::RSO_REFUSE);
         <?php endif; ?>
 
         <p><strong>Согласование с РСО:</strong> <?= $model->rsoAgreement ?></p>
+
+        <?php if ($model->mode === $model::MODE_WITH_VKS && $isUserCanUpdateRequest): ?>
+
+            <p>
+                <strong>Ссылка на аудиозапись:</strong>
+
+                <?php if ((time() + 3 * 60 * 60) > ($model->date->toDateTime()->getTimestamp() + $model->endTime * 60)) {
+                    $conferenceName = ConferenceService::instance()->generateConferenceName($model);
+                    echo Html::a($conferenceName . '.wav', 'http://oskrportal/records/other/' . $conferenceName . '-in.wav', ['target' => '_blank']);
+                } else {
+                    echo "-";
+                } ?>
+            </p>
+
+        <?php endif; ?>
 
         <p class="lead">Организатор</p>
 
@@ -145,8 +162,8 @@ $isUserCanRsoRefuse = Yii::$app->user->can(SystemPermission::RSO_REFUSE);
                     <td><?= $participant->company->name ?></td>
                     <td><?= $participant->contact ?></td>
                     <td><?= $participant->phone ?></td>
-                    <td><?= ($confirmPerson = $participant->confirmPerson) ? $confirmPerson->fullName .' тел.: '. $confirmPerson->phone . ' ' .
-                            Html::a($confirmPerson->email, 'mailto:'.$confirmPerson->email) : '' ?></td>
+                    <td><?= ($confirmPerson = $participant->confirmPerson) ? $confirmPerson->fullName . ' тел.: ' . $confirmPerson->phone . ' ' .
+                            Html::a($confirmPerson->email, 'mailto:' . $confirmPerson->email) : '' ?></td>
                     <?php if ($isOSKRUser): ?>
                         <td><?= $participant->dialString ?></td>
                     <?php endif; ?>

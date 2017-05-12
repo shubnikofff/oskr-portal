@@ -91,7 +91,7 @@ class ConferenceService
      * @param Request $request
      * @return string
      */
-    private function generateConferenceName(Request $request)
+    public function generateConferenceName(Request $request)
     {
         return date('d-m-Y', $request->date->toDateTime()->getTimestamp()) . "_" . $request->number;
     }
