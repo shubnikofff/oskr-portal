@@ -44,6 +44,10 @@ class RequestForm extends Request
      * @var UploadedFile[]
      */
     public $rsoUploadedFiles;
+    /**
+     * @var array
+     */
+    private $_newBookings = [];
 
     /**
      * @inheritDoc
@@ -219,7 +223,7 @@ class RequestForm extends Request
                 $this->number = self::generateNumber($this->date);
             }
 
-            if ($insert) {
+            /*if ($insert) {
 
                 $this->status = self::STATUS_OSKR_CONSIDERATION;
                 foreach ($this->participants as $participant) {
@@ -230,7 +234,37 @@ class RequestForm extends Request
             } elseif ($this->status !== self::STATUS_ROOMS_CONSIDIRATION) {
                 $this->status = self::STATUS_OSKR_CONSIDERATION;
                 $this->trigger(self::EVENT_STATUS_CHANGED, new RequestStatusChangedEvent(['request' => $this]));
+            }*/
+
+
+            $newBookings = [];
+            foreach ($this->participants as $participant) {
+
+                if($insert || !$this->getRoomStatus($participant->_id)) {
+
+                    $newBookings[] = [
+                        'room' => $participant,
+                        'status' => $participant->ahuConfirmation ? Participant::STATUS_CONSIDIRATION : Participant::STATUS_APPROVE
+                    ];
+                }
             }
+
+            $newStatus = self::STATUS_OSKR_CONSIDERATION;
+            foreach ($newBookings as $newBooking) {
+
+                if($newBooking['status'] === Participant::STATUS_CONSIDIRATION) {
+                    $newStatus = self::STATUS_ROOMS_CONSIDIRATION;
+                    $newBooking['room']->trigger(Participant::EVENT_STATUS_CHANGED, new RoomStatusChangedEvent(['request' => $this, 'roomStatus' => $newBooking['status']]));
+                }
+            }
+
+            if($this->status !== $newStatus) {
+                $this->status = $newStatus;
+                $this->trigger(self::EVENT_STATUS_CHANGED, new RequestStatusChangedEvent(['request' => $this]));
+            }
+
+            $this->_newBookings = $newBookings;
+
             return true;
 
         } else {
@@ -245,7 +279,7 @@ class RequestForm extends Request
     {
         parent::afterSave($insert, $changedAttributes);
 
-        if ($insert) {
+        /*if ($insert) {
             $this->trigger(self::EVENT_STATUS_CHANGED, new RequestStatusChangedEvent(['request' => $this]));
 
             foreach ($this->participants as $participant) {
@@ -258,7 +292,14 @@ class RequestForm extends Request
                 }
                 $participant->writeLog($this, $roomStatus, true);
             }
+        }*/
+
+        foreach ($this->_newBookings as $newBooking) {
+
+            $newBooking['room']->writeLog($this, $newBooking['status'], true);
+
         }
+
     }
 
 }
