@@ -223,20 +223,6 @@ class RequestForm extends Request
                 $this->number = self::generateNumber($this->date);
             }
 
-            /*if ($insert) {
-
-                $this->status = self::STATUS_OSKR_CONSIDERATION;
-                foreach ($this->participants as $participant) {
-                    if ($participant->ahuConfirmation) {
-                        $this->status = self::STATUS_ROOMS_CONSIDIRATION;
-                    }
-                }
-            } elseif ($this->status !== self::STATUS_ROOMS_CONSIDIRATION) {
-                $this->status = self::STATUS_OSKR_CONSIDERATION;
-                $this->trigger(self::EVENT_STATUS_CHANGED, new RequestStatusChangedEvent(['request' => $this]));
-            }*/
-
-
             $newBookings = [];
             foreach ($this->participants as $participant) {
 
@@ -254,7 +240,6 @@ class RequestForm extends Request
 
                 if($newBooking['status'] === Participant::STATUS_CONSIDIRATION) {
                     $newStatus = self::STATUS_ROOMS_CONSIDIRATION;
-                    $newBooking['room']->trigger(Participant::EVENT_STATUS_CHANGED, new RoomStatusChangedEvent(['request' => $this, 'roomStatus' => $newBooking['status']]));
                 }
             }
 
@@ -279,27 +264,13 @@ class RequestForm extends Request
     {
         parent::afterSave($insert, $changedAttributes);
 
-        /*if ($insert) {
-            $this->trigger(self::EVENT_STATUS_CHANGED, new RequestStatusChangedEvent(['request' => $this]));
-
-            foreach ($this->participants as $participant) {
-
-                if ($participant->ahuConfirmation) {
-                    $roomStatus = Participant::STATUS_CONSIDIRATION;
-                    $participant->trigger(Participant::EVENT_STATUS_CHANGED, new RoomStatusChangedEvent(['request' => $this, 'roomStatus' => $roomStatus]));
-                } else {
-                    $roomStatus = Participant::STATUS_APPROVE;
-                }
-                $participant->writeLog($this, $roomStatus, true);
-            }
-        }*/
-
         foreach ($this->_newBookings as $newBooking) {
 
             $newBooking['room']->writeLog($this, $newBooking['status'], true);
-
+            if($newBooking['status'] === Participant::STATUS_CONSIDIRATION) {
+                $newBooking['room']->trigger(Participant::EVENT_STATUS_CHANGED, new RoomStatusChangedEvent(['request' => $this, 'roomStatus' => $newBooking['status']]));
+            }
         }
-
     }
 
 }
