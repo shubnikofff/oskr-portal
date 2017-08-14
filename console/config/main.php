@@ -15,7 +15,7 @@ return [
     'controllerNamespace' => 'console\controllers',
     'controllerMap' => [
         'mongodb-migrate' => \yii\mongodb\console\controllers\MigrateController::class,
-        'fixture' => \yii\faker\FixtureController::class
+        //'fixture' => \yii\faker\FixtureController::class
     ],
     'components' => [
         'log' => [
