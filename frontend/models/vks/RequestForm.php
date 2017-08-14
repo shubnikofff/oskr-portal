@@ -245,7 +245,6 @@ class RequestForm extends Request
 
             if($this->status !== $newStatus) {
                 $this->status = $newStatus;
-                $this->trigger(self::EVENT_STATUS_CHANGED, new RequestStatusChangedEvent(['request' => $this]));
             }
 
             $this->_newBookings = $newBookings;
@@ -271,6 +270,7 @@ class RequestForm extends Request
                 $newBooking['room']->trigger(Participant::EVENT_STATUS_CHANGED, new RoomStatusChangedEvent(['request' => $this, 'roomStatus' => $newBooking['status']]));
             }
         }
+        $this->trigger(self::EVENT_STATUS_CHANGED, new RequestStatusChangedEvent(['request' => $this]));
     }
 
 }

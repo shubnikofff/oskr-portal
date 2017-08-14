@@ -27,4 +27,5 @@ class SystemPermission
     const RSO_AGREE = 'rso_agree';
     const RSO_REFUSE = 'rso_refuse';
     const BOOK_FOR_THE_YEAR = 'book_for_the_year';
+    const SEE_CONNECTION_INFO = 'see_connection_info';
 }

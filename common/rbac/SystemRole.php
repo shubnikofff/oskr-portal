@@ -21,4 +21,5 @@ class SystemRole
     const OSKR = 'oskr';
     const RSO = 'rso';
     const UNLIMITED_BOOKING = 'unlimited_booking';
+    const CONNECTION_INFO_ACCESS = 'connection_info_access';
 }

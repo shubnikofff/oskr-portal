@@ -101,7 +101,7 @@ $isUserCanRsoRefuse = Yii::$app->user->can(SystemPermission::RSO_REFUSE);
 
         <?php if ($model->mode === $model::MODE_WITH_VKS): ?>
 
-            <?php if ($isUserCanUpdateRequest): ?>
+            <?php if ($isUserCanUpdateRequest || Yii::$app->user->can(SystemPermission::SEE_CONNECTION_INFO)): ?>
 
                 <?= $this->render('_connectingInfo', ['model' => $model]) ?>
 
