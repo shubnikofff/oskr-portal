@@ -13,7 +13,7 @@ $this->beginContent('@app/views/layouts/main.php');
 echo \yii\bootstrap\Nav::widget([
     'items' => [
         [
-            'label' => 'Моия заявки',
+            'label' => 'Мои заявки',
             'url' => ['/user/requests']
         ],
         [

@@ -17,7 +17,7 @@ $link = Yii::$app->urlManager->createAbsoluteUrl(['vks-request/approve-booking',
 <p>Вы получили это письмо, потому что на <?= Yii::$app->name ?> была забронирована комната <b><?= $room->name ?></b>,
     которая входит в зону Вашей компетенции.</p>
 
-<p>Данная комната была забронирована в рамках проведения совещнаия на тему: &laquo;<?= $request->topic ?>&raquo;,
+<p>Данная комната была забронирована в рамках проведения совещанаия на тему: &laquo;<?= $request->topic ?>&raquo;,
     которое будет проходить <b><?= Yii::$app->formatter->asDate($request->date->toDateTime(), 'long') ?></b> c
     <b><?= MinuteFormatter::asString($request->beginTime) ?></b> до
     <b><?= MinuteFormatter::asString($request->endTime) ?></b>.</p>
