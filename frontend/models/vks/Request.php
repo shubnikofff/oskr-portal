@@ -35,6 +35,7 @@ use frontend\models\rso\UserNotificationStrategy;
  * @property string endTimeString
  * @property int $mode
  * @property Conference $conference
+ * @property string $isVim
  * @property array $equipment
  * @property ObjectID[] $participantsId
  * @property array $roomsOnConsidiration
@@ -93,6 +94,7 @@ class Request extends \common\models\Request
             'mode',
             'conference',
             'equipment',
+            'isVim',
             'participantsId',
             'roomsOnConsidiration',
             'cancellationReason',
@@ -168,6 +170,7 @@ class Request extends \common\models\Request
             'endTimeInput' => 'Время конца',
             'mode' => 'Режим совещания',
             'equipment' => 'Дополнительное оборудование',
+            'isVim' => 'Очень важное совещание',
             'participantsId' => 'Участники',
             'status' => 'Статус',
             'cancellationReason' => 'Причина отмены',

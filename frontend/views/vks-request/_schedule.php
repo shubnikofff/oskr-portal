@@ -112,9 +112,21 @@ $participantsCountPerHour = $isOskrUser ? (new Schedule($model->date))->particip
 
                                 <div class="vks-request-options">
 
+                                    <?php if ($request->note !== ''): ?>
+
+                                        <span class="glyphicon glyphicon-warning-sign"></span>
+
+                                    <?php endif; ?>
+
                                     <?php if ($request->mode === $request::MODE_WITH_VKS): ?>
 
                                         <span class="glyphicon glyphicon-facetime-video"></span>
+
+                                    <?php endif; ?>
+
+                                    <?php if ($request->isVim === '1'): ?>
+
+                                        <span style="color: red" class="glyphicon glyphicon-star"></span>
 
                                     <?php endif; ?>
 

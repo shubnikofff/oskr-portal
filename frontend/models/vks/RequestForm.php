@@ -80,7 +80,7 @@ class RequestForm extends Request
     public function scenarios()
     {
         return [
-            'default' => ['status', 'topic', 'dateInput', 'beginTimeInput', 'endTimeInput', 'foreignOrganizations', 'rsoUploadedFiles', 'mode', 'equipment', 'participantsId', 'note'],
+            'default' => ['status', 'topic', 'dateInput', 'beginTimeInput', 'endTimeInput', 'isVim', 'foreignOrganizations', 'rsoUploadedFiles', 'mode', 'equipment', 'participantsId', 'note'],
             self::SCENARIO_REFRESH_PARTICIPANTS => ['dateInput', 'beginTimeInput', 'endTimeInput', 'participantsId'],
         ];
     }
@@ -144,6 +144,8 @@ class RequestForm extends Request
             ['mode', 'filter', 'filter' => function ($value) {
                 return intval($value);
             }],
+
+            ['isVim', 'boolean'],
 
             ['participantsId', 'required', 'on' => 'default', 'message' => 'Необходимо выбрать участников'],
             ['participantsId', function ($attribute) {

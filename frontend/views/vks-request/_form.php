@@ -83,6 +83,10 @@ use common\rbac\SystemPermission;
         0 => 'Без участия'
     ]) ?>
 
+    <?php if (\Yii::$app->user->can(SystemPermission::APPROVE_REQUEST)) : ?>
+        <?= $form->field($model, 'isVim')->checkbox() ?>
+    <?php endif; ?>
+
     <div id="rso-files-container" <?= $model->foreignOrganizations == 1 ? '' : 'hidden' ?>>
 
         <?= $form->field($model, 'rsoUploadedFiles[]', ['enableClientValidation' => false])->fileInput(['multiple' => true])->label("Документы для режимно-секретного отдела") ?>
