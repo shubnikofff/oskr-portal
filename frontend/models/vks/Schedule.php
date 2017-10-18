@@ -20,10 +20,23 @@ use MongoDB\BSON\Javascript;
 class Schedule
 {
     /**
+     * @var UTCDateTime
+     */
+    private $_date;
+
+    /**
+     * Schedule constructor.
      * @param UTCDateTime $date
+     */
+    public function __construct(UTCDateTime $date)
+    {
+        $this->_date = $date;
+    }
+
+    /**
      * @return array|string
      */
-    public static function participantsCountPerHour(UTCDateTime $date)
+    public function participantsCountPerHour()
     {
         /** @var $collection Collection */
         $collection = \Yii::$app->get('mongodb')->getCollection(Request::collectionName());
@@ -41,7 +54,7 @@ class Schedule
         $out = ['inline' => true];
 
         $condition = [
-            'date' => $date,
+            'date' => $this->_date,
             'mode' => Request::MODE_WITH_VKS,
             'status' => ['$ne' => Request::STATUS_CANCELED]
         ];
@@ -50,5 +63,23 @@ class Schedule
 
         return ArrayHelper::map($result, '_id', 'value');
 
+    }
+
+    public function participantsCountOnPeriod($beginTime, $endTime)
+    {
+        /** @var $collection Collection */
+        $collection = \Yii::$app->get('mongodb')->getCollection(Request::collectionName());
+
+        $count = $collection->aggregate([
+            ['$match' => [
+                'date' => $this->_date,
+                'beginTime' => ['$lt' => $endTime],
+                'endTime' => ['$gt' => $beginTime],
+            ]],
+            ['$project' => ['_id' => 0, 'participantsId' => 1]],
+            ['$unwind' => '$participantsId']
+        ]);
+
+        return count($count);
     }
 }

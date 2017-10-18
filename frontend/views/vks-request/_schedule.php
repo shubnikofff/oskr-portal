@@ -19,7 +19,7 @@ $minMinute = Yii::$app->params['vks.minTime'];
 $maxMinute = Yii::$app->params['vks.maxTime'];
 $isOskrUser = Yii::$app->user->can(\common\rbac\SystemPermission::APPROVE_REQUEST);
 $mcuServers = $isOskrUser ? ArrayHelper::map(MCURepository::instance()->getRaw(), 'id', 'name') : [];
-$participantsCountPerHour = $isOskrUser ? Schedule::participantsCountPerHour($model->date) : [];
+$participantsCountPerHour = $isOskrUser ? (new Schedule($model->date))->participantsCountPerHour() : [];
 ?>
     <p class="lead" style="padding-top: 90px">Расписание
         на <?= Yii::$app->formatter->asDate($model->date->toDateTime(), 'long') ?></p>

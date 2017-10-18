@@ -14,8 +14,10 @@ use frontend\models\vks\ApproveRoomForm;
 use frontend\models\vks\ConferenceForm;
 use frontend\models\vks\RequestForm;
 use frontend\models\vks\RequestSearch;
+use frontend\models\vks\Schedule;
 use MongoDB\BSON\ObjectID;
 use yii\filters\VerbFilter;
+use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\ForbiddenHttpException;
@@ -139,6 +141,7 @@ class VksRequestController extends Controller
 
             if ($model->save()) {
                 \Yii::$app->session->setFlash('success', "Заявка создана");
+                self::setTooManyParticipantsFlash($model);
                 return $this->redirect(Url::home());
             }
         }
@@ -161,6 +164,7 @@ class VksRequestController extends Controller
 
             if ($model->save()) {
                 \Yii::$app->session->setFlash('success', "Заявка сохранена");
+                self::setTooManyParticipantsFlash($model);
                 return $this->redirect(Url::home());
             }
         }
@@ -287,5 +291,18 @@ class VksRequestController extends Controller
         }
 
         return $model;
+    }
+
+    /**
+     * @param RequestForm $model
+     */
+    private static function setTooManyParticipantsFlash($model)
+    {
+        if ((new Schedule($model->date))->participantsCountOnPeriod($model->beginTime, $model->endTime) >= 45) {
+            $message = "Внимание!<br>На планируемый Вами промежуток времени запланировано большое количество совещаний. 
+                        Для обеспечения качественной работы серверного оборудования, при наличии возможности, убедительная просьба "
+            .Html::a('перенести совещание на другую дату/время', ['vks-request/update', 'id' => (string)$model->primaryKey]) . ".";
+            \Yii::$app->session->setFlash('warning', $message);
+        }
     }
 }

@@ -77,16 +77,18 @@ AppAsset::register($this);
     </div>
 </div>
 
-<footer class="footer">
+<footer class="footer" style="padding-bottom: 50px;">
     <div class="container">
         <div class="row">
-            <div class="col-md-6">&copy;&nbsp;<?/*= date('Y') */?> Управление системных корпоративных ресурсов АО ИК "АСЭ"</div>
             <div class="col-md-3">
                 <div>0-0-0</div>
+                <div><?= Html::a('oskr@niaep.ru', 'mailto:oskr@niaep.ru') ?></div>
+            </div>
+            <div class="col-md-3">
                 <div>+7 (910) 100-80-00</div>
                 <div>+7 (831) 421-79-90</div>
             </div>
-            <div class="col-md-3"><?= Html::a('oskr@niaep.ru', 'mailto:oskr@niaep.ru') ?></div>
+            <div class="col-md-6">&copy;&nbsp;Управление системных корпоративных ресурсов АО ИК "АСЭ" <?= date('Y') ?>г.</div>
         </div>
     </div>
 
