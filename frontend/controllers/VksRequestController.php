@@ -298,7 +298,15 @@ class VksRequestController extends Controller
      */
     private static function setTooManyParticipantsFlash($model)
     {
-        if ((new Schedule($model->date))->participantsCountOnPeriod($model->beginTime, $model->endTime) >= 45) {
+        $participantsCount =  (new Schedule($model->date))->participantsCountPerHour();
+        $max = 0;
+        foreach ($participantsCount as $key => $value) {
+            if($key >= $model->beginTime && $key <= $model->endTime && $value > $max) {
+                $max = $value;
+            }
+        }
+
+        if ($max >= 45) {
             $message = "Внимание!<br>На планируемый Вами промежуток времени запланировано большое количество совещаний. 
                         Для обеспечения качественной работы серверного оборудования, при наличии возможности, убедительная просьба "
             .Html::a('перенести совещание на другую дату/время', ['vks-request/update', 'id' => (string)$model->primaryKey]) . ".";
