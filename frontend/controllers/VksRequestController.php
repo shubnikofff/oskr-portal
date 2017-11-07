@@ -141,7 +141,6 @@ class VksRequestController extends Controller
 
             if ($model->save()) {
                 \Yii::$app->session->setFlash('success', "Заявка создана");
-                self::setTooManyParticipantsFlash($model);
                 return $this->redirect(Url::home());
             }
         }
@@ -164,7 +163,6 @@ class VksRequestController extends Controller
 
             if ($model->save()) {
                 \Yii::$app->session->setFlash('success', "Заявка сохранена");
-                self::setTooManyParticipantsFlash($model);
                 return $this->redirect(Url::home());
             }
         }
