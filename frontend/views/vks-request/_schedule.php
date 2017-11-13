@@ -164,10 +164,10 @@ $participantsCountPerHour = $isOskrUser ? (new Schedule($model->date))->particip
             if ($isOskrUser) {
                 $participantsCount = $participantsCountPerHour[$i];
                 $participantsCountColorClass = 'participants-count-success';
-                if ($participantsCount >= 25) {
+                if ($participantsCount >= 40) {
                     $participantsCountColorClass = 'participants-count-warning';
                 }
-                if ($participantsCount >= 33) {
+                if ($participantsCount >= 60) {
                     $participantsCountColorClass = 'participants-count-danger';
                 }
                 echo Html::tag('td', Html::tag('b', $participantsCount), ['class' => 'participants-count small ' . $participantsCountColorClass]);
