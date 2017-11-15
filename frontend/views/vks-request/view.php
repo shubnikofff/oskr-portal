@@ -4,6 +4,7 @@
  * Created: 28.10.15 13:41
  * @copyright Copyright (c) 2015 OSKR NIAEP
  */
+
 use yii\bootstrap\Html;
 use common\rbac\SystemPermission;
 use common\models\vks\Participant;
@@ -20,6 +21,7 @@ $isOSKRUser = Yii::$app->user->can(SystemPermission::APPROVE_REQUEST);
 $isUserCanUpdateRequest = Yii::$app->user->can(SystemPermission::UPDATE_REQUEST, ['object' => $model]);
 $isUserCanRsoAgree = Yii::$app->user->can(SystemPermission::RSO_AGREE);
 $isUserCanRsoRefuse = Yii::$app->user->can(SystemPermission::RSO_REFUSE);
+$endTime = $model->date->toDateTime()->getTimestamp() + $model->endTime * 60;
 ?>
 
     <div style="font-size: 13px">
@@ -210,43 +212,51 @@ $isUserCanRsoRefuse = Yii::$app->user->can(SystemPermission::RSO_REFUSE);
 
         <div style="margin-bottom: 12px">
 
-            <?php if ($isUserCanUpdateRequest): ?>
+            <?php if (time() < ($endTime - 60 * 60)): ?>
 
-                <?= Html::a("<span class='glyphicon glyphicon-pencil'></span> Редактировать", ['vks-request/update', 'id' => (string)$model->primaryKey], ['class' => 'btn btn-primary']) ?>
+                <?php if ($isUserCanUpdateRequest): ?>
 
-            <?php endif; ?>
+                    <?= Html::a("<span class='glyphicon glyphicon-pencil'></span> Редактировать", ['vks-request/update', 'id' => (string)$model->primaryKey], ['class' => 'btn btn-primary']) ?>
 
-            <?php if ($isOSKRUser && $model->status !== $model::STATUS_APPROVED): ?>
+                <?php endif; ?>
 
-                <?= Html::a("<span class='glyphicon glyphicon-ok'></span> Согласовать", ['vks-request/approve', 'requestId' => (string)$model->primaryKey], ['class' => 'btn btn-success', 'data' => ['method' => 'post']]) ?>
+                <?php if ($isOSKRUser && $model->status !== $model::STATUS_APPROVED): ?>
 
-            <?php endif; ?>
+                    <?= Html::a("<span class='glyphicon glyphicon-ok'></span> Согласовать", ['vks-request/approve', 'requestId' => (string)$model->primaryKey], ['class' => 'btn btn-success', 'data' => ['method' => 'post']]) ?>
+
+                <?php endif; ?>
 
 
-            <?php if ($model->status !== $model::STATUS_CANCELED && Yii::$app->user->can(SystemPermission::CANCEL_REQUEST, ['object' => $model])): ?>
+                <?php if ($model->status !== $model::STATUS_CANCELED && Yii::$app->user->can(SystemPermission::CANCEL_REQUEST, ['object' => $model])): ?>
 
-                <?= Html::a("<span class='glyphicon glyphicon-ban-circle'></span> Отменить", ['vks-request/cancel', 'id' => (string)$model->primaryKey], ['class' => 'btn btn-warning']) ?>
+                    <?= Html::a("<span class='glyphicon glyphicon-ban-circle'></span> Отменить", ['vks-request/cancel', 'id' => (string)$model->primaryKey], ['class' => 'btn btn-warning']) ?>
 
-            <?php endif; ?>
+                <?php endif; ?>
 
-            <?php if (Yii::$app->user->can(SystemPermission::DELETE_REQUEST)): ?>
+                <?php if (Yii::$app->user->can(SystemPermission::DELETE_REQUEST)): ?>
 
-                <?= Html::a("<span class='glyphicon glyphicon-trash'></span> Удалить", ['vks-request/delete', 'id' => (string)$model->primaryKey], [
-                    'class' => 'btn btn-danger',
-                    'data' => ['method' => 'post', 'confirm' => 'Удалить данную заявку ?']
-                ]) ?>
+                    <?= Html::a("<span class='glyphicon glyphicon-trash'></span> Удалить", ['vks-request/delete', 'id' => (string)$model->primaryKey], [
+                        'class' => 'btn btn-danger',
+                        'data' => ['method' => 'post', 'confirm' => 'Удалить данную заявку ?']
+                    ]) ?>
 
-            <?php endif; ?>
+                <?php endif; ?>
 
-            <?php if ($isUserCanRsoAgree): ?>
+                <?php if ($isUserCanRsoAgree): ?>
 
-                <?= Html::a('Одобрить', ['rso/approve-request', 'id' => (string)$model->_id], ['class' => 'btn btn-success', 'style' => 'display:inline-block']) ?>
+                    <?= Html::a('Одобрить', ['rso/approve-request', 'id' => (string)$model->_id], ['class' => 'btn btn-success', 'style' => 'display:inline-block']) ?>
 
-            <?php endif; ?>
+                <?php endif; ?>
 
-            <?php if ($isUserCanRsoRefuse): ?>
+                <?php if ($isUserCanRsoRefuse): ?>
 
-                <?= Html::a('Отказать', ['rso/refuse-request', 'id' => (string)$model->_id], ['class' => 'btn btn-danger', 'style' => 'display:inline-block']) ?>
+                    <?= Html::a('Отказать', ['rso/refuse-request', 'id' => (string)$model->_id], ['class' => 'btn btn-danger', 'style' => 'display:inline-block']) ?>
+
+                <?php endif; ?>
+
+            <?php elseif ($isUserCanUpdateRequest): ?>
+
+                <?= Html::a("<span class='glyphicon glyphicon-star'></span> Оценить качетсво", ['/feed-back', 'requestId' => (string)$model->_id], ['class' => 'btn btn-lg btn-warning']) ?>
 
             <?php endif; ?>
 

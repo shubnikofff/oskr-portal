@@ -47,6 +47,7 @@ use frontend\models\rso\UserNotificationStrategy;
  * @property array $log
  * @property string $rsoAgreement
  * @property array $rsoFiles
+ * @property string satisfaction
  */
 class Request extends \common\models\Request
 {
@@ -56,6 +57,7 @@ class Request extends \common\models\Request
     const MODE_WITHOUT_VKS = 1;
 
     const SCENARIO_CANCEL = 'cancel';
+    const SCENARIO_FEEDBACK = 'feedback';
     const SCENARIO_DEPLOY_CONFERENCE = 'deploy_conference';
 
     const RSO_AGREEMENT_NO_NEED = "Нет необходимости";
@@ -99,7 +101,9 @@ class Request extends \common\models\Request
             'roomsOnConsidiration',
             'cancellationReason',
             'note',
-            'log'
+            'log',
+            'satisfaction',
+            'feedback'
         ]);
     }
 
@@ -117,6 +121,7 @@ class Request extends \common\models\Request
     {
         return [
             self::SCENARIO_CANCEL => ['cancellationReason'],
+            self::SCENARIO_FEEDBACK => ['satisfaction', 'feedback'],
         ];
     }
 
@@ -127,11 +132,17 @@ class Request extends \common\models\Request
     {
         return array_merge(parent::rules(), [
 
-            ['cancellationReason', 'required'],
+            [['cancellationReason', 'satisfaction'], 'required'],
 
             ['dateInput', MongoDateValidator::class, 'format' => 'dd.MM.yyyy', 'mongoDateAttribute' => 'date'],
 
             ['participantsId', 'checkParticipantsIdFormat'],
+
+            ['satisfaction', 'boolean'],
+
+            ['feedback', 'required', 'when' => function($model) {
+                return $model->satisfaction === '0';
+            }, 'message' => 'Пожалуйста укажите Ваши замечания']
         ]);
     }
 
@@ -175,7 +186,8 @@ class Request extends \common\models\Request
             'status' => 'Статус',
             'cancellationReason' => 'Причина отмены',
             'note' => 'Примечание',
-            'rsoAgreement' => 'Согласование с РСО'
+            'rsoAgreement' => 'Согласование с РСО',
+            'feedback' => 'Отзыв'
         ];
     }
 
