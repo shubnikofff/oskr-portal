@@ -256,7 +256,7 @@ $endTime = $model->date->toDateTime()->getTimestamp() + $model->endTime * 60;
 
             <?php elseif ($isUserCanUpdateRequest): ?>
 
-                <?= Html::a("<span class='glyphicon glyphicon-star'></span> Оценить качетсво", ['/feed-back', 'requestId' => (string)$model->_id], ['class' => 'btn btn-lg btn-warning']) ?>
+                <?= Html::a("<span class='glyphicon glyphicon-star'></span> Оценить качество", ['/feed-back', 'requestId' => (string)$model->_id], ['class' => 'btn btn-lg btn-warning']) ?>
 
             <?php endif; ?>
 

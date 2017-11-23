@@ -22,4 +22,5 @@ class SystemRole
     const RSO = 'rso';
     const UNLIMITED_BOOKING = 'unlimited_booking';
     const CONNECTION_INFO_ACCESS = 'connection_info_access';
+    const WORK_WITH_REPORTS = 'work_with_reports';
 }

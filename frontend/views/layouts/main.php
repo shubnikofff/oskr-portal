@@ -5,6 +5,7 @@ use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
 use frontend\assets\AppAsset;
 use common\widgets\Alert;
+use common\rbac\SystemPermission;
 
 /* @var $this \yii\web\View */
 /* @var $content string */
@@ -57,6 +58,9 @@ AppAsset::register($this);
     ]); ?>
 
     <?php $rightMenuItems = $userMenu;
+    if(Yii::$app->user->can(SystemPermission::GENERATE_REPORTS)) {
+        $rightMenuItems[] = ['label' => '<span class="glyphicon glyphicon-file"></span> Отчет', 'url' => ['/report']];
+    }
     $rightMenuItems[] = ['label' => '<span class="glyphicon glyphicon-question-sign"></span> Справка', 'url' => ['/site/about']];
     $rightMenuItems[] = ['label' => '<span class="glyphicon glyphicon-envelope"></span> Написать в УСКР', 'url' => 'mailto:oskr@niaep.ru'] ?>
 

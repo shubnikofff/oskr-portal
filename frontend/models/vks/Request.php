@@ -47,7 +47,7 @@ use frontend\models\rso\UserNotificationStrategy;
  * @property array $log
  * @property string $rsoAgreement
  * @property array $rsoFiles
- * @property string satisfaction
+ * @property string $satisfaction
  */
 class Request extends \common\models\Request
 {
@@ -187,6 +187,7 @@ class Request extends \common\models\Request
             'cancellationReason' => 'Причина отмены',
             'note' => 'Примечание',
             'rsoAgreement' => 'Согласование с РСО',
+            'satisfaction' => 'Оценка',
             'feedback' => 'Отзыв'
         ];
     }

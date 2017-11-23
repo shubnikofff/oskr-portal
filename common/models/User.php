@@ -1,4 +1,5 @@
 <?php
+
 namespace common\models;
 
 use common\models\vks\Participant;
@@ -96,7 +97,8 @@ class User extends ActiveRecord implements IdentityInterface
             'post' => 'Должность',
             'phone' => 'Контактный телефон',
             'mobile' => 'Мобильный телефон',
-            'createdAt' => 'Дата регистрации'
+            'createdAt' => 'Дата регистрации',
+            'fullNameWithPost' => 'ФИО и должность сотрудника'
         ];
     }
 
@@ -306,6 +308,12 @@ class User extends ActiveRecord implements IdentityInterface
         return implode(' ', $fullName);
     }
 
+
+    public function getFullNameWithPost()
+    {
+        return $this->getFullName() . " - " . $this->post;
+    }
+
     /**
      * @return bool
      * @throws \yii\base\InvalidConfigException
@@ -315,7 +323,7 @@ class User extends ActiveRecord implements IdentityInterface
         /** @var Collection $collection */
         $collection = \Yii::$app->get('mongodb')->getCollection(Participant::collectionName());
         $count = $collection->count(['confirmPersonId' => $this->_id]);
-        
+
         return $count > 0 ? true : false;
     }
 
@@ -323,7 +331,7 @@ class User extends ActiveRecord implements IdentityInterface
     {
         /** @var Collection $collection */
         $collection = \Yii::$app->get('mongodb')->getCollection(Participant::collectionName());
-        
+
         $list = $collection->aggregate([
             ['$match' => [
                 'confirmPersonId' => $this->_id,
