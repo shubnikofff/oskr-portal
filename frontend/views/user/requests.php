@@ -26,7 +26,7 @@ $this->title = "Заявки";
 
     <div class="row">
         <div class="col-md-8">
-            <?= $form->field($model, 'searchKey')->textInput(['placeholder' => 'Введите текст заявки'])->label(false) ?>
+            <?= $form->field($model, 'searchKey')->textInput(['placeholder' => 'Поиск по теме или примечанию'])->label(false) ?>
         </div>
         <div class="col-md-4" style="vertical-align: bottom">
             <?= Html::submitButton('<span class="glyphicon glyphicon-search"></span> Найти', ['class' => 'btn btn-primary']) ?>
@@ -38,20 +38,12 @@ $this->title = "Заявки";
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'formatter' => ['class' => \yii\i18n\Formatter::class, 'nullDisplay' => ''],
-        'tableOptions' => [
-            'class' => 'table'
-        ],
-        'columns' => [
-            [
-                'attribute' => 'number',
-                'contentOptions' => ['class' => 'text-center']
-            ],
 
+        'columns' => [
             [
                 'attribute' => 'date',
                 'content' => function (\frontend\models\vks\Request $model) {
-
-                    return Yii::$app->formatter->asDate($model->date->toDateTime(), 'short');
+                    return Yii::$app->formatter->asDate($model->date->toDateTime(), 'long');
                 },
             ],
 

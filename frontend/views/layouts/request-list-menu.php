@@ -17,6 +17,10 @@ echo \yii\bootstrap\Nav::widget([
             'url' => ['/user/requests']
         ],
         [
+            'label' => 'Заявки без оценки',
+            'url' => ['/user/request-without-feedback-list']
+        ],
+        [
             'label' => 'Согласование брони помещений',
             'url' => ['/user/booking-approve-list'],
             'visible' => Yii::$app->user->identity->isRoomApprovePerson()

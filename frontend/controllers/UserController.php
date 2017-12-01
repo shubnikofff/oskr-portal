@@ -93,4 +93,10 @@ class UserController extends Controller
         $this->layout = 'request-list-menu';
         return $this->render('room-approve-list', ['list' => \Yii::$app->user->identity->getRoomApproveList()]);
     }
+
+    public function actionRequestWithoutFeedbackList()
+    {
+        $this->layout = 'request-list-menu';
+        return $this->render('request-without-feedback-list', ['dataProvider' => (new RequestSearch())->getWithoutFeedbackList()]);
+    }
 }

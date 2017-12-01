@@ -50,7 +50,8 @@ $userListUrl = Url::to(['user-list']);
             <?= $form->field($model, 'toDate', ['options' => ['class' => 'col-md-3']])->widget(DatePicker::className(), [
                 'pluginOptions' => [
                     'autoclose' => true,
-                    'format' => 'dd.mm.yyyy'
+                    'format' => 'dd.mm.yyyy',
+                    'endDate' => '-1d'
                 ]
             ]) ?>
 
@@ -83,12 +84,30 @@ $userListUrl = Url::to(['user-list']);
             ]) ?>
 
             <div class="col-md-12 text-center" style="margin: 10px 0">
-                <?= Html::submitButton('Сформаировать отчет', ['class' => 'btn btn-success']) ?>
+                <?= Html::submitButton('Сформировать отчет', ['class' => 'btn btn-success']) ?>
             </div>
 
             <?php ActiveForm::end() ?>
         </div>
     </div>
+
+    <?php if ($counts !== null): ?>
+
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h5>Общие показатели за выбранный период</h5>
+            </div>
+            <div class="panel-body">
+                <ul class="list-inline">
+                    <li>Количество конференций: <b><?= $counts['meeting_count'] ?></b></li>
+                    <li>Количество участников: <b><?= $counts['participants_count'] ?></b></li>
+                    <li>Удовлетворительных оценок: <b><?= $counts['satisfactorily_percent'] ?>%</b></li>
+                    <li>Неудовлетворительных оценок: <b><?= $counts['unsatisfactorily_percent'] ?>%</b></li>
+                </ul>
+            </div>
+        </div>
+
+    <?php endif; ?>
 
     <?php if ($dataProvider !== null): ?>
 
@@ -102,7 +121,7 @@ $userListUrl = Url::to(['user-list']);
                     'contentOptions' => ['class' => 'text-center'],
                     'content' => function ($model) {
                         return "<span class='glyphicon " .
-                            ($model->satisfaction === '0' ? 'glyphicon-thumbs-down text-danger' : 'glyphicon-thumbs-up text-success') .
+                            ($model->satisfaction && $model->satisfaction < 6 ? 'glyphicon-thumbs-down text-danger' : 'glyphicon-thumbs-up text-success') .
                             "'></span>";
                     }
                 ],
@@ -122,24 +141,6 @@ $userListUrl = Url::to(['user-list']);
                 ]
             ]
         ]) ?>
-
-    <?php endif; ?>
-
-    <?php if ($counts !== null): ?>
-
-        <div class="panel panel-info">
-            <div class="panel-heading">
-                <h5>Общие показатели за выбранный период</h5>
-            </div>
-            <div class="panel-body">
-                <ul class="list-inline">
-                    <li>Количество конференций: <b><?= $counts['meeting_count'] ?></b></li>
-                    <li>Количество участников: <b><?= $counts['participants_count'] ?></b></li>
-                    <li>Удовлетворительных оценок: <b><?= $counts['satisfactorily_percent'] ?>%</b></li>
-                    <li>Неудовлетворительных оценок: <b><?= $counts['unsatisfactorily_percent'] ?>%</b></li>
-                </ul>
-            </div>
-        </div>
 
     <?php endif; ?>
 

@@ -14,8 +14,8 @@ use yii\data\ActiveDataProvider;
 use yii\data\Sort;
 use yii\mongodb\Collection;
 use yii\mongodb\validators\MongoDateValidator;
-use MongoDB\BSON\ObjectID;
-
+use MongoDB\BSON\ObjectId;
+use yii\mongodb\validators\MongoIdValidator;
 
 /**
  * Class Report
@@ -38,9 +38,9 @@ class Report extends Model
         return [
             [['fromDate', 'toDate'], 'required'],
             ['fromDate', MongoDateValidator::class, 'format' => 'dd.MM.yyyy', 'mongoDateAttribute' => 'fromMongoDate'],
-            ['toDate', MongoDateValidator::class, 'format' => 'dd.MM.yyyy', 'mongoDateAttribute' => 'toMongoDate'],
+            ['toDate', MongoDateValidator::class, 'format' => 'dd.MM.yyyy', 'mongoDateAttribute' => 'toMongoDate', 'max' => time(), 'maxString' => \Yii::$app->formatter->asDate(time())],
             ['satisfaction', 'in', 'range' => ['0', '1']],
-            ['employee', 'safe']
+            ['employee', MongoIdValidator::class]
         ];
     }
 
@@ -60,7 +60,7 @@ class Report extends Model
         $collection = \Yii::$app->get('mongodb')->getCollection(Request::collectionName());
 
         $map = new Javascript("function(){
-                var unsatisfactorily = this.satisfaction === '0' ? 1 : 0;
+                var unsatisfactorily = this.satisfaction < 6 ? 1 : 0;
                 emit(null, {'meeting_count':1, 'participants_count':this.participantsId.length, 'unsatisfactorily_count': unsatisfactorily});}"
         );
 
@@ -87,6 +87,9 @@ class Report extends Model
         $condition = [
             'date' => ['$gte' => $this->fromMongoDate, '$lte' => $this->toMongoDate]
         ];
+        if (!empty($this->employee)) {
+            $condition['createdBy'] = new ObjectID($this->employee);
+        }
 
         $result = $collection->mapReduce($map, $reduce, $out, $condition)[0]['value'];
 
@@ -104,22 +107,29 @@ class Report extends Model
             'attributes' => [
                 'date',
                 'satisfaction'
+            ],
+            'defaultOrder' => [
+                'date' => SORT_DESC
             ]
         ]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'sort' => $sort
+            'sort' => $sort,
+            'pagination' => [
+                'pageSize' => '50'
+            ]
         ]);
 
         $query->andWhere(['date' => ['$gte' => $this->fromMongoDate, '$lte' => $this->toMongoDate]]);
 
-        if($this->satisfaction !== "") {
-            $query->andWhere(['satisfaction' => ($this->satisfaction === '0' ? '0' : ['$ne' => '0'])]);
+        if ($this->satisfaction !== "") {
+            $condition = ['satisfaction' => ($this->satisfaction === '0' ? ['$lt' => 6] : ['$not' => ['$lt' => 6]])];
+            $query->andWhere($condition);
         }
 
-        if(!empty($this->employee)) {
-            $query->andWhere(['createdBy' =>  new ObjectID($this->employee)]);
+        if (!empty($this->employee)) {
+            $query->andWhere(['createdBy' => new ObjectId($this->employee)]);
         }
 
         return $dataProvider;

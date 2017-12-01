@@ -24,7 +24,7 @@ class FeedBackController extends Controller
         $model = self::finRequest($requestId);
 
         $model->scenario = $model::SCENARIO_FEEDBACK;
-        if($model->load(\Yii::$app->request->post()) && $model->save()) {
+        if($model->load(\Yii::$app->request->post()) && $model->saveFeedBack()) {
             return $this->render('success');
         }
         return $this->render('index', ['model' => $model]);

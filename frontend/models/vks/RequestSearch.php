@@ -9,6 +9,8 @@
 namespace frontend\models\vks;
 
 use common\models\SearchModelInterface;
+use MongoDB\BSON\ObjectId;
+use MongoDB\BSON\UTCDateTime;
 use yii\data\ActiveDataProvider;
 use yii\data\Pagination;
 use common\rbac\SystemPermission;
@@ -116,4 +118,32 @@ class RequestSearch extends Request implements SearchModelInterface
         return $dataProvider;
     }
 
+    /**
+     * @return ActiveDataProvider
+     */
+    public function getWithoutFeedbackList()
+    {
+        $query = self::find()->where([
+            'createdBy' => new ObjectId(\Yii::$app->user->id),
+            'satisfaction' => ['$exists' => false],
+            'date' => ['$lt' => new UTCDateTime()]
+        ]);
+
+        $sort = new Sort([
+            'attributes' => [
+                'date',
+                'status'
+            ],
+            'defaultOrder' => [
+                'date' => SORT_DESC
+            ]
+        ]);
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'sort' => $sort
+        ]);
+
+        return $dataProvider;
+    }
 }

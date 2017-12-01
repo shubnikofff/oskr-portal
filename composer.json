@@ -33,6 +33,7 @@
     "kartik-v/yii2-widget-depdrop": "@dev",
     "kartik-v/yii2-helpers": "dev-master",
     "kartik-v/yii2-sortable-input": "*",
+    "kartik-v/yii2-widget-rating": "*",
     "bower-asset/jquery": "1.*",
     "bower-asset/html5shiv": "*",
     "bower-asset/respond": "*"

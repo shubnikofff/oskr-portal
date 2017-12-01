@@ -1,4 +1,5 @@
 <?php
+
 use yii\helpers\Html;
 use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
@@ -6,6 +7,7 @@ use yii\widgets\Breadcrumbs;
 use frontend\assets\AppAsset;
 use common\widgets\Alert;
 use common\rbac\SystemPermission;
+use yii\bootstrap\Alert as BootstrapAlert;
 
 /* @var $this \yii\web\View */
 /* @var $content string */
@@ -41,9 +43,9 @@ AppAsset::register($this);
         /** @var \common\models\User $identity */
         $identity = Yii::$app->user->identity;
         $leftMenuItems[] = ['label' => '<span class="glyphicon glyphicon-pencil"></span> Подать заявку', 'url' => ['/vks-request/create']];
-        $userMenu[] = ['label' => '<span class="glyphicon glyphicon-user"></span> ' . $identity->shortName, 'items' => [
+        $userMenu[] = ['label' => '<span class="glyphicon glyphicon-user"></span> Личный кабинет', 'items' => [
             ['label' => '<span class="glyphicon glyphicon-cog"></span> Профиль', 'url' => ['/user/profile']],
-            ['label' => '<span class="glyphicon glyphicon-list-alt"></span> Заявки', 'url' => ['/user/requests']],
+            ['label' => '<span class="glyphicon glyphicon-list-alt"></span> Мои заявки', 'url' => ['/user/requests']],
             ['label' => '<span class="glyphicon glyphicon-earphone"></span> Аудиоконференция', 'url' => ['/audio-conference/index']],
             ['label' => 'Выход', 'url' => ['/site/logout'], 'linkOptions' => ['data-method' => 'post']]
         ]];
@@ -58,7 +60,7 @@ AppAsset::register($this);
     ]); ?>
 
     <?php $rightMenuItems = $userMenu;
-    if(Yii::$app->user->can(SystemPermission::GENERATE_REPORTS)) {
+    if (Yii::$app->user->can(SystemPermission::GENERATE_REPORTS)) {
         $rightMenuItems[] = ['label' => '<span class="glyphicon glyphicon-file"></span> Отчет', 'url' => ['/report']];
     }
     $rightMenuItems[] = ['label' => '<span class="glyphicon glyphicon-question-sign"></span> Справка', 'url' => ['/site/about']];
@@ -73,6 +75,21 @@ AppAsset::register($this);
     <?php NavBar::end() ?>
 
     <div class="container">
+
+        <?php if (Yii::$app->user->isGuest && $this->context->id!== 'site'): ?>
+
+            <?= BootstrapAlert::widget([
+                'options' => [
+                    'class' => 'alert-warning',
+                ],
+                'body' => 'Уважаемый Гость, Вы находитесь в режиме просмотра, для создания/редактирования заявок необходимо '
+                    . Html::a('войти', ['/site/login']) . ' на портал под своей учетной записью или ' .
+                    Html::a('зарегистрироваться', ['/site/register']) . '.',
+            ]) ?>
+
+        <?php endif; ?>
+
+
         <?= Breadcrumbs::widget([
             'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
         ]) ?>
@@ -92,7 +109,9 @@ AppAsset::register($this);
                 <div>+7 (910) 100-80-00</div>
                 <div>+7 (831) 421-79-90</div>
             </div>
-            <div class="col-md-6">&copy;&nbsp;Управление системных корпоративных ресурсов АО ИК "АСЭ" <?= date('Y') ?>г.</div>
+            <div class="col-md-6">&copy;&nbsp;Управление системных корпоративных ресурсов АО ИК "АСЭ" <?= date('Y') ?>
+                г.
+            </div>
         </div>
     </div>
 

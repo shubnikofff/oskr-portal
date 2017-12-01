@@ -138,10 +138,10 @@ class Request extends \common\models\Request
 
             ['participantsId', 'checkParticipantsIdFormat'],
 
-            ['satisfaction', 'boolean'],
+            ['satisfaction', 'integer', 'min' => 1, 'max' => 10],
 
             ['feedback', 'required', 'when' => function($model) {
-                return $model->satisfaction === '0';
+                return $model->satisfaction !== '10';
             }, 'message' => 'Пожалуйста укажите Ваши замечания']
         ]);
     }
@@ -467,6 +467,15 @@ class Request extends \common\models\Request
         $result = self::find()->where(['date' => $date])->orderBy(['number' => SORT_DESC])->limit(1)->asArray()->all();
         $number = $result[0]['number'];
         return $number === null ? 100 : $number + 1;
+    }
+
+    public function saveFeedBack()
+    {
+        if($this->validate()) {
+            $this->satisfaction = (int)$this->satisfaction;
+            return $this->save(false);
+        }
+        return false;
     }
 
 }
