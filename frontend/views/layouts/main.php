@@ -75,8 +75,12 @@ AppAsset::register($this);
     <?php NavBar::end() ?>
 
     <div class="container">
-
-        <?php if (Yii::$app->user->isGuest && $this->context->id!== 'site'): ?>
+        <!--[if (lt IE 9)]>
+        <div class="alert alert-danger" role="alert">Внимание! Ваш браузер не поддерживается. Для корректной работы
+            портала воспользуйтесь другим браузером, например Google Chrome.
+        </div>
+        <![endif]-->
+        <?php if (Yii::$app->user->isGuest && $this->context->id !== 'site'): ?>
 
             <?= BootstrapAlert::widget([
                 'options' => [
