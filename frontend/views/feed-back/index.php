@@ -19,8 +19,8 @@ $this->title = "Оценка качества";
     <h1>Оценка качества технического обслуживания совещания</h1>
     <br>
     <p><strong>Дата совещания</strong>
-        <samp><?= Yii::$app->formatter->asDate($model->date->toDateTime()->getTimestamp(), 'long') ?></samp></p>
-    <p><strong>Тема совещания</strong> <samp><?= $model->topic ?></samp></p>
+        <?= Yii::$app->formatter->asDate($model->date->toDateTime()->getTimestamp(), 'long') ?></p>
+    <p><strong>Тема совещания</strong> <?= $model->topic ?></p>
 
     <br>
     <h4>Пожалуйста оцените качетсво работы нашей службы по Вашей заявке.</h4>
