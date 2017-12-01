@@ -43,7 +43,8 @@ $userListUrl = Url::to(['user-list']);
             <?= $form->field($model, 'fromDate', ['options' => ['class' => 'col-md-3']])->widget(DatePicker::className(), [
                 'pluginOptions' => [
                     'autoclose' => true,
-                    'format' => 'dd.mm.yyyy'
+                    'format' => 'dd.mm.yyyy',
+                    'endDate' => '-1d'
                 ]
             ]) ?>
 
