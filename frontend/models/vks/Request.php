@@ -5,11 +5,13 @@
  * Date: 07.10.15
  * Time: 14:24
  */
+
 namespace frontend\models\vks;
 
 use frontend\models\NotifyService;
 use MongoDB\BSON\ObjectID;
 use MongoDB\BSON\UTCDateTime;
+use yii\base\ErrorException;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\mongodb\Collection;
@@ -140,7 +142,7 @@ class Request extends \common\models\Request
 
             ['satisfaction', 'integer', 'min' => 1, 'max' => 10],
 
-            ['feedback', 'required', 'when' => function($model) {
+            ['feedback', 'required', 'when' => function ($model) {
                 return $model->satisfaction !== '10';
             }, 'message' => 'Пожалуйста укажите Ваши замечания']
         ]);
@@ -327,6 +329,9 @@ class Request extends \common\models\Request
                 $result = ConferenceService::instance()->create($this, $form)->getData();
                 if ($result['retcode'] === 100) {
                     $raw = $result['Conferences'][0];
+                    if (!$raw['numericId']) {
+                        throw new ErrorException('Конференция возможно не создалась. Код ответа от ' . \Yii::$app->params['mcugw.url'] . ' успешный, но данные о конференции не получены.');
+                    }
                     $this->conference = new Conference($raw['conferenceName'], $raw['numericId'], $raw['pin'], $raw['mcuid'], $raw['profile'], $raw['recordType'], $result['extDS'], $result['intDS']);
                     return true;
                 } else {
@@ -420,7 +425,7 @@ class Request extends \common\models\Request
     public function afterFind()
     {
         parent::afterFind();
-        if($row = $this->conference) {
+        if ($row = $this->conference) {
             $conference = new Conference($row['name'], $row['number'], $row['password'], $row['mcuId'], $row['profileId'], $row['audioRecordTypeId'], $row['externalDS'], $row['internalDS']);
             $this->conference = $conference;
         }
@@ -471,7 +476,7 @@ class Request extends \common\models\Request
 
     public function saveFeedBack()
     {
-        if($this->validate()) {
+        if ($this->validate()) {
             $this->satisfaction = (int)$this->satisfaction;
             return $this->save(false);
         }

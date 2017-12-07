@@ -7,6 +7,7 @@
 
 namespace frontend\models\vks;
 
+use yii\base\ErrorException;
 use yii\httpclient\Client;
 
 
@@ -43,6 +44,7 @@ class MCURepository
     }
 
     /**
+     * @throws ErrorException
      * @return array
      */
     public function getRaw()
@@ -56,8 +58,11 @@ class MCURepository
                     'format' => Client::FORMAT_JSON
                 ],
             ]);
-            $data = $httpClient->get('http://gw.niaepnn.ru/api/mcues', null, ['content-type' => 'application/json;charset=utf-8'])->send()->getData();
+            $data = $httpClient->get(\Yii::$app->params['mcugw.url'] . '/api/mcues', null, ['content-type' => 'application/json;charset=utf-8'])->send()->getData();
             $this->_raw = $data['Mcues'];
+            if (!is_array($this->_raw)) {
+                throw new ErrorException("Не удалось получить список MCU с " . \Yii::$app->params['mcugw.url']);
+            }
         }
         return $this->_raw;
     }

@@ -30,7 +30,7 @@ class ConferenceService
     private function __construct()
     {
         $this->_httpClient = new Client([
-            'baseUrl' => 'http://gw.niaepnn.ru/api/Conference',
+            'baseUrl' => \Yii::$app->params['mcugw.url'] . '/api/Conference',
             'requestConfig' => [
                 'format' => Client::FORMAT_JSON,
                 'headers' => ['content-type' => 'application/json;charset=utf-8']

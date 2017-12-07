@@ -27,7 +27,7 @@ class AudioConferenceService
     public function __construct()
     {
         $this->httpClient = new Client([
-            'baseUrl' => 'http://gw.niaepnn.ru/api/Meetme',
+            'baseUrl' => \Yii::$app->params['mcugw.url'] . '/api/Meetme',
             'requestConfig' => [
                 'format' => Client::FORMAT_JSON,
                 'headers' => ['content-type' => 'application/json;charset=utf-8']

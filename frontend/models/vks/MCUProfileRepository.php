@@ -56,7 +56,7 @@ class MCUProfileRepository
                     'format' => Client::FORMAT_JSON
                 ],
             ]);
-            $data = $httpClient->get('http://gw.niaepnn.ru/api/profiles/' . $mcuId, null, ['content-type' => 'application/json;charset=utf-8'])->send()->getData();
+            $data = $httpClient->get(\Yii::$app->params['mcugw.url'] . '/api/profiles/' . $mcuId, null, ['content-type' => 'application/json;charset=utf-8'])->send()->getData();
             $this->_raw = $data['Profiles'];
         }
         return $this->_raw;
